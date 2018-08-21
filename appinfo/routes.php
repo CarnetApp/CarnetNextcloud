@@ -14,6 +14,7 @@ return [
        ['name' => 'page#writer', 'url' => '/writer', 'verb' => 'GET'],
        ['name' => 'page#do_echo', 'url' => '/echo', 'verb' => 'POST'],
        ['name' => 'note#openNote', 'url' => '/note/open', 'verb' => 'GET'],
+       ['name' => 'note#createNote', 'url' => '/note/create', 'verb' => 'GET'],
        ['name' => 'note#saveTextToOpenNote', 'url' => '/note/saveText', 'verb' => 'POST'],
        ['name' => 'note#listDir', 'url' => '/browser/list', 'verb' => 'GET'],
        ['name' => 'note#getRecent', 'url' => '/recentdb', 'verb' => 'GET'],

@@ -42,7 +42,7 @@
         $path = $_GET['path'];
         if ($path == "/" || $path == ".")
             $path = "";
-        else if(substr($path, -1) != '/' && path != "")
+        else if(substr($path, -1) != '/' && !empty($path))
             $path .= "/";
 
         $data = array();
@@ -159,6 +159,36 @@
         }
         $this->internalSaveRecent(json_encode($recent));
         return $recent;
+     }
+
+     /**
+      * @NoAdminRequired
+      * @NoCSRFRequired
+      */
+     public function createNote(){
+        $path = $_GET['path'];
+        if ($path == "/" || $path == ".")
+            $path = "";
+        else if(substr($path, -1) != '/' AND !empty($path))
+            $path .= "/";
+        $list = $this->CarnetFolder->get($path)->getDirectoryListing();
+        $un = "untitled";
+        $name = "";
+        $i = 0;
+        $continue = true;
+        while($continue){
+            $continue = false;
+            $name = $un.(($i == 0)?"":" ".$i).".sqd";
+            foreach($list as $in){
+                if($in->getName() == $name){
+                    $continue = true;
+                    break;
+                }
+            }
+            $i++;
+        }
+        return $name;
+        
      }
 
      /**
