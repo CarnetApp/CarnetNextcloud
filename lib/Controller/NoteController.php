@@ -20,9 +20,9 @@
         $this->userId = $UserId;
         $this->appFolder= $AppFolder;
         try {
-            $this->CarnetFolder = $RootFolder->getUserFolder($this->userId)->get('Documents/QuickDoc');
+            $this->CarnetFolder = $RootFolder->getUserFolder($this->userId)->get('Documents/QuickNote');
         } catch(\OCP\Files\NotFoundException $e) {
-            $this->CarnetFolder = $RootFolder->getUserFolder($this->userId)->newFolder('Documents/QuickDoc');
+            $this->CarnetFolder = $RootFolder->getUserFolder($this->userId)->newFolder('Documents/QuickNote');
         }
        // \OC_Util::tearDownFS();
        // \OC_Util::setupFS($UserId);
