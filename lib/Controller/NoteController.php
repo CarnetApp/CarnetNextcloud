@@ -246,7 +246,7 @@
                  $array[$path] = array();
                  try{
                     $array[$path]['metadata'] = json_decode($zipFile->getEntryContents("metadata.json"));
-                 } catch(Exception $e){
+                 } catch(\PhpZip\Exception\ZipNotFoundEntry $e){
                     
                  }
                  try{
