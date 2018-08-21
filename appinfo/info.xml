@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<info xmlns:xsi= "http://www.w3.org/2001/XMLSchema-instance"
+      xsi:noNamespaceSchemaLocation="https://apps.nextcloud.com/schema/apps/info.xsd">
+    <id>carnet</id>
+    <name>Carnet</name>
+    <summary>Carnet on Nextcloud</summary>
+    <description><![CDATA[Carnet on Nextcloud]]></description>
+    <version>0.0.1</version>
+    <licence>agpl</licence>
+    <author mail="phie@phie.ovh" >Phie</author>
+    <namespace>Carnet</namespace>
+    <category>tools</category>
+    <bugs>https://github.com/PhieF/CarnetNextcloud/issues</bugs>
+    <dependencies>
+        <nextcloud min-version="13" max-version="13"/>
+    </dependencies>
+    <navigations>
+        <navigation>
+            <name>Carnet</name>
+            <route>carnet.page.index</route>
+        </navigation>
+    </navigations>
+</info>
