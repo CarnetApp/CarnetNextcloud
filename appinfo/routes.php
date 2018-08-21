@@ -18,6 +18,8 @@ return [
        ['name' => 'note#saveTextToOpenNote', 'url' => '/note/saveText', 'verb' => 'POST'],
        ['name' => 'note#listDir', 'url' => '/browser/list', 'verb' => 'GET'],
        ['name' => 'note#getRecent', 'url' => '/recentdb', 'verb' => 'GET'],
+       ['name' => 'note#mergeRecentDB', 'url' => '/recentdb/merge', 'verb' => 'GET'],
+
        ['name' => 'note#postActions', 'url' => '/recentdb/action', 'verb' => 'POST'],
 	   ['name' => 'note#getMetadata', 'url' => '/metadata', 'verg' => 'GET'],
        ['name' => 'note#create', 'url' => '/notes', 'verb' => 'POST'],

@@ -117,6 +117,44 @@
         }
     }
 
+    /**
+      * @NoAdminRequired
+      * @NoCSRFRequired
+      */
+     public function mergeRecentDB() {
+         $myDb = $this->getRecentFile();
+         $hasChanged = false;
+         foreach($this->CarnetFolder->get("quickdoc/recentdb/")->getDirectoryListing() as $inDB){
+             if($inDB->getName() == $myDb->getName()){
+                 continue;
+             }
+             $myDbContent = json_decode($myDb->getContent());
+             $thisDbContent = json_decode($inDB->getContent());
+             $saveDB = false;
+             foreach($thisDbContent->data as $action){
+                $isIn = false;
+                foreach($myDbContent->data as $actionMy){
+                    if($actionMy->time == $action->time && $actionMy->path == $action->path && $actionMy->action == $action->action){
+                        $isIn = true;
+                        break;
+                     }         
+                 }
+                 if(!$isIn){
+                    $hasChanged = true;
+                    $saveDB = true;
+                    array_push($myDbContent->data,$action);
+                 }
+             }
+             if($saveDB){
+                usort($myDbContent->data, function($a, $b) {
+                    return $a->time <=> $b->time;
+                });
+                $myDb->putContent(json_encode($myDbContent));
+             }
+         }
+         return $hasChanged;
+     }
+
      /**
       * @NoAdminRequired
       * @NoCSRFRequired
