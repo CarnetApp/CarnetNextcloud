@@ -247,12 +247,12 @@
                  try{
                     $array[$path]['metadata'] = json_decode($zipFile->getEntryContents("metadata.json"));
                  } catch(\PhpZip\Exception\ZipNotFoundEntry $e){
-
+                    
                  }
                  try{
                     $array[$path]['shorttext'] = substr(trim(strip_tags($zipFile->getEntryContents("index.html"))),0, 100);
                 } catch(\PhpZip\Exception\ZipNotFoundEntry $e){
-
+                    $array[$path]['shorttext'] = "";
                 }
 			} catch(\OCP\Files\NotFoundException $e) {
 			}
