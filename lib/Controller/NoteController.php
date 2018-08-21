@@ -250,7 +250,7 @@
                     
                  }
                  try{
-                    $array[$path]['shorttext'] = substr(trim(strip_tags($zipFile->getEntryContents("index.html"))),0, 100);
+                    $array[$path]['shorttext'] = mb_substr(trim(strip_tags($zipFile->getEntryContents("index.html"))),0, 100);
                 } catch(\PhpZip\Exception\ZipNotFoundEntry $e){
                     $array[$path]['shorttext'] = "";
                 }
