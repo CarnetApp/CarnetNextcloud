@@ -21,7 +21,10 @@ return [
        ['name' => 'note#mergeRecentDB', 'url' => '/recentdb/merge', 'verb' => 'GET'],
 
        ['name' => 'note#postActions', 'url' => '/recentdb/action', 'verb' => 'POST'],
-	   ['name' => 'note#getMetadata', 'url' => '/metadata', 'verg' => 'GET'],
+       ['name' => 'note#getMetadata', 'url' => '/metadata', 'verg' => 'GET'],
+       ['name' => 'note#getKeywordsDB', 'url' => '/keywordsdb', 'verb' => 'GET'],
+
+
        ['name' => 'note#create', 'url' => '/notes', 'verb' => 'POST'],
        ['name' => 'note#update', 'url' => '/notes/{id}', 'verb' => 'PUT'],
        ['name' => 'note#destroy', 'url' => '/notes/{id}', 'verb' => 'DELETE']

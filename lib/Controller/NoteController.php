@@ -108,6 +108,27 @@
         }
     }
 
+    /**
+    * @NoAdminRequired
+    * @NoCSRFRequired
+    */
+   public function getKeywordsDB() {
+       
+
+       return json_decode($this->getKeywordFile()->getContent(),true);
+   }
+
+   private function getKeywordFile(){
+       try {
+           return $this->CarnetFolder->get("quickdoc/keywords/keywordsnc");
+       } catch(\OCP\Files\NotFoundException $e) {
+           $this->CarnetFolder->newFolder('/quickdoc/keywords', 0777, true);
+           $file = $this->CarnetFolder->newFile("quickdoc/keywords/keywordsnc");
+           $file->putContent("{\"data\":[]}");
+           return $file;
+       }
+   }
+
     private function getCacheFolder(){
         try {
             return $this->appFolder->get("Carnet/cache/".$this->userId);
