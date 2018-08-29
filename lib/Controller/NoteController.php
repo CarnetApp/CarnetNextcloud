@@ -108,6 +108,19 @@
         }
     }
 
+
+    /**
+      * @NoAdminRequired
+      * @NoCSRFRequired
+      */
+     public function postKeywordsActions(){
+        $recent = $this->getKeywordsDB();
+        foreach($_POST["data"] as $action){
+            array_push($recent['data'],$action);
+        }
+        $this->internalSaveKeywordsDB(json_encode($recent));
+        return $recent;
+     }
     /**
     * @NoAdminRequired
     * @NoCSRFRequired
@@ -115,10 +128,10 @@
    public function getKeywordsDB() {
        
 
-       return json_decode($this->getKeywordFile()->getContent(),true);
+       return json_decode($this->getKeywordsDBFile()->getContent(),true);
    }
 
-   private function getKeywordFile(){
+   private function getKeywordsDBFile(){
        try {
            return $this->CarnetFolder->get("quickdoc/keywords/keywordsnc");
        } catch(\OCP\Files\NotFoundException $e) {
@@ -197,6 +210,14 @@
             // you have to create this exception by yourself ;)
             throw new StorageException('Cant write to file');
         }
+     }
+
+     /**
+      * @NoAdminRequired
+      * @NoCSRFRequired
+      */
+     public function internalSaveKeywordsDB($str) {
+        $this->getKeywordsDBFile()->putContent($str);
      }
 
      /**
