@@ -2,6 +2,7 @@
 namespace OCA\Carnet\Controller;
 
 use OCP\IRequest;
+use OCP\AppFramework\Http\ContentSecurityPolicy;
 use OCP\AppFramework\Http\TemplateResponse;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\Controller;
@@ -26,7 +27,11 @@ class PageController extends Controller {
 	 * @NoCSRFRequired
 	 */
 	public function index() {
-		return new TemplateResponse($this->appName,"index"); // templates/index.php
+		$response = new TemplateResponse($this->appName,"index");
+		$policy = new ContentSecurityPolicy();
+        $policy->addAllowedFrameDomain('\'self\'');
+        $response->setContentSecurityPolicy($policy); // allow iframe
+		return $response;
 	}
 
 	/**
