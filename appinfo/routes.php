@@ -23,6 +23,7 @@ return [
        ['name' => 'note#postActions', 'url' => '/recentdb/action', 'verb' => 'POST'],
        ['name' => 'note#getMetadata', 'url' => '/metadata', 'verg' => 'GET'],
        ['name' => 'note#getKeywordsDB', 'url' => '/keywordsdb', 'verb' => 'GET'],
+       ['name' => 'note#mergeKeywordsDB', 'url' => '/keywordsdb/merge', 'verb' => 'GET'],
        ['name' => 'note#postKeywordsActions', 'url' => '/keywordsdb/action', 'verb' => 'POST'],
 
        ['name' => 'note#create', 'url' => '/notes', 'verb' => 'POST'],

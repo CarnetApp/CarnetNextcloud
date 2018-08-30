@@ -142,6 +142,44 @@
        }
    }
 
+   /**
+   * @NoAdminRequired
+   * @NoCSRFRequired
+   */
+  public function mergeKeywordsDB() {
+      $myDb = $this->getKeywordsDBFile();
+      $hasChanged = false;
+      foreach($this->CarnetFolder->get("quickdoc/keywords/")->getDirectoryListing() as $inDB){
+          if($inDB->getName() == $myDb->getName()){
+              continue;
+          }
+          $myDbContent = json_decode($myDb->getContent());
+          $thisDbContent = json_decode($inDB->getContent());
+          $saveDB = false;
+          foreach($thisDbContent->data as $action){
+             $isIn = false;
+             foreach($myDbContent->data as $actionMy){
+                 if($actionMy->keyword == $action->keyword && $actionMy->time == $action->time && $actionMy->path == $action->path && $actionMy->action == $action->action){
+                     $isIn = true;
+                     break;
+                  }         
+              }
+              if(!$isIn){
+                 $hasChanged = true;
+                 $saveDB = true;
+                 array_push($myDbContent->data,$action);
+              }
+          }
+          if($saveDB){
+             usort($myDbContent->data, function($a, $b) {
+                 return $a->time <=> $b->time;
+             });
+             $myDb->putContent(json_encode($myDbContent));
+          }
+      }
+      return $hasChanged;
+  }
+
     private function getCacheFolder(){
         try {
             return $this->appFolder->get("Carnet/cache/".$this->userId);
