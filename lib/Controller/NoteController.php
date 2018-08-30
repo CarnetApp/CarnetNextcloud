@@ -331,11 +331,12 @@
         $folder = $cache->get("currentnote".$id);
         $zipFile = new MyZipFile();
         $this->addFolderContentToArchive($folder,$zipFile,"");
+        
         try{
-            $file = $this->CarnetFolder->get($path);
+            $this->CarnetFolder->get($path)->delete();
         } catch(\OCP\Files\NotFoundException $e) {
-            $file = $this->CarnetFolder->newFile($path);
         }
+        $file = $this->CarnetFolder->newFile($path);
         $zipFile->saveAsStream($file->fopen("w"));
      } 
 
