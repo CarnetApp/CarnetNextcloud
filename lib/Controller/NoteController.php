@@ -347,7 +347,7 @@
                 $archive->addEmptyDir($path);
                 $this->addFolderContentToArchive($in, $archive, $path."/");
             }else {
-                $archive->addFromStream($in->fopen("r"), $path, \PhpZip\ZipFile::METHOD_STORED);
+                $archive->addFromStream($in->fopen("r"), $path, \PhpZip\ZipFile::METHOD_DEFLATED);
             }
 
         }
