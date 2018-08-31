@@ -436,6 +436,10 @@
                     } else if($entryName == "metadata.json"){
                         $data['metadata'] = json_decode($contents);
                     }
+                    $parent = dirname($entryName);
+                    if($parent != "." && !$folder->nodeExists($parent)){
+                        $folder->newFolder($parent);
+                    }
                     $folder->newFile($entryName)->putContent($contents);
                 }
             }
