@@ -430,7 +430,7 @@
                 if($contents == "" AND $zipFile->isDirectory($entryName)){
                     $folder->newFolder($entryName);
                 }
-                else{
+                else if($contents != ""){
                     if($entryName == "index.html"){
                         $data['html'] = $contents;
                     } else if($entryName == "metadata.json"){
@@ -441,6 +441,7 @@
             }
             unlink($tmppath);
         } catch(\OCP\Files\NotFoundException $e) {
+            $data["error"] = "not found";
         }
         $data['id'] = $editUniqueID;
         return $data; 
