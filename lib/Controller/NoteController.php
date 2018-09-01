@@ -375,7 +375,13 @@
         } catch(\OCP\Files\NotFoundException $e) {
         }
         $file = $this->CarnetFolder->newFile($path);
-        $zipFile->saveAsStream($file->fopen("w"));
+        //tried to do with a direct fopen on $file but lead to bad size on nextcloud
+        $tmppath = getcwd()."/".uniqid().".sqd";
+        $zipFile->saveAsFile($tmppath);
+        $tmph = fopen($tmppath, "r");
+        $file->putContent($tmph);
+        fclose($tmph);
+        unlink($tmppath);
      } 
 
      private function addFolderContentToArchive($folder, $archive, $relativePath){
