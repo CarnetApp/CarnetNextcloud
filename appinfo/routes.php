@@ -16,6 +16,10 @@ return [
        ['name' => 'note#openNote', 'url' => '/note/open', 'verb' => 'GET'],
        ['name' => 'note#createNote', 'url' => '/note/create', 'verb' => 'GET'],
        ['name' => 'note#saveTextToOpenNote', 'url' => '/note/saveText', 'verb' => 'POST'],
+       ['name' => 'note#addMediaToOpenNote', 'url' => '/note/open/{id}/addMedia', 'verb' => 'POST'],
+       ['name' => 'note#listMediaOfOpenNote', 'url' => '/note/open/{id}/listMedia', 'verb' => 'GET'],
+       ['name' => 'note#getMediaOfOpenNote', 'url' => '/note/open/{id}/getMedia/{media}', 'verb' => 'GET'],
+
        ['name' => 'note#listDir', 'url' => '/browser/list', 'verb' => 'GET'],
        ['name' => 'note#getRecent', 'url' => '/recentdb', 'verb' => 'GET'],
        ['name' => 'note#mergeRecentDB', 'url' => '/recentdb/merge', 'verb' => 'GET'],

@@ -2,6 +2,7 @@
  namespace OCA\Carnet\Controller;
  use OCP\IRequest;
  use OCP\AppFramework\Controller;
+ use OCP\AppFramework\Http\FileDisplayResponse;
  //require_once 'vendor/autoload.php';
 
  class MyZipFile extends \PhpZip\ZipFile {
@@ -362,6 +363,61 @@
         $file->putContent($_POST['metadata']);
 
         $this->saveOpenNote($_POST['path'],$id);
+     }
+
+     /**
+     * @NoAdminRequired
+     * @NoCSRFRequired
+     */
+     public function addMediaToOpenNote($id){
+        $cache = $this->getCacheFolder();
+        $folder = $cache->get("currentnote".$id);
+        
+        try{
+            $data = $folder->get("data");
+        } catch(\OCP\Files\NotFoundException $e) {
+            $data = $folder->newFolder("data");
+        }
+        $fileIn = fopen($_FILES['media']['tmp_name'][0],"r");
+        if (!$fileIn) {
+            die("KO");
+        } else {
+            $fileOut = $data->newFile($_FILES['media']['name'][0]);
+            $fileOut->putContent($fileIn);
+            fclose($fileIn);
+        }
+        $this->saveOpenNote($_POST['path'],$id);
+        return $this->listMediaOfOpenNote($id);
+     }
+
+     /**
+     * @NoAdminRequired
+     * @NoCSRFRequired
+     */
+     public function listMediaOfOpenNote($id){
+        $cache = $this->getCacheFolder();
+        $folder = $cache->get("currentnote".$id);
+        $media = array();
+        try{
+            $data = $folder->get("data");
+            foreach($data->getDirectoryListing() as $in){
+                array_push($media,"note/open/".$id."/getMedia/".$in->getName());
+            }
+        } catch(\OCP\Files\NotFoundException $e) {
+            
+        }
+        return $media;
+     }
+
+     /**
+     * @NoAdminRequired
+     * @NoCSRFRequired
+     */
+     public function getMediaOfOpenNote($id, $media){
+        $cache = $this->getCacheFolder();
+        $folder = $cache->get("currentnote".$id);
+        $data = $folder->get("data");
+        return new FileDisplayResponse($data->get($media));
      }
 
      private function saveOpenNote($path,$id){
