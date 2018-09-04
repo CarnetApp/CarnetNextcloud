@@ -10,10 +10,12 @@ use OCP\AppFramework\Controller;
 class PageController extends Controller {
 	private $userId;
 	private $RootFolder;
-	public function __construct($AppName, IRequest $request, $UserId, $RootFolder){
+	private $config;
+	public function __construct($AppName, IRequest $request, $UserId, $RootFolder, $Config){
 		parent::__construct($AppName, $request);
 		$this->userId = $UserId;
 		$this->RootFolder = $RootFolder;
+		$this->config = $Config;
 	}
 
 	/**
@@ -27,7 +29,10 @@ class PageController extends Controller {
 	 * @NoCSRFRequired
 	 */
 	public function index() {
-		$response = new TemplateResponse($this->appName,"index");
+		$parameters = [
+			'carnet_display_fullscreen' => $this->config->getAppValue('carnet', 'carnetDisplayFullscreen', 'no'),
+		];
+		$response = new TemplateResponse($this->appName,"index",$parameters);
 		$policy = new ContentSecurityPolicy();
         $policy->addAllowedFrameDomain('\'self\'');
         $response->setContentSecurityPolicy($policy); // allow iframe

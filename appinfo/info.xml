@@ -5,7 +5,7 @@
     <name>Carnet</name>
     <summary>Carnet on Nextcloud</summary>
     <description><![CDATA[Carnet on Nextcloud]]></description>
-    <version>0.0.1</version>
+    <version>0.0.3</version>
     <licence>agpl</licence>
     <author mail="phie@phie.ovh" >Phie</author>
     <namespace>Carnet</namespace>
@@ -20,4 +20,7 @@
             <route>carnet.page.index</route>
         </navigation>
     </navigations>
+    <settings>
+        <admin>\OCA\Carnet\Settings\AdminSettings</admin>
+    </settings>
 </info>

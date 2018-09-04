@@ -39,6 +39,9 @@ class Application extends App {
             return $c->query('ServerContainer')->getAppFolder();
         });
 
+        $container->registerService('Config', function($c) {
+            return $c->query('ServerContainer')->getConfig();
+        });
     }
 }
 ?>
