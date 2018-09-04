@@ -12,6 +12,8 @@ for ($i = 0; $i < count($matches[1]); $i++) {
     if (strpos($url, 'jquery.min') == false) //jquery already in nextcloud
         script("carnet","../templates/CarnetElectron/".$url);
 }
+if($_['carnet_display_fullscreen']=="yes")
+    script("carnet","../templates/CarnetElectron/compatibility/nextcloud/reader_fullscreen");
 $file = preg_replace('#<script(.*?)>(.*?)</script>#is', '', $file);
 $root = substr(__DIR__, strlen($_SERVER['DOCUMENT_ROOT']));
 $file = str_replace("src=\"","defer src=\"".$root."/CarnetElectron/",$file);

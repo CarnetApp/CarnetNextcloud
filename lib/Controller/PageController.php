@@ -44,7 +44,10 @@ class PageController extends Controller {
 	 * @NoCSRFRequired
 	 */
 	public function writer() {
-		return new TemplateResponse($this->appName,"writer"); // templates/writer.php
+		$parameters = [
+			'carnet_display_fullscreen' => $this->config->getAppValue('carnet', 'carnetDisplayFullscreen', 'no'),
+		];
+		return new TemplateResponse($this->appName,"writer", $parameters); // templates/writer.php
 	}
 
 }
