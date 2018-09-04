@@ -16,14 +16,20 @@
     private $storage;
     private $CarnetFolder;
     private $appFolder;
-	public function __construct($AppName, IRequest $request, $UserId, $RootFolder, $AppFolder){
+	public function __construct($AppName, IRequest $request, $UserId, $RootFolder, $AppFolder, $Config){
 		parent::__construct($AppName, $request);
         $this->userId = $UserId;
         $this->appFolder= $AppFolder;
+        $this->Config = $Config;
+        $this->rootFolder = $RootFolder;
+        $folder = $this->Config->getUserValue($this->userId, $this->appName, "note_folder");
+        //$this->Config->setUserValue($this->userId, $this->appName, "note_folder", 'Documents/QuickNote');
+        if(empty($folder))
+            $folder= 'Documents/QuickNote';
         try {
-            $this->CarnetFolder = $RootFolder->getUserFolder($this->userId)->get('Documents/QuickNote');
+            $this->CarnetFolder = $RootFolder->getUserFolder($this->userId)->get($folder);
         } catch(\OCP\Files\NotFoundException $e) {
-            $this->CarnetFolder = $RootFolder->getUserFolder($this->userId)->newFolder('Documents/QuickNote');
+            $this->CarnetFolder = $RootFolder->getUserFolder($this->userId)->newFolder($folder);
         }
        // \OC_Util::tearDownFS();
        // \OC_Util::setupFS($UserId);
@@ -97,7 +103,26 @@
 
         return json_decode($this->getRecentFile()->getContent(),true);
     }
+    /*
+     * @NoAdminRequired
+	 * @NoCSRFRequired
+	 */
+	public function getNotePath() {
+        
 
+        return substr($this->CarnetFolder->getInternalPath(),6);
+    }
+
+    /*
+    * @NoAdminRequired
+    * @NoCSRFRequired
+    */
+   public function setNotePath() {
+       if(!empty($_POST['path'])&& $this->rootFolder->getUserFolder($this->userId)->isValidPath($_POST['path'])){
+            $this->Config->setUserValue($this->userId, $this->appName,"note_folder",$_POST['path']);
+       }
+       return substr($this->CarnetFolder->getInternalPath(),6);
+   }
     private function getRecentFile(){
         try {
             return $this->CarnetFolder->get("quickdoc/recentdb/recentnc");
