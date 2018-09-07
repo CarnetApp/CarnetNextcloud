@@ -365,6 +365,14 @@
 		}
 		 return $array;
      }
+
+     /**
+      * @NoAdminRequired
+      * @NoCSRFRequired
+      */
+	 public function deleteNote($path){
+		$this->CarnetFolder->get($path)->delete();
+     }
      
      /**
      * @NoAdminRequired

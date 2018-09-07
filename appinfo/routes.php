@@ -34,7 +34,6 @@ return [
        ['name' => 'note#postKeywordsActions', 'url' => '/keywordsdb/action', 'verb' => 'POST'],
 
        ['name' => 'note#create', 'url' => '/notes', 'verb' => 'POST'],
-       ['name' => 'note#update', 'url' => '/notes/{id}', 'verb' => 'PUT'],
-       ['name' => 'note#destroy', 'url' => '/notes/{id}', 'verb' => 'DELETE']
+       ['name' => 'note#deleteNote', 'url' => '/notes', 'verb' => 'DELETE']
     ]
 ];
