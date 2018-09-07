@@ -360,7 +360,7 @@
                     
                  }
                  try{
-                    $array[$path]['shorttext'] = mb_substr(trim(preg_replace('#<[^>]+>#', ' ', $zipFile->getEntryContents("index.html"))),0, 100);
+                    $array[$path]['shorttext'] = mb_substr(trim(preg_replace('#<[^>]+>#', ' ', $zipFile->getEntryContents("index.html"))),0, 150);
                 } catch(\PhpZip\Exception\ZipNotFoundEntry $e){
                     $array[$path]['shorttext'] = "";
                 }
