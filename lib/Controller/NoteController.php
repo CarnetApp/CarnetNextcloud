@@ -380,7 +380,7 @@
         } catch(\OCP\Files\NotFoundException $e) {
             
         }
-        return shell_exec('php occ carnet:search phie '.escapeshellcmd($query).' '.escapeshellcmd($from).'> /dev/null 2>/dev/null &');
+        shell_exec('php occ carnet:search '.$this->userId.' '.escapeshellcmd($query).' '.escapeshellcmd($from).'> /dev/null 2>/dev/null &');
      }
 
      /**
@@ -389,10 +389,12 @@
      */
     public function getSearchCache(){
         try {
-            return json_decode($this->getCacheFolder()->get("carnet_search")->getContent());
-        } catch(\OCP\Files\NotFoundException $e) {
-            return array();
+            $c = json_decode($this->getCacheFolder()->get("carnet_search")->getContent());
+            if($c)
+                return $c;
+        } catch(\OCP\Files\NotFoundException $e) {      
         }
+        return array();
     }
 
      /**

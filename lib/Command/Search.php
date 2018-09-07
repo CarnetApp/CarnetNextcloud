@@ -55,10 +55,12 @@ protected function execute(InputInterface $input, OutputInterface $output) {
         $this->CarnetFolder = $this->rootFolder->getUserFolder($this->userId)->newFolder($folder);
     }
     $output->writeln('starting '.$this->appName.' user '.$input->getArgument('user_id'));
-    $output->writeln('starting '.$this->rootFolder->get($this->userId."/cache")->getPath());
 
     $output->writeln('searching '.$input->getArgument('query')." in ".$this->CarnetFolder->getFullPath($input->getArgument('root')));
-    $this->search($this->CarnetFolder->get($input->getArgument('root')),$input->getArgument('query'),0);
+    $path = $input->getArgument('root');
+    if (!empty($path) && substr($path, -1) == '/' || $path == ".")
+        $path = substr($path, -1);
+    $this->search($path, $this->CarnetFolder->get($path),$input->getArgument('query'),0);
     $this->searchCache->putContent($this->searchCache->getContent()."\"end_of_search\"]");
 }
 
@@ -71,19 +73,19 @@ private function getCacheFolder(){
     }
 }
 
-private function writeFound($in){
+private function writeFound($relativePath, $in){
     $this->output->writeln('found in '.$in->getPath());
     if($this->searchCache){
         $inf = $in->getFileInfo();
         $file = array();
         $file['name'] = $inf->getName();
-        $file['path'] = $path.$inf->getName();
+        $file['path'] = $relativePath."/".$inf->getName();
         $file['isDir'] = $inf->getType() == "dir";
         $file['mtime'] = $inf->getMtime();
         $this->searchCache->putContent($this->searchCache->getContent().json_encode($file).",");
     }
 }
-private function search($folder, $query, $curDepth){
+private function search($relativePath, $folder, $query, $curDepth){
     $array = array();
 
     foreach($folder->getDirectoryListing() as $in){
@@ -91,12 +93,12 @@ private function search($folder, $query, $curDepth){
         
         if($in->getFileInfo()->getType() == "dir"){
             if($curDepth<30) //might be a problem in nc db
-            $this->search($in, $query, $curDepth+1);
+            $this->search(($relativePath!=""?relativePath."/":"").$in->getName(), $in, $query, $curDepth+1);
 
         }
         else{
             if(strstr($in->getName(), $query)){
-                $this->writeFound($in);
+                $this->writeFound($relativePath, $in);
                 continue;
             }
             try {
@@ -104,7 +106,7 @@ private function search($folder, $query, $curDepth){
                 $zipFile->openFromStream($in->fopen("r"));
                 $index = $zipFile->getEntryContents("index.html");
                 if(strstr($index, $query)){
-                    $this->writeFound($in);
+                    $this->writeFound($relativePath,$in);
                 }
             } catch(\OCP\Files\NotFoundException $e) {
             } catch(\PhpZip\Exception\ZipException $e){
