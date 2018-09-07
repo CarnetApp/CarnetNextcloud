@@ -374,6 +374,31 @@
       * @NoAdminRequired
       * @NoCSRFRequired
       */
+	 public function search($from, $query){
+        try {
+            $this->getCacheFolder()->get("carnet_search")->delete();
+        } catch(\OCP\Files\NotFoundException $e) {
+            
+        }
+        return shell_exec('php occ carnet:search phie '.escapeshellcmd($query).' '.escapeshellcmd($from).'> /dev/null 2>/dev/null &');
+     }
+
+     /**
+     * @NoAdminRequired
+     * @NoCSRFRequired
+     */
+    public function getSearchCache(){
+        try {
+            return json_decode($this->getCacheFolder()->get("carnet_search")->getContent());
+        } catch(\OCP\Files\NotFoundException $e) {
+            return array();
+        }
+    }
+
+     /**
+      * @NoAdminRequired
+      * @NoCSRFRequired
+      */
 	 public function deleteNote($path){
 		$this->CarnetFolder->get($path)->delete();
      }
