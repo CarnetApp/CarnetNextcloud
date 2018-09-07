@@ -297,8 +297,12 @@
       * @NoCSRFRequired
       */
      public function postActions(){
+        return $this->internalPostActions($_POST["data"]);
+     }
+
+     public function internalPostActions($actions){
         $recent = $this->getRecent();
-        foreach($_POST["data"] as $action){
+        foreach($actions as $action){
             array_push($recent['data'],$action);
         }
         $this->internalSaveRecent(json_encode($recent));
@@ -373,7 +377,23 @@
 	 public function deleteNote($path){
 		$this->CarnetFolder->get($path)->delete();
      }
-     
+
+     /**
+      * @NoAdminRequired
+      * @NoCSRFRequired
+      */
+	 public function moveNote($from, $to){
+         
+        $this->CarnetFolder->get($from)->move($this->CarnetFolder->getFullPath($to));
+        $actions = array();
+        $actions[0] = array();
+        $actions[0]['action'] = "move";
+        $actions[0]['path'] = $from;
+        $actions[0]['newPath'] = $to;
+        $actions[0]['time'] = time();
+        $this->internalPostActions($actions);
+     }
+
      /**
      * @NoAdminRequired
      * @NoCSRFRequired
