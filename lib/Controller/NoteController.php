@@ -361,6 +361,17 @@
                  }
                  try{
                     $array[$path]['shorttext'] = mb_substr(trim(preg_replace('#<[^>]+>#', ' ', $zipFile->getEntryContents("index.html"))),0, 150);
+                    $i=0;
+                    foreach($zipFile->getListFiles() as $f){
+                        if(substr($f, 0, strlen("data/preview")) === "data/preview"){
+
+                            $array[$path]['previews'][$i] = "data:image/jpeg;base64,".base64_encode($zipFile->getEntryContents($f));
+                            $i++;
+                            if($i>2)
+                                break;
+                        }
+                        
+                    }
                 } catch(\PhpZip\Exception\ZipNotFoundEntry $e){
                     $array[$path]['shorttext'] = "";
                 }
@@ -464,6 +475,26 @@
         } else {
             $fileOut = $data->newFile($_FILES['media']['name'][0]);
             $fileOut->putContent($fileIn);
+            if(@is_array(getimagesize($_FILES['media']['tmp_name'][0]))){
+                $fn = $_FILES['media']['tmp_name'][0];
+                $size = getimagesize($fn);
+                $ratio = $size[0]/$size[1]; // width/height
+                if( $ratio > 1) {
+                    $width = 200;
+                    $height = 200/$ratio;
+                }
+                else {
+                    $width = 200*$ratio;
+                    $height = 200;
+                }
+                $src = imagecreatefromstring(file_get_contents($fn));
+                $dst = imagecreatetruecolor($width,$height);
+                imagecopyresampled($dst,$src,0,0,0,0,$width,$height,$size[0],$size[1]);
+                imagedestroy($src);
+                $fileOut = $data->newFile("preview_".$_FILES['media']['name'][0].".jpg");
+                imagejpeg($dst,$fileOut->fopen("w"));
+                imagedestroy($dst);
+            }
             fclose($fileIn);
         }
         $this->saveOpenNote($_POST['path'],$id);
