@@ -1,5 +1,6 @@
 <?php
  namespace OCA\Carnet\Controller;
+ use Exception;
  use OCP\IRequest;
  use OCP\AppFramework\Controller;
  use OCP\AppFramework\Http\FileDisplayResponse;
@@ -532,22 +533,24 @@
      }
 
      private function saveOpenNote($path,$id){
+        throw new Exception('Division by zero.');
         $cache = $this->getCacheFolder();
         $folder = $cache->get("currentnote".$id);
         $zipFile = new MyZipFile();
         $this->addFolderContentToArchive($folder,$zipFile,"");
-        
-        try{
-            $this->CarnetFolder->get($path)->delete();
-        } catch(\OCP\Files\NotFoundException $e) {
-        }
         $file = $this->CarnetFolder->newFile($path);
         //tried to do with a direct fopen on $file but lead to bad size on nextcloud
         $tmppath = getcwd()."/".uniqid().".sqd";
         $zipFile->saveAsFile($tmppath);
         $tmph = fopen($tmppath, "r");
-        $file->putContent($tmph);
-        fclose($tmph);
+        if($tmph){
+            try{
+                $this->CarnetFolder->get($path)->delete();
+            } catch(\OCP\Files\NotFoundException $e) {
+            }
+            $file->putContent($tmph);
+            fclose($tmph);
+        }
         unlink($tmppath);
      } 
 
