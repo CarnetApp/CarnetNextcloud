@@ -472,7 +472,7 @@
         }
         $fileIn = fopen($_FILES['media']['tmp_name'][0],"r");
         if (!$fileIn) {
-            die("KO");
+            throw new Exception('Media doesn\'t exist');
         } else {
             $fileOut = $data->newFile($_FILES['media']['name'][0]);
             $fileOut->putContent($fileIn);
