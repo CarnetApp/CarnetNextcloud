@@ -513,7 +513,8 @@
         try{
             $data = $folder->get("data");
             foreach($data->getDirectoryListing() as $in){
-                array_push($media,"note/open/".$id."/getMedia/".$in->getName());
+                if(substr($in->getName(), 0, strlen("preview_")) !== "preview_")
+                    array_push($media,"note/open/".$id."/getMedia/".$in->getName());
             }
         } catch(\OCP\Files\NotFoundException $e) {
             
