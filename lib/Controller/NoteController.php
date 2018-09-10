@@ -533,7 +533,6 @@
      }
 
      private function saveOpenNote($path,$id){
-        throw new Exception('Division by zero.');
         $cache = $this->getCacheFolder();
         $folder = $cache->get("currentnote".$id);
         $zipFile = new MyZipFile();
@@ -550,7 +549,9 @@
             }
             $file->putContent($tmph);
             fclose($tmph);
-        }
+        } else 
+            throw new Exception('Unable to create Zip');
+
         unlink($tmppath);
      } 
 
