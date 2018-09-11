@@ -530,7 +530,12 @@
         $cache = $this->getCacheFolder();
         $folder = $cache->get("currentnote".$id);
         $data = $folder->get("data");
-        return new FileDisplayResponse($data->get($media));
+        $f = $data->get($media);
+        $r = new FileDisplayResponse($f);
+        $r->addHeader("Content-Disposition", "attachment");
+        $r->addHeader("Content-Type", $f->getMimeType());
+
+        return $r;
      }
 
      private function saveOpenNote($path,$id){
