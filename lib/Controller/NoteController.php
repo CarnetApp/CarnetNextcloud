@@ -4,6 +4,7 @@
  use OCP\IRequest;
  use OCP\AppFramework\Controller;
  use OCP\AppFramework\Http\FileDisplayResponse;
+ use OCP\AppFramework\Http\RedirectResponse;
  //require_once 'vendor/autoload.php';
 
  class MyZipFile extends \PhpZip\ZipFile {
@@ -662,6 +663,23 @@
       */
      public function destroy($id) {
          // empty for now
+     }
+
+     /**
+     * @NoAdminRequired
+     * @NoCSRFRequired
+     */
+     public function downloadArchive(){
+
+        return new RedirectResponse("../../../../../index.php/apps/files/ajax/download.php?files=".$this->getNotePath());
+     }
+
+     /**
+     * @NoAdminRequired
+     * @NoCSRFRequired
+     */
+     public function importNote(){
+    
      }
 
  }

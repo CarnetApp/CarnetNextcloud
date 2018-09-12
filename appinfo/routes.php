@@ -34,6 +34,7 @@ return [
        ['name' => 'note#postKeywordsActions', 'url' => '/keywordsdb/action', 'verb' => 'POST'],
 
        ['name' => 'note#create', 'url' => '/notes', 'verb' => 'POST'],
+       ['name' => 'note#downloadArchive', 'url' => '/notes/export', 'verb' => 'GET'],
        ['name' => 'note#moveNote', 'url' => '/notes/move', 'verb' => 'POST'],
        ['name' => 'note#deleteNote', 'url' => '/notes', 'verb' => 'DELETE'],
        ['name' => 'note#search', 'url' => '/notes/search', 'verb' => 'GET'],
