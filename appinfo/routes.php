@@ -24,6 +24,7 @@ return [
        ['name' => 'note#getMediaOfOpenNote', 'url' => '/note/open/{id}/getMedia/{media}', 'verb' => 'GET'],
 
        ['name' => 'note#listDir', 'url' => '/browser/list', 'verb' => 'GET'],
+       ['name' => 'note#newFolder', 'url' => '/browser/newfolder', 'verb' => 'POST'],
        ['name' => 'note#getRecent', 'url' => '/recentdb', 'verb' => 'GET'],
        ['name' => 'note#mergeRecentDB', 'url' => '/recentdb/merge', 'verb' => 'GET'],
 

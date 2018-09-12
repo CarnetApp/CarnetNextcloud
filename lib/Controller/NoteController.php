@@ -67,6 +67,16 @@
 
         return $data;
     }
+
+    /*
+    * @NoAdminRequired
+    * @NoCSRFRequired
+    */
+    public function newFolder(){
+        $path = $_POST['path'];
+        $this->CarnetFolder->newFolder($path);
+    }
+
     /**
 	 * CAUTION: the @Stuff turns off security checks; for this page no admin is
 	 *          required and no CSRF check. If you don't know what CSRF is, read
