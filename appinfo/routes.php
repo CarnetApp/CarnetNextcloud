@@ -15,6 +15,7 @@ return [
        ['name' => 'page#settings', 'url' => '/settings', 'verb' => 'GET'],
        ['name' => 'note#getNotePath', 'url' => '/settings/note_path', 'verb' => 'GET'],
        ['name' => 'note#setNotePath', 'url' => '/settings/note_path', 'verb' => 'POST'],
+       ['name' => 'note#isFirstRun', 'url' => '/settings/isfirstrun', 'verb' => 'GET'],
        ['name' => 'page#do_echo', 'url' => '/echo', 'verb' => 'POST'],
        ['name' => 'note#openNote', 'url' => '/note/open', 'verb' => 'GET'],
        ['name' => 'note#createNote', 'url' => '/note/create', 'verb' => 'GET'],

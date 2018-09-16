@@ -667,14 +667,14 @@
      }
 
      /**
-      * @NoAdminRequired
-      *
-      * @param int $id
-      */
-     public function destroy($id) {
-         // empty for now
+     * @NoAdminRequired
+     * @NoCSRFRequired
+     */
+     public function isFirstRun(){
+        $isFirst = $this->Config->getUserValue($this->userId, $this->appName, "is_first_run",1);
+        $this->Config->setUserValue($this->userId, $this->appName, "is_first_run", 0);
+        return $isFirst;
      }
-
      /**
      * @NoAdminRequired
      * @NoCSRFRequired
