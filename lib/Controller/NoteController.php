@@ -556,7 +556,7 @@
         $this->addFolderContentToArchive($folder,$zipFile,"");
         $file = $this->CarnetFolder->newFile($path);
         //tried to do with a direct fopen on $file but lead to bad size on nextcloud
-        $tmppath = getcwd()."/".uniqid().".sqd";
+        $tmppath = tempnam(sys_get_temp_dir(), uniqid().".sqd");
         $zipFile->saveAsFile($tmppath);
         $tmph = fopen($tmppath, "r");
         if($tmph){
@@ -615,7 +615,7 @@
         
         $folder = $cache->newFolder("currentnote".$editUniqueID);
         try{
-            $tmppath = getcwd()."/".uniqid().".zip";
+            $tmppath = tempnam(sys_get_temp_dir(), uniqid().".zip");
             file_put_contents($tmppath,$this->CarnetFolder->get($path)->fopen("r"));
 
             $zipFile = new MyZipFile();
