@@ -363,8 +363,11 @@
 			if(empty($path))
 				continue;
 			try {
-				 $zipFile = new \PhpZip\ZipFile();
-				 $zipFile->openFromStream($this->CarnetFolder->get($path)->fopen("r"));
+                $tmppath = tempnam(sys_get_temp_dir(), uniqid().".zip");
+                file_put_contents($tmppath, $this->CarnetFolder->get($path)->fopen("r"));
+                 $zipFile = new \PhpZip\ZipFile();
+                 $zipFile->openFromStream(fopen($tmppath, "r")); //issue with encryption when open directly + unexpectedly faster to copy before Oo'
+                
                  $array[$path] = array();
                  try{
                     $array[$path]['metadata'] = json_decode($zipFile->getEntryContents("metadata.json"));
@@ -372,23 +375,32 @@
                     
                  }
                  try{
+                    
                     $array[$path]['shorttext'] = mb_substr(trim(preg_replace('#<[^>]+>#', ' ', $zipFile->getEntryContents("index.html"))),0, 150);
                     $i=0;
-                    foreach($zipFile->getListFiles() as $f){
-                        if(substr($f, 0, strlen("data/preview")) === "data/preview"){
+                    try{
+                        foreach($zipFile->getListFiles() as $f){
+                            if(substr($f, 0, strlen("data/preview")) === "data/preview"){
 
-                            $array[$path]['previews'][$i] = "data:image/jpeg;base64,".base64_encode($zipFile->getEntryContents($f));
-                            $i++;
-                            if($i>2)
-                                break;
+                                $array[$path]['previews'][$i] = "data:image/jpeg;base64,".base64_encode($zipFile->getEntryContents($f));
+                                $i++;
+                                if($i>2)
+                                    break;
+                            }
+                            
                         }
+                    }
+                    catch(\PhpZip\Exception\ZipNotFoundEntry $e){
                         
                     }
                 } catch(\PhpZip\Exception\ZipNotFoundEntry $e){
                     $array[$path]['shorttext'] = "";
+                    
                 }
+                 unlink($tmppath);
 			} catch(\OCP\Files\NotFoundException $e) {
-			}
+            }
+           
 		}
 		 return $array;
      }
@@ -610,9 +622,12 @@
             because of an issue with nextcloud, working with a single currentnote folder is impossible...
         */
         $folder = $this->getCurrentnoteDir();
-        if($folder != null)
-            $folder->delete();
-        
+        try{
+            if($folder != null)
+                $folder->delete();
+        }
+        catch(\BadMethodCallException $e){
+        }
         $folder = $cache->newFolder("currentnote".$editUniqueID);
         try{
             $tmppath = tempnam(sys_get_temp_dir(), uniqid().".zip");
