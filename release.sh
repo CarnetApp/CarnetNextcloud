@@ -43,7 +43,7 @@ fi
   
   # archive creation + signing
   zip -r "$cur""/$zip_name" *
-  tar cfJ   "$cur""/$tar_name" *
+  tar zcvf   "$cur""/$tar_name" *
   cd "$cur"
   rm ../CarnetNextcloudTmp -R
   # temporary setup destruction
