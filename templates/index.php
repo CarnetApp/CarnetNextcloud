@@ -12,6 +12,10 @@ for ($i = 0; $i < count($matches[1]); $i++) {
 }
 if($_['carnet_display_fullscreen']==="yes")
     script("carnet","../templates/CarnetElectron/compatibility/nextcloud/browser_fullscreen");
+else {
+    if($_['nc_version']>=14)
+    style("carnet","../templates/CarnetElectron/compatibility/nextcloud/nc14-header");
+}
 $file = preg_replace('#<script(.*?)>(.*?)</script>#is', '', $file);
 $root = substr(__DIR__, strlen($_SERVER['DOCUMENT_ROOT']));
 $file = str_replace("src=\"","defer src=\"".$root."/CarnetElectron/",$file);

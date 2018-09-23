@@ -30,6 +30,7 @@ class PageController extends Controller {
 	 */
 	public function index() {
 		$parameters = [
+			'nc_version' => \OCP\Util::getVersion()[0],
 			'carnet_display_fullscreen' => $this->config->getAppValue('carnet', 'carnetDisplayFullscreen', 'no'),
 		];
 		$response = new TemplateResponse($this->appName,"index",$parameters);
