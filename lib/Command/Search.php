@@ -58,7 +58,7 @@ protected function execute(InputInterface $input, OutputInterface $output) {
 
     $output->writeln('searching '.$input->getArgument('query')." in ".$this->CarnetFolder->getFullPath($input->getArgument('root')));
     $path = $input->getArgument('root');
-    if (!empty($path) && substr($path, -1) == '/' || $path == ".")
+    if (!empty($path) && substr($path, -1) !== '/' || $path !== ".")
         $path = substr($path, -1);
     $this->search($path, $this->CarnetFolder->get($path),$input->getArgument('query'),0);
     $data = json_decode( $this->searchCache->getContent());
@@ -82,7 +82,7 @@ private function writeFound($relativePath, $in){
         $file = array();
         $file['name'] = $inf->getName();
         $file['path'] = $relativePath."/".$inf->getName();
-        $file['isDir'] = $inf->getType() == "dir";
+        $file['isDir'] = $inf->getType() === "dir";
         $file['mtime'] = $inf->getMtime();
         $data = json_decode( $this->searchCache->getContent());
         array_push($data, $file);
@@ -95,9 +95,9 @@ private function search($relativePath, $folder, $query, $curDepth){
     foreach($folder->getDirectoryListing() as $in){
         //$this->output->writeln('in '.$in->getPath());
         
-        if($in->getFileInfo()->getType() == "dir"){
+        if($in->getFileInfo()->getType() === "dir"){
             if($curDepth<30) //might be a problem in nc db
-            $this->search(($relativePath!=""?relativePath."/":"").$in->getName(), $in, $query, $curDepth+1);
+            $this->search(($relativePath!==""?relativePath."/":"").$in->getName(), $in, $query, $curDepth+1);
 
         }
         else{

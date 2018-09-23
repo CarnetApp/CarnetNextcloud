@@ -49,9 +49,9 @@
 	 */
 	public function listDir() {
         $path = $_GET['path'];
-        if ($path == "/" || $path == ".")
+        if ($path === "/" || $path === ".")
             $path = "";
-        else if(substr($path, -1) != '/' && !empty($path))
+        else if(substr($path, -1) !== '/' && !empty($path))
             $path .= "/";
 
         $data = array();
@@ -60,7 +60,7 @@
             $file = array();
             $file['name'] = $inf->getName();
             $file['path'] = $path.$inf->getName();
-            $file['isDir'] = $inf->getType() == "dir";
+            $file['isDir'] = $inf->getType() === "dir";
             $file['mtime'] = $inf->getMtime();
             array_push($data,$file);
         }
@@ -188,7 +188,7 @@
       $myDb = $this->getKeywordsDBFile();
       $hasChanged = false;
       foreach($this->CarnetFolder->get("quickdoc/keywords/")->getDirectoryListing() as $inDB){
-          if($inDB->getName() == $myDb->getName()){
+          if($inDB->getName() === $myDb->getName()){
               continue;
           }
           $myDbContent = json_decode($myDb->getContent());
@@ -197,7 +197,7 @@
           foreach($thisDbContent->data as $action){
              $isIn = false;
              foreach($myDbContent->data as $actionMy){
-                 if($actionMy->keyword == $action->keyword && $actionMy->time == $action->time && $actionMy->path == $action->path && $actionMy->action == $action->action){
+                 if($actionMy->keyword === $action->keyword && $actionMy->time === $action->time && $actionMy->path === $action->path && $actionMy->action === $action->action){
                      $isIn = true;
                      break;
                   }         
@@ -235,7 +235,7 @@
          $myDb = $this->getRecentFile();
          $hasChanged = false;
          foreach($this->CarnetFolder->get("quickdoc/recentdb/")->getDirectoryListing() as $inDB){
-             if($inDB->getName() == $myDb->getName()){
+             if($inDB->getName() === $myDb->getName()){
                  continue;
              }
              $myDbContent = json_decode($myDb->getContent());
@@ -244,7 +244,7 @@
              foreach($thisDbContent->data as $action){
                 $isIn = false;
                 foreach($myDbContent->data as $actionMy){
-                    if($actionMy->time == $action->time && $actionMy->path == $action->path && $actionMy->action == $action->action){
+                    if($actionMy->time === $action->time && $actionMy->path === $action->path && $actionMy->action === $action->action){
                         $isIn = true;
                         break;
                      }         
@@ -327,9 +327,9 @@
       */
      public function createNote(){
         $path = $_GET['path'];
-        if ($path == "/" || $path == ".")
+        if ($path === "/" || $path === ".")
             $path = "";
-        else if(substr($path, -1) != '/' AND !empty($path))
+        else if(substr($path, -1) !== '/' AND !empty($path))
             $path .= "/";
         $list = $this->CarnetFolder->get($path)->getDirectoryListing();
         $un = "untitled";
@@ -338,9 +338,9 @@
         $continue = true;
         while($continue){
             $continue = false;
-            $name = $un.(($i == 0)?"":" ".$i).".sqd";
+            $name = $un.(($i === 0)?"":" ".$i).".sqd";
             foreach($list as $in){
-                if($in->getName() == $name){
+                if($in->getName() === $name){
                     $continue = true;
                     break;
                 }
@@ -593,7 +593,7 @@
         foreach($folder->getDirectoryListing() as $in){
             $inf = $in->getFileInfo();
             $path = $relativePath.$inf->getName();
-            if($inf->getType() == "dir"){
+            if($inf->getType() === "dir"){
                 $archive->addEmptyDir($path);
                 $this->addFolderContentToArchive($in, $archive, $path."/");
             }else {
@@ -628,7 +628,7 @@
         */
         $folder = $this->getCurrentnoteDir();
         try{
-            if($folder != null)
+            if($folder !== null)
                 $folder->delete();
         }
         catch(\BadMethodCallException $e){
@@ -641,17 +641,17 @@
             $zipFile = new MyZipFile();
             $zipFile->openFile($tmppath);
             foreach($zipFile as $entryName => $contents){
-                if($contents == "" AND $zipFile->isDirectory($entryName)){
+                if($contents === "" AND $zipFile->isDirectory($entryName)){
                     $folder->newFolder($entryName);
                 }
-                else if($contents != ""){
-                    if($entryName == "index.html"){
+                else if($contents !== "" && $contents !== NULL){
+                    if($entryName === "index.html"){
                         $data['html'] = $contents;
-                    } else if($entryName == "metadata.json"){
+                    } else if($entryName === "metadata.json"){
                         $data['metadata'] = json_decode($contents);
                     }
                     $parent = dirname($entryName);
-                    if($parent != "." && !$folder->nodeExists($parent)){
+                    if($parent !== "." && !$folder->nodeExists($parent)){
                         $folder->newFolder($parent);
                     }
                     $folder->newFile($entryName)->putContent($contents);
