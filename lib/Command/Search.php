@@ -44,7 +44,7 @@ protected function execute(InputInterface $input, OutputInterface $output) {
         
     }
     $this->searchCache = $this->getCacheFolder()->newFile("carnet_search");
-    $this->searchCache->putContent("[");
+    $this->searchCache->putContent("[]");
     $folder = $this->Config->getUserValue($userId , $this->appName, "note_folder");
     
     if(empty($folder))
@@ -61,14 +61,16 @@ protected function execute(InputInterface $input, OutputInterface $output) {
     if (!empty($path) && substr($path, -1) == '/' || $path == ".")
         $path = substr($path, -1);
     $this->search($path, $this->CarnetFolder->get($path),$input->getArgument('query'),0);
-    $this->searchCache->putContent($this->searchCache->getContent()."\"end_of_search\"]");
+    $data = json_decode( $this->searchCache->getContent());
+    array_push($data, "end_of_search");
+    $this->searchCache->putContent(json_encode($data));
 }
 
 private function getCacheFolder(){
     try {
-        return $this->appFolder->get("Carnet/cache/".$this->userId);
+        return $this->rootFolder->getUserFolder($this->userId)->get(".carnet/cache/".$this->userId);
     } catch(\OCP\Files\NotFoundException $e) {
-        $folder = $this->appFolder->newFolder("Carnet/cache/".$this->userId, 0777, true);
+        $folder = $this->rootFolder->getUserFolder($this->userId)->newFolder(".carnet/cache/".$this->userId, 0777, true);
         return $folder;
     }
 }
@@ -82,7 +84,9 @@ private function writeFound($relativePath, $in){
         $file['path'] = $relativePath."/".$inf->getName();
         $file['isDir'] = $inf->getType() == "dir";
         $file['mtime'] = $inf->getMtime();
-        $this->searchCache->putContent($this->searchCache->getContent().json_encode($file).",");
+        $data = json_decode( $this->searchCache->getContent());
+        array_push($data, $file);
+        $this->searchCache->putContent(json_encode($data));
     }
 }
 private function search($relativePath, $folder, $query, $curDepth){
