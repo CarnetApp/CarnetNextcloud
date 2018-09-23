@@ -220,9 +220,9 @@
 
     private function getCacheFolder(){
         try {
-            return $this->appFolder->get("Carnet/cache/".$this->userId);
+            return $this->rootFolder->getUserFolder($this->userId)->get(".carnet/cache/".$this->userId);
         } catch(\OCP\Files\NotFoundException $e) {
-            $folder = $this->appFolder->newFolder("Carnet/cache/".$this->userId, 0777, true);
+            $folder = $this->rootFolder->getUserFolder($this->userId)->newFolder(".carnet/cache/".$this->userId, 0777, true);
             return $folder;
         }
     }
