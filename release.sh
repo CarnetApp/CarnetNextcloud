@@ -56,5 +56,5 @@ git tag -a "$version" -m "$version"
 
   #github-release upload --user phief --repo exode --tag "$version" --name "$zip_name" --file "$zip_name"
   git push origin master
-
+  rm "$zip_name";
 )
