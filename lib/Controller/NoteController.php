@@ -427,7 +427,12 @@
             $c = json_decode($this->getCacheFolder()->get("carnet_search")->getContent());
             if($c)
                 return $c;
-        } catch(\OCP\Files\NotFoundException $e) {      
+        } catch(\OCP\Files\NotFoundException $e) {  
+        } catch(\OCP\Lock\LockedException $e){
+            sleep(2);
+            $c = json_decode($this->getCacheFolder()->get("carnet_search")->getContent());
+            if($c)
+                return $c;
         }
         return array();
     }
