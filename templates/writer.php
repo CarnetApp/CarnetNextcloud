@@ -14,10 +14,10 @@ $root = substr(__DIR__, strlen($_SERVER['DOCUMENT_ROOT']));
 $file = str_replace("src=\"","defer src=\"".$root."/CarnetElectron/",$file);
 
 
+$file = str_replace("<!ROOTURL>", $root."/CarnetElectron/", $file);
+$file = str_replace("<!APIURL>", "../../../index.php/apps/carnet/", $file);
 
 
 echo $file;
-echo "<span style=\"display:none;\" id=\"root-url\">".$root."/CarnetElectron/</span>";
-echo "<span style=\"display:none;\" id=\"api-url\">../../../index.php/apps/carnet/</span>";
 
 ?>
