@@ -3,4 +3,4 @@ Place this app in **nextcloud/apps/**
 
 What is Carnet ?
 
-<a href="../../CarnetDocumentation">See</a>
+<a href="https://framagit.org/PhieF/CarnetDocumentation">See</a>
