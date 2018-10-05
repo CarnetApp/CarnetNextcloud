@@ -31,21 +31,23 @@ echo
 if [[ ! $REPLY =~ ^[Yy]$ ]]; then
   exit 0
 fi
-#git tag -a "$version" -m "$version"
+git tag -a "$version" -m "$version"
 
 # Creating the archives
 (
+  mkdir ../tmpcarnet
   cur=$(pwd)
-  cp . ../CarnetNextcloudTmp -R
-  cd ../CarnetNextcloudTmp/
+  cp . ../tmpcarnet/carnet -R
+  cd ../tmpcarnet/carnet/
   sudo rm .git -R
   sudo rm templates/CarnetElectron/.git -R
-  
+  sudo rm .Trash-1000 -R
+  cd ..
   # archive creation + signing
-  zip -r "$cur""/$zip_name" *
-  tar zcvf   "$cur""/$tar_name" *
+  zip -r "$cur""/$zip_name" carnet
+  tar zcvf   "$cur""/$tar_name" carnet
   cd "$cur"
-  rm ../CarnetNextcloudTmp -R
+  rm ../tmpcarnet -R
   # temporary setup destruction
 )
 
@@ -59,4 +61,7 @@ fi
   #github-release upload --user phief --repo exode --tag "$version" --name "$zip_name" --file "$zip_name"
   git push origin master
   rm "$zip_name";
+  openssl dgst -sha512 -sign ~/.nextcloud/certificates/carnet.key "$tar_name" | openssl base64
+  rm "$tar_name";
+
 )
