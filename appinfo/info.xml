@@ -34,6 +34,7 @@ Mac, with sync capabilities
         <navigation>
             <name>Carnet</name>
             <route>carnet.page.index</route>
+            <icon>app.svg</icon>
         </navigation>
     </navigations>
     <settings>
