@@ -1,7 +1,7 @@
 <?php
-$currentpath = getcwd()."/CarnetElectron/";
+$currentpath = getcwd()."/";
 
-$file = file_get_contents($currentpath."reader/reader.html");
+$file = file_get_contents($currentpath."CarnetElectron/reader/reader.html");
 $file = str_replace("<!ROOTPATH>", "CarnetElectron/", $file);
 
 $file = preg_replace_callback('/<script(.*?)src=\"(.*?\.js(?:\?.*?)?)"/s',function ($matches) {

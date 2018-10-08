@@ -1,10 +1,7 @@
 <?php
 
-$currentpath = substr(get_defined_vars()["file"],0, -strlen("index.php"))."/CarnetElectron/";
-$root = substr(__DIR__, strlen($_SERVER['DOCUMENT_ROOT']));
-if (strpos(__DIR__, '/snap/') !== false) {
-   $root = "/extra-apps/carnet/templates";
-}
+$currentpath = __DIR__."/CarnetElectron/";
+$root = \OCP\Util::linkToAbsolute("carnet","templates");
 $file = file_get_contents($currentpath."index.html");
 //
 $file = str_replace("href=\"","href=\"".$root."/CarnetElectron/",$file);
