@@ -7,6 +7,8 @@
  * The controller class has to be registered in the application.php file since
  * it's instantiated in there
  */
+
+$this->create('carnet_writer','/writer')->actionInclude('carnet/templates/writer.php');
  
 return [
     'routes' => [
