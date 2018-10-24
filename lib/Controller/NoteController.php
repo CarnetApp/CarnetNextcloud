@@ -461,6 +461,15 @@
         $this->internalPostActions($actions);
      }
 
+      /**
+     * @NoAdminRequired
+     * @NoCSRFRequired
+     */
+
+     public function getEditorUrl(){
+         return "./writer";
+     }
+
      /**
      * @NoAdminRequired
      * @NoCSRFRequired
@@ -485,6 +494,20 @@
         $this->saveOpenNote($_POST['path'],$id);
      }
 
+
+     /**
+     * @NoAdminRequired
+     * @NoCSRFRequired
+     */
+    public function deleteMediaFromOpenNote($id){
+        $cache = $this->getCacheFolder();
+        $folder = $cache->get("currentnote".$id);
+        
+        $folder->get("data/".$_GET['media'])->delete();
+        $this->saveOpenNote($_GET['path'],$id);
+        return $this->listMediaOfOpenNote($id);
+
+    }
      /**
      * @NoAdminRequired
      * @NoCSRFRequired
