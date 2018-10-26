@@ -2,6 +2,10 @@
 
 $currentpath = __DIR__."/CarnetElectron/";
 $root = \OCP\Util::linkToAbsolute("carnet","templates");
+if(strpos($root,"http://") === 0 && !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off'){
+    //should be https...
+    $root = "https".substr($root,strlen("http"));
+}
 $file = file_get_contents($currentpath."settings/index.html");
 
 //
