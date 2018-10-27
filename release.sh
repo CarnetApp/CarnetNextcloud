@@ -35,12 +35,16 @@ git tag -a "$version" -m "$version"
 
 # Creating the archives
 (
+  sudo rm ../tmpcarnet -R
   mkdir ../tmpcarnet
   cur=$(pwd)
   cp . ../tmpcarnet/carnet -R
   cd ../tmpcarnet/carnet/
   sudo rm .git -R
   sudo rm templates/CarnetElectron/.git -R
+  sudo rm templates/CarnetElectron/node_modules/ -R
+  sudo rm templates/CarnetElectron/build/ -R
+
   sudo rm .Trash-1000 -R
   cd ..
   # archive creation + signing
