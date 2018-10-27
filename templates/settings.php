@@ -6,7 +6,7 @@ if(strpos($root,"http://") === 0 && !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS
     //should be https...
     $root = "https".substr($root,strlen("http"));
 }
-$file = file_get_contents($currentpath."settings/index.html");
+$file = file_get_contents($currentpath."settings.html");
 
 //
 $file = str_replace("href=\"","href=\"".$root."/CarnetElectron/",$file);

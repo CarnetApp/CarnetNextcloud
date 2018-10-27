@@ -115,17 +115,16 @@
 
         return json_decode($this->getRecentFile()->getContent(),true);
     }
-    /*
-     * @NoAdminRequired
-	 * @NoCSRFRequired
-	 */
-	public function getNotePath() {
-        
 
+    /**
+    * @NoAdminRequired
+    * @NoCSRFRequired
+    */
+	public function getNotePath() {
         return substr($this->CarnetFolder->getInternalPath(),6);
     }
 
-    /*
+    /**
     * @NoAdminRequired
     * @NoCSRFRequired
     */
