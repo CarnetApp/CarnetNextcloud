@@ -503,6 +503,10 @@
         $folder = $cache->get("currentnote".$id);
         
         $folder->get("data/".$_GET['media'])->delete();
+        try{
+            $folder->get("data/preview_".$_GET['media'].".jpg")->delete();
+        } catch(\OCP\Files\NotFoundException $e) {
+        }
         $this->saveOpenNote($_GET['path'],$id);
         return $this->listMediaOfOpenNote($id);
 
