@@ -448,17 +448,19 @@
       * @NoAdminRequired
       * @NoCSRFRequired
       */
-	 public function moveNote($from, $to){
-         
-        $this->CarnetFolder->get($from)->move($this->CarnetFolder->getFullPath($to));
-        $actions = array();
-        $actions[0] = array();
-        $actions[0]['action'] = "move";
-        $actions[0]['path'] = $from;
-        $actions[0]['newPath'] = $to;
-        $actions[0]['time'] = time();
-        $this->internalPostActions($actions);
-     }
+    public function moveNote($from, $to){     
+        if($this->CarnetFolder->nodeExists($to)){
+            throw new Exception("Already exists");
+        }
+       $this->CarnetFolder->get($from)->move($this->CarnetFolder->getFullPath($to));
+       $actions = array();
+       $actions[0] = array();
+       $actions[0]['action'] = "move";
+       $actions[0]['path'] = $from;
+       $actions[0]['newPath'] = $to;
+       $actions[0]['time'] = time();
+       $this->internalPostActions($actions);
+    }
 
       /**
      * @NoAdminRequired
