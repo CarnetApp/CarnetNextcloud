@@ -28,7 +28,7 @@ Mac, with sync capabilities
     <screenshot>https://raw.githubusercontent.com/PhieF/CarnetDocumentation/master/intro/overview.png</screenshot>
     <bugs>https://github.com/PhieF/CarnetNextcloud/issues</bugs>
     <dependencies>
-        <nextcloud min-version="13" max-version="14"/>
+        <nextcloud min-version="13" max-version="15"/>
     </dependencies>
     <navigations>
         <navigation>
