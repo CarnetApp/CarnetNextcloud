@@ -33,11 +33,7 @@ class Application extends App {
 
         $container = $this->getContainer();
 
-       
-
-        $container->registerService('AppFolder', function($c) {
-            return $c->query('ServerContainer')->getAppFolder();
-        });
+    
 
         $container->registerService('Config', function($c) {
             return $c->query('ServerContainer')->getConfig();

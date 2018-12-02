@@ -17,11 +17,9 @@
     private $bla;
     private $storage;
     private $CarnetFolder;
-    private $appFolder;
-	public function __construct($AppName, IRequest $request, $UserId, $RootFolder, $AppFolder, $Config){
+	public function __construct($AppName, IRequest $request, $UserId, $RootFolder, $Config){
 		parent::__construct($AppName, $request);
         $this->userId = $UserId;
-        $this->appFolder= $AppFolder;
         $this->Config = $Config;
         $this->rootFolder = $RootFolder;
         $folder = $this->Config->getUserValue($this->userId, $this->appName, "note_folder");

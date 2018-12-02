@@ -23,12 +23,11 @@ class Search extends Command {
          * @param string $appName
          * @param IRootFolder $rootFolder
     */
-public function __construct($AppName, $RootFolder, $AppFolder, $Config){
+public function __construct($AppName, $RootFolder,  $Config){
     parent::__construct();
     $this->appName = $AppName;
     $this->Config = $Config;
     $this->rootFolder = $RootFolder;
-    $this->appFolder = $AppFolder;
 }
 /**
 * @param InputInterface $input
