@@ -740,5 +740,70 @@
     
      }
 
+
+     /**
+     * @NoAdminRequired
+     * @NoCSRFRequired
+     */
+    public function getAppThemes(){
+        $root = \OCP\Util::linkToAbsolute($this->appName,"templates")."/CarnetElectron/css/";
+        if(strpos($root,"http://") === 0 && !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off'){
+            //should be https...
+            $root = "https".substr($root,strlen("http"));
+        }
+        return json_decode('[{"name":"Carnet", "path":"'.$root.'carnet", "preview":"'.$root.'carnet/preview.png"}, {"name":"Dark", "path":"'.$root.'dark", "preview":"'.$root.'dark/preview.png"}]');
+    }
+     /**
+     * @NoAdminRequired
+     * @NoCSRFRequired
+     */
+     public function setAppTheme($url){
+         if(strpos($url, '/') !== false && strpos($url, 'http') !==0)
+            throw new Exception("forbidden");
+        $meta = json_decode(file_get_contents($url."/metadata.json"),true);
+        $browser = array();
+        $editor = array();
+        $settings = array();
+        foreach($meta['browser'] as $css){
+            array_push($browser, $url."/".$css);
+        }
+        $this->Config->setUserValue($this->userId, $this->appName,"css_browser", json_encode($browser));
+        foreach($meta['editor'] as $css){
+            array_push($editor, $url."/".$css);
+        }
+        $this->Config->setUserValue($this->userId, $this->appName,"css_editor", json_encode($editor));
+        foreach($meta['settings'] as $css){
+            array_push($settings, $url."/".$css);
+        }
+        $this->Config->setUserValue($this->userId, $this->appName,"css_settings", json_encode($settings));
+        
+     }
+
+     /**
+     * @NoAdminRequired
+     * @NoCSRFRequired
+     */
+      public function getEditorCss(){
+        return json_decode($this->Config->getUserValue($this->userId, $this->appName, "css_editor"));
+      }
+
+      /**
+     * @NoAdminRequired
+     * @NoCSRFRequired
+     */
+    public function getBrowserCss(){
+        return json_decode($this->Config->getUserValue($this->userId, $this->appName, "css_browser"));
+      }
+
+
+      /**
+     * @NoAdminRequired
+     * @NoCSRFRequired
+     */
+    public function getSettingsCss(){
+        return json_decode($this->Config->getUserValue($this->userId, $this->appName, "css_settings"));
+      }
+
+
  }
 ?>

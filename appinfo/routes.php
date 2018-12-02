@@ -17,6 +17,12 @@ return [
        ['name' => 'note#getNotePath', 'url' => '/settings/note_path', 'verb' => 'GET'],
        ['name' => 'note#setNotePath', 'url' => '/settings/note_path', 'verb' => 'POST'],
        ['name' => 'note#isFirstRun', 'url' => '/settings/isfirstrun', 'verb' => 'GET'],
+       ['name' => 'note#setAppTheme', 'url' => '/settings/app_theme', 'verb' => 'POST'],
+       ['name' => 'note#getAppThemes', 'url' => '/settings/themes', 'verb' => 'GET'],
+       ['name' => 'note#getEditorCss', 'url' => '/settings/editor_css', 'verb' => 'GET'],
+       ['name' => 'note#getSettingsCss', 'url' => '/settings/settings_css', 'verb' => 'GET'],
+       ['name' => 'note#getBrowserCss', 'url' => '/settings/browser_css', 'verb' => 'GET'],
+
        ['name' => 'page#do_echo', 'url' => '/echo', 'verb' => 'POST'],
        ['name' => 'note#openNote', 'url' => '/note/open', 'verb' => 'GET'],
        ['name' => 'note#createNote', 'url' => '/note/create', 'verb' => 'GET'],
