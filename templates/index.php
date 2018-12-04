@@ -12,7 +12,7 @@ $file = str_replace("href=\"","href=\"".$root."/CarnetElectron/",$file);
 
 preg_match_all('/<script.*?src=\"(.*?\.js(?:\?.*?)?)"/si', $file, $matches, PREG_PATTERN_ORDER);
 for ($i = 0; $i < count($matches[1]); $i++) {
-    script("carnet","../templates/CarnetElectron/".substr($matches[1][$i],0,-3));
+    script("carnet","../templates/CarnetElectron/".substr($matches[1][$i],0,-3)."?t=".time());
 }
 if($_['carnet_display_fullscreen']==="yes")
     script("carnet","../templates/CarnetElectron/compatibility/nextcloud/browser_fullscreen");

@@ -782,7 +782,10 @@
      * @NoCSRFRequired
      */
       public function getEditorCss(){
-        return json_decode($this->Config->getUserValue($this->userId, $this->appName, "css_editor"));
+        $css = $this->Config->getUserValue($this->userId, $this->appName, "css_editor");
+        if(empty($css))
+          $css = "[]";
+        return json_decode($css);
       }
 
       /**
@@ -790,8 +793,11 @@
      * @NoCSRFRequired
      */
     public function getBrowserCss(){
-        return json_decode($this->Config->getUserValue($this->userId, $this->appName, "css_browser"));
-      }
+        $css = $this->Config->getUserValue($this->userId, $this->appName, "css_browser");
+        if(empty($css))
+          $css = "[]";
+        return json_decode($css);
+    }
 
 
       /**
@@ -799,8 +805,11 @@
      * @NoCSRFRequired
      */
     public function getSettingsCss(){
-        return json_decode($this->Config->getUserValue($this->userId, $this->appName, "css_settings"));
-      }
+        $css = $this->Config->getUserValue($this->userId, $this->appName, "css_settings");
+        if(empty($css))
+          $css = "[]";
+        return json_decode($css);
+    }
 
 
  }
