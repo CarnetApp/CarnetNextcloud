@@ -1,5 +1,6 @@
 <?php
-
+global $currentpath;
+global $root;
 $currentpath = __DIR__."/CarnetElectron/";
 $root = \OCP\Util::linkToAbsolute("carnet","templates");
 if(strpos($root,"http://") === 0 && !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off'){
@@ -10,18 +11,20 @@ $file = file_get_contents($currentpath."index.html");
 //
 $file = str_replace("href=\"","href=\"".$root."/CarnetElectron/",$file);
 
-preg_match_all('/<script.*?src=\"(.*?\.js(?:\?.*?)?)"/si', $file, $matches, PREG_PATTERN_ORDER);
-for ($i = 0; $i < count($matches[1]); $i++) {
-    script("carnet","../templates/CarnetElectron/".substr($matches[1][$i],0,-3)."?t=".time());
-}
+
+$file = preg_replace_callback('/<script(.*?)src=\"(.*?\.js(?:\?.*?)?)"/s',function ($matches) {
+    global $currentpath;
+
+    return "<script".$matches[1]."src=\"".$matches[2]."?mtime=".filemtime($currentpath.$matches[2])."\"";
+}, $file);
+
 if($_['carnet_display_fullscreen']==="yes")
     script("carnet","../templates/CarnetElectron/compatibility/nextcloud/browser_fullscreen");
 else {
     if($_['nc_version']>=14)
     style("carnet","../templates/CarnetElectron/compatibility/nextcloud/nc14-header");
 }
-$file = preg_replace('#<script(.*?)>(.*?)</script>#is', '', $file);
-$file = str_replace("src=\"","defer src=\"".$root."/CarnetElectron/",$file);
+$file = str_replace("src=\"","defer nonce='".\OC::$server->getContentSecurityPolicyNonceManager()->getNonce()."' src=\"".$root."/CarnetElectron/",$file);
 echo $file;
 echo "<span style=\"display:none;\" id=\"root-url\">".$root."/CarnetElectron/</span>";
 ?>
