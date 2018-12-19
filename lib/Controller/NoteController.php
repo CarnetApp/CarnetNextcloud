@@ -5,6 +5,7 @@
  use OCP\AppFramework\Controller;
  use OCP\AppFramework\Http\FileDisplayResponse;
  use OCP\AppFramework\Http\RedirectResponse;
+ use OCP\AppFramework\Http\StreamResponse;
  //require_once 'vendor/autoload.php';
 
  class MyZipFile extends \PhpZip\ZipFile {
@@ -176,6 +177,30 @@
            return $file;
        }
    }
+
+   /**
+   * @NoAdminRequired
+   * @NoCSRFRequired
+   */
+   public function getUbuntuFont(){
+      $font = basename($_SERVER['REQUEST_URI']);
+      if($font !== ".." && $font !== "../")
+        return new StreamResponse(__DIR__.'/../../templates/CarnetElectron/fonts/'.basename($_SERVER['REQUEST_URI']));
+      else
+        die();
+   }
+
+   /**
+   * @NoAdminRequired
+   * @NoCSRFRequired
+   */
+  public function getMaterialFont(){
+    $font = basename($_SERVER['REQUEST_URI']);
+    if($font !== ".." && $font !== "../")
+      return new StreamResponse(__DIR__.'/../../templates/CarnetElectron/fonts/'.basename($_SERVER['REQUEST_URI']));
+    else
+      die();
+ }
 
    /**
    * @NoAdminRequired
