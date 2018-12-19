@@ -9,8 +9,12 @@ if(strpos($root,"http://") === 0 && !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS
 }
 $file = file_get_contents($currentpath."index.html");
 //
-$file = str_replace("href=\"","href=\"".$root."/CarnetElectron/",$file);
 
+$file = preg_replace_callback('/<link(.*?)href=\"(.*?\.css(?:\?.*?)?)"/s',function ($matches) {
+    global $currentpath;
+    return "<link".$matches[1]."href=\"".$matches[2]."?mtime=".filemtime($currentpath.$matches[2])."\"";
+}, $file);
+$file = str_replace("href=\"","href=\"".$root."/CarnetElectron/",$file);
 
 $file = preg_replace_callback('/<script(.*?)src=\"(.*?\.js(?:\?.*?)?)"/s',function ($matches) {
     global $currentpath;

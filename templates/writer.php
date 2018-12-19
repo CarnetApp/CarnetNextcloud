@@ -16,6 +16,15 @@ $file = preg_replace_callback('/<script(.*?)src=\"(.*?\.js(?:\?.*?)?)"/s',functi
     $relativePath = str_replace("<!ROOTPATH>", "", $matches[2]);
     return "<script".$matches[1]."src=\"".$src."?mtime=".filemtime($currentpath.$relativePath)."\"";
 }, $file);
+
+$file = preg_replace_callback('/<link(.*?)href=\"(.*?\.css(?:\?.*?)?)"/s',function ($matches) {
+    global $currentpath;
+    global $root;
+    $src = str_replace("<!ROOTPATH>", $root."/CarnetElectron/", $matches[2]);
+    $relativePath = str_replace("<!ROOTPATH>", "", $matches[2]);
+    return "<link".$matches[1]."href=\"".$src."?mtime=".filemtime($currentpath.$relativePath)."\"";
+}, $file);
+
 $file = str_replace("<!ROOTPATH>", $root."/CarnetElectron/", $file);
 
 $root = substr(__DIR__, strlen($_SERVER['DOCUMENT_ROOT']));
