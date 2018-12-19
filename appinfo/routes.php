@@ -49,8 +49,8 @@ return [
        ['name' => 'note#deleteNote', 'url' => '/notes', 'verb' => 'DELETE'],
        ['name' => 'note#search', 'url' => '/notes/search', 'verb' => 'GET'],
        ['name' => 'note#getSearchCache', 'url' => '/notes/getSearchCache', 'verb' => 'GET'],
-       ['name' => 'note#getUbuntuFont', 'url' => 'fonts/ubuntu.woff2', 'verb' => 'GET' ],
-       ['name' => 'note#getMaterialFont', 'url' => 'fonts/material-icons.woff2', 'verb' => 'GET' ],
+       ['name' => 'note#getUbuntuFont', 'url' => 'templates/CarnetElectron/fonts/ubuntu.woff2', 'verb' => 'GET' ],
+       ['name' => 'note#getMaterialFont', 'url' => 'templates/CarnetElectron/fonts/material-icons.woff2', 'verb' => 'GET' ],
        
 
     ]
