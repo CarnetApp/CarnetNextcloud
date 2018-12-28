@@ -13,6 +13,8 @@ $file = str_replace("href=\"","href=\"".$root."/CarnetElectron/",$file);
 
 preg_match_all('/<script.*?src=\"(.*?\.js(?:\?.*?)?)"/si', $file, $matches, PREG_PATTERN_ORDER);
 for ($i = 0; $i < count($matches[1]); $i++) {
+    if($matches[1][$i] === "libs/jquery.min.js")
+        continue;
     script("carnet","../templates/CarnetElectron/".substr($matches[1][$i],0,-3));
 }
 if($_['carnet_display_fullscreen']==="yes")

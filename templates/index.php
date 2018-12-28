@@ -18,7 +18,8 @@ $file = str_replace("href=\"","href=\"".$root."/CarnetElectron/",$file);
 
 $file = preg_replace_callback('/<script(.*?)src=\"(.*?\.js(?:\?.*?)?)"/s',function ($matches) {
     global $currentpath;
-
+    if($matches[2] === "libs/jquery.min.js")
+        return "";
     return "<script".$matches[1]."src=\"".$matches[2]."?mtime=".filemtime($currentpath.$matches[2])."\"";
 }, $file);
 
