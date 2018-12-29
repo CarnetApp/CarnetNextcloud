@@ -28,6 +28,7 @@ return [
        ['name' => 'note#createNote', 'url' => '/note/create', 'verb' => 'GET'],
        ['name' => 'note#saveTextToOpenNote', 'url' => '/note/saveText', 'verb' => 'POST'],
        ['name' => 'note#addMediaToOpenNote', 'url' => '/note/open/{id}/addMedia', 'verb' => 'POST'],
+       ['name' => 'note#updateMetadata', 'url' =>'notes/metadata', 'verb' => 'POST'],
        ['name' => 'note#deleteMediaFromOpenNote', 'url' => 'note/open/{id}/media', 'verb' => 'DELETE'],
        ['name' => 'note#listMediaOfOpenNote', 'url' => '/note/open/{id}/listMedia', 'verb' => 'GET'],
        ['name' => 'note#getMediaOfOpenNote', 'url' => '/note/open/{id}/getMedia/{media}', 'verb' => 'GET'],
