@@ -1,6 +1,7 @@
 <?php
  namespace OCA\Carnet\Controller;
  use Exception;
+ use OCP\App;
  use OCP\IRequest;
  use OCP\AppFramework\Controller;
  use OCP\AppFramework\Http\FileDisplayResponse;
@@ -161,12 +162,29 @@
     * @NoAdminRequired
     * @NoCSRFRequired
     */
-   public function getKeywordsDB() {
+   public function getChangelog() {
        
-
-       return json_decode($this->getKeywordsDBFile()->getContent(),true);
+    $changelog = file_get_contents(__DIR__."/../../CHANGELOG.md");
+    $current = App::getAppInfo($this->appName)['version'];
+    $last = $this->Config->getUserValue($this->userId, $this->appName, "last_changelog_version");
+    if($last !== $current){
+        $this->Config->setUserValue($this->userId, $this->appName, "last_changelog_version", $current);
+    }
+    $result = array();
+    $result['changelog'] = $changelog;
+    $result['shouldDisplayChangelog'] = $last !== $current;
+    return $result;
    }
 
+   /**
+    * @NoAdminRequired
+    * @NoCSRFRequired
+    */
+    public function getKeywordsDB() {  
+
+        return json_decode($this->getKeywordsDBFile()->getContent(),true);
+    }
+    
    private function getKeywordsDBFile(){
        try {
            return $this->CarnetFolder->get("quickdoc/keywords/keywordsnc");
