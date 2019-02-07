@@ -45,6 +45,7 @@ git tag -a "$version" -m "$version"
   sudo rm templates/CarnetElectron/node_modules/ -R
   sudo rm templates/CarnetElectron/build/ -R
 
+  sudo rm templates/CarnetElectron/dist/ -R
   sudo rm .Trash-1000 -R
   cd ..
   # archive creation + signing
