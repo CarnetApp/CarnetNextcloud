@@ -1,3 +1,7 @@
+# Version 0.12.1
+
+Fix issue with reverse proxies
+
 # Version 0.12.0
 
 Todo-List (in editor, tools)
