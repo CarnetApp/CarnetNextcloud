@@ -28,7 +28,7 @@ $file = str_replace("<!ROOTPATH>", $root."/CarnetElectron/", $file);
 $root = substr(__DIR__, strlen($_SERVER['DOCUMENT_ROOT']));
 $urlGenerator = \OC::$server->getURLGenerator();
 $file = str_replace("<!ROOTURL>", $root."/CarnetElectron/", $file);
-$file = str_replace("<!APIURL>", $urlGenerator->linkToRouteAbsolute("carnet.page.index"), $file);
+$file = str_replace("<!APIURL>", parse_url($urlGenerator->linkToRouteAbsolute("carnet.page.index"), PHP_URL_PATH), $file);
 echo $file;
 
 ?>
