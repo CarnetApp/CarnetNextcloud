@@ -8,7 +8,7 @@ assignees: ''
 ---
 
 Please report every bug related to the Android application here
-https://github.com/PhieF/CarnetNextcloud/
+https://github.com/PhieF/CarnetAndroid/
 
 
 **Describe the bug**
