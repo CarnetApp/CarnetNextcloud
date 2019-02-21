@@ -486,8 +486,8 @@
         } catch(\OCP\Files\NotFoundException $e) {
             
         }
-        shell_exec('php occ carnet:search '.$this->userId.' '.escapeshellcmd($query).' '.escapeshellcmd($from).'> /dev/null 2>/dev/null &');
-     }
+        shell_exec('php occ carnet:search '.$this->userId.' '.escapeshellarg($query).' '.escapeshellarg($from).'> /dev/null 2>/dev/null &');
+    }
 
      /**
      * @NoAdminRequired
