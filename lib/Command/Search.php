@@ -117,9 +117,25 @@ private function search($relativePath, $folder, $query, $curDepth){
                 $this->writeFound($relativePath, $in);
                 continue;
             }
+
             try {
                 $zipFile = new \PhpZip\ZipFile();
                 $zipFile->openFromStream($in->fopen("r"));
+                try {
+                    $metadata = json_decode($zipFile->getEntryContents("metadata.json"));
+                    $hasFound = false;
+                    foreach($metadata->keywords as $keyword){
+                        if(strstr($this->removeAccents(strtolower($keyword)), $query)){
+                            $this->writeFound($relativePath,$in);
+                            $hasFound = true;
+                            break;
+                        }
+                    }
+                    if($hasFound)
+                        continue;
+                    
+                } catch(Exception $e){
+                }
                 $index = $zipFile->getEntryContents("index.html");
                 if(strstr($this->removeAccents(strtolower($index)), $query)){
                     $this->writeFound($relativePath,$in);
