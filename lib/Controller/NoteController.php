@@ -7,6 +7,9 @@
  use OCP\AppFramework\Http\FileDisplayResponse;
  use OCP\AppFramework\Http\RedirectResponse;
  use OCP\AppFramework\Http\StreamResponse;
+ use OCA\Carnet\Misc\NoteUtils;
+ use OCA\Carnet\Misc\CacheManager;
+ use OCP\IDBConnection;
  //require_once 'vendor/autoload.php';
 
  class MyZipFile extends \PhpZip\ZipFile {
@@ -19,9 +22,11 @@
     private $bla;
     private $storage;
     private $CarnetFolder;
-	public function __construct($AppName, IRequest $request, $UserId, $RootFolder, $Config){
+    private $db;
+	public function __construct($AppName, IRequest $request, $UserId, $RootFolder, $Config,  IDBConnection $IDBConnection){
 		parent::__construct($AppName, $request);
         $this->userId = $UserId;
+        $this->db = $IDBConnection;
         $this->Config = $Config;
         $this->rootFolder = $RootFolder;
         $folder = $this->Config->getUserValue($this->userId, $this->appName, "note_folder");
@@ -428,52 +433,26 @@
       */
 	 public function getMetadata($paths){
 		$array = array();
-		$pathsAr = explode(",",$paths);
-
+        $pathsAr = explode(",",$paths);
+        $cache = new CacheManager($this->db);
+        $metadataFromCache = $cache->getFromCache($pathsAr);
+        
 		foreach($pathsAr as $path){
 			if(empty($path))
-				continue;
-			try {
-                $tmppath = tempnam(sys_get_temp_dir(), uniqid().".zip");
-                file_put_contents($tmppath, $this->CarnetFolder->get($path)->fopen("r"));
-                 $zipFile = new \PhpZip\ZipFile();
-                 $zipFile->openFromStream(fopen($tmppath, "r")); //issue with encryption when open directly + unexpectedly faster to copy before Oo'
-                
-                 $array[$path] = array();
-                 try{
-                    $array[$path]['metadata'] = json_decode($zipFile->getEntryContents("metadata.json"));
-                 } catch(\PhpZip\Exception\ZipNotFoundEntry $e){
-                    
-                 }
-                 try{
-                    
-                    $array[$path]['shorttext'] = mb_substr(trim(preg_replace('#<[^>]+>#', ' ', $zipFile->getEntryContents("index.html"))),0, 150);
-                    $i=0;
-                    try{
-                        foreach($zipFile->getListFiles() as $f){
-                            if(substr($f, 0, strlen("data/preview")) === "data/preview"){
-
-                                $array[$path]['previews'][$i] = "data:image/jpeg;base64,".base64_encode($zipFile->getEntryContents($f));
-                                $i++;
-                                if($i>2)
-                                    break;
-                            }
-                            
-                        }
-                    }
-                    catch(\PhpZip\Exception\ZipNotFoundEntry $e){
-                        
-                    }
-                } catch(\PhpZip\Exception\ZipNotFoundEntry $e){
-                    $array[$path]['shorttext'] = "";
-                    
+                continue;
+            try{
+                if(!array_key_exists($path, $metadataFromCache)|| True){
+                    $utils = new NoteUtils();
+                    $meta = $utils->getMetadata($this->CarnetFolder, $path);
+                    $array[$path] = $meta;
+                    $cache->addToCache($path, $meta, $meta['lastmodfile']);
                 }
-                 unlink($tmppath);
 			} catch(\OCP\Files\NotFoundException $e) {
             }
            
-		}
-		 return $array;
+        }
+        $array = array_merge($metadataFromCache, $array);
+		return $array;
      }
 
      /**

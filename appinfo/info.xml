@@ -18,7 +18,7 @@ Mac, with sync capabilities
 - Statistics : words/sentences/characters
 - Sync with NextCloud
 - Online editor as a NextCloud App]]></description>
-    <version>0.12.2</version>
+    <version>0.13.0</version>
     <licence>agpl</licence>
     <author mail="phie@phie.ovh" >Phie</author>
     <namespace>Carnet</namespace>
@@ -27,6 +27,9 @@ Mac, with sync capabilities
     <category>tools</category>
     <screenshot>https://raw.githubusercontent.com/PhieF/CarnetDocumentation/master/intro/overview.png</screenshot>
     <bugs>https://github.com/PhieF/CarnetNextcloud/issues</bugs>
+    <types>
+            <filesystem/>
+    </types>
     <dependencies>
         <nextcloud min-version="13" max-version="15"/>
     </dependencies>

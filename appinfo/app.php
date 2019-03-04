@@ -21,8 +21,15 @@
  *
  */
 namespace OCA\Carnet\AppInfo;
-use \OCP\AppFramework\App;
+use OCP\AppFramework\App;
 use OCA\Mail\HordeTranslationHandler;
+use OCA\Carnet\Hooks\FSHooks;
+use OCP\Files\IRootFolder;
+use OCP\Files\Node;
+use OCP\AppFramework\IAppContainer;
+use OCP\Util;
+use OCP\IDBConnection;
+
 if ((@include_once __DIR__ . '/../vendor/autoload.php')===false) {
 	throw new Exception('Cannot include autoload. Did you run install dependencies using composer?');
 }
@@ -30,14 +37,24 @@ class Application extends App {
 
     public function __construct(array $urlParams=array()){
         parent::__construct('carnet', $urlParams);
-
         $container = $this->getContainer();
-
-    
-
         $container->registerService('Config', function($c) {
+
             return $c->query('ServerContainer')->getConfig();
         });
+        $this->connectWatcher($container);
+    }
+
+    private function connectWatcher(IAppContainer $container) {
+            /** @var IRootFolder $root */
+            $root = $container->query(IRootFolder::class);
+             $root->listen('\OC\Files', 'postWrite', function (Node $node) use ($container) {
+                $c = $container->query('ServerContainer');
+                $watcher = new FSHooks($c->getUserFolder(), $c->getUserSession()->getUser()->getUID(), $c->getConfig(), 'carnet',$container->query(IDBConnection::class));
+                $watcher->postWrite($node);
+            });
     }
 }
+$app = new Application();
+
 ?>
