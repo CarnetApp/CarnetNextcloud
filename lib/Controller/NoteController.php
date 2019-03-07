@@ -17,14 +17,16 @@
         return $this->inputStream;
      }
  }
+ $test = "bla";
  class NoteController extends Controller {
 	private $userId;
     private $bla;
     private $storage;
     private $CarnetFolder;
     private $db;
+    public static $lastWrite = null;
 	public function __construct($AppName, IRequest $request, $UserId, $RootFolder, $Config,  IDBConnection $IDBConnection){
-		parent::__construct($AppName, $request);
+        parent::__construct($AppName, $request);
         $this->userId = $UserId;
         $this->db = $IDBConnection;
         $this->Config = $Config;
@@ -441,7 +443,7 @@
 			if(empty($path))
                 continue;
             try{
-                if(!array_key_exists($path, $metadataFromCache)|| True){
+                if(!array_key_exists($path, $metadataFromCache)){
                     $utils = new NoteUtils();
                     $meta = $utils->getMetadata($this->CarnetFolder, $path);
                     $array[$path] = $meta;
@@ -650,6 +652,7 @@
         $folder = $cache->get("currentnote".$id);
         $zipFile = new MyZipFile();
         $this->addFolderContentToArchive($folder,$zipFile,"");
+        //self::$lastWrite = $this->CarnetFolder->getPath()."/".$path; //to avoid FSHooks rewrite of metadata
         $file = $this->CarnetFolder->newFile($path);
         //tried to do with a direct fopen on $file but lead to bad size on nextcloud
         $tmppath = tempnam(sys_get_temp_dir(), uniqid().".sqd");
@@ -660,6 +663,8 @@
                 $this->CarnetFolder->get($path)->delete();
             } catch(\OCP\Files\NotFoundException $e) {
             }
+            //self::$lastWrite = $file->getPath();
+
             $file->putContent($tmph);
             fclose($tmph);
         } else 

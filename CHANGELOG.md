@@ -1,3 +1,23 @@
+# Version 0.13.0
+
+Cache on server side
+
+Better media management of small screens
+
+Better search (ignoring accents + search amoung keywords)
+
+Rename after 10 secs instead of 2 in editor
+
+Print option 
+
+Cancel load option
+
+Fix:
+
+remove < character
+
+search sentencies
+
 # Version 0.12.1
 
 Fix issue with reverse proxies
