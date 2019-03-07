@@ -31,7 +31,7 @@ class FSHooks {
         if(substr($node->getName(), -3) === "sqd"){ // to avoid getting carnet's path each time a file is writen
             //we check if is in our path
                        
-            if(substr($node->getPath(), 0, strlen($this->folder)) === $this->folder){
+            if(substr($node->getPath(), 0, strlen($this->carnetFolder->getPath())) === $this->carnetFolder->getPath()){
                 $relativePath = substr($node->getPath(), strlen($this->carnetFolder->getPath()));
                 if(substr($relativePath, 0, 1) === "/")
                     $relativePath = substr($relativePath, 1); 

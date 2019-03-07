@@ -17,6 +17,7 @@
         <field>
             <name>path</name> 
         </field>
+        <name>indexpath</name>
         <unique>true</unique>
     </index>
     <field>
