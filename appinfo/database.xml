@@ -11,7 +11,7 @@
     <name>path</name>
     <type>text</type>
     <notnull>true</notnull>
-    <length>460</length>
+    <length>255</length>
   </field>
   <index>
         <field>
