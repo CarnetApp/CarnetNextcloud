@@ -27,22 +27,25 @@ class FSHooks {
     }
     
     public function postWrite($node) {
-        
-        if(substr($node->getName(), -3) === "sqd"){ // to avoid getting carnet's path each time a file is writen
-            //we check if is in our path
-                       
-            if(substr($node->getPath(), 0, strlen($this->carnetFolder->getPath())) === $this->carnetFolder->getPath()){
-                $relativePath = substr($node->getPath(), strlen($this->carnetFolder->getPath()));
-                if(substr($relativePath, 0, 1) === "/")
-                    $relativePath = substr($relativePath, 1); 
-                /*if(NoteController::$lastWrite === $node->getPath()){
-                    return; //was already handled in save
-                }*/
-                $cacheManager = new CacheManager($this->db);
-                $utils = new NoteUtils();
-                $metadata = $utils->getMetadata($this->carnetFolder, $relativePath);
-                $cacheManager->addToCache($relativePath, $metadata, $metadata['lastmodfile']);
+        try{
+            if(substr($node->getName(), -3) === "sqd"){ // to avoid getting carnet's path each time a file is writen
+                //we check if is in our path
+                        
+                if(substr($node->getPath(), 0, strlen($this->carnetFolder->getPath())) === $this->carnetFolder->getPath()){
+                    $relativePath = substr($node->getPath(), strlen($this->carnetFolder->getPath()));
+                    if(substr($relativePath, 0, 1) === "/")
+                        $relativePath = substr($relativePath, 1); 
+                    /*if(NoteController::$lastWrite === $node->getPath()){
+                        return; //was already handled in save
+                    }*/
+                    $cacheManager = new CacheManager($this->db);
+                    $utils = new NoteUtils();
+                    $metadata = $utils->getMetadata($this->carnetFolder, $relativePath);
+                    $cacheManager->addToCache($relativePath, $metadata, $metadata['lastmodfile']);
+                }
             }
+        } catch(\PhpZip\Exception\ZipException $e){
+
         }
         
         
