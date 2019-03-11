@@ -50,8 +50,11 @@ class Application extends App {
             $root = $container->query(IRootFolder::class);
              $root->listen('\OC\Files', 'postWrite', function (Node $node) use ($container) {
                 $c = $container->query('ServerContainer');
-                $watcher = new FSHooks($c->getUserFolder(), $c->getUserSession()->getUser()->getUID(), $c->getConfig(), 'carnet',$container->query(IDBConnection::class));
-                $watcher->postWrite($node);
+                $user = $c->getUserSession()->getUser();
+                if($user != null){
+                    $watcher = new FSHooks($c->getUserFolder(), $user->getUID(), $c->getConfig(), 'carnet',$container->query(IDBConnection::class));
+                    $watcher->postWrite($node);
+                 }
             });
     }
 }
