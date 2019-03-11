@@ -445,9 +445,13 @@
             try{
                 if(!array_key_exists($path, $metadataFromCache)){
                     $utils = new NoteUtils();
-                    $meta = $utils->getMetadata($this->CarnetFolder, $path);
-                    $array[$path] = $meta;
-                    $cache->addToCache($path, $meta, $meta['lastmodfile']);
+                    try{
+                        $meta = $utils->getMetadata($this->CarnetFolder, $path);
+                        $array[$path] = $meta;
+                        $cache->addToCache($path, $meta, $meta['lastmodfile']);
+                    } catch(\PhpZip\Exception\ZipException $e){
+
+                    }
                 }
 			} catch(\OCP\Files\NotFoundException $e) {
             }
