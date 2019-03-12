@@ -3,7 +3,7 @@ Place this app in **nextcloud/apps/**
 
 What is Carnet ?
 
-<a href="https://framagit.org/PhieF/CarnetDocumentation">See</a>
+<a href="https://framagit.org/PhieF/CarnetDocumentation">Documentation and description of Carnet are available here</a>
 
 
 ## Help
