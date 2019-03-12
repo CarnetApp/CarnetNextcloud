@@ -818,24 +818,37 @@
      * @NoCSRFRequired
      */
     public function getAppThemes(){
-        $root = \OCP\Util::linkToAbsolute($this->appName,"templates")."/CarnetElectron/css/";
+        $root = $this->getCarnetElectronUrl()."/css/";
+        return json_decode('[{"name":"Carnet", "path":"'.$this->getCarnetElectronPath().'/css/carnet", "preview":"'.$root.'carnet/preview.png"}, {"name":"Dark", "path":"'.$this->getCarnetElectronPath().'/css/dark", "preview":"'.$root.'dark/preview.png"}]');
+    }
+
+    private function getCarnetElectronPath(){
+        return __DIR__.'/../../templates/CarnetElectron';
+    }
+
+    private function getCarnetElectronUrl(){
+        $root = \OCP\Util::linkToAbsolute($this->appName,"templates")."/CarnetElectron";
         if(strpos($root,"http://") === 0 && !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off'){
             //should be https...
             $root = "https".substr($root,strlen("http"));
         }
-        return json_decode('[{"name":"Carnet", "path":"'.$root.'carnet", "preview":"'.$root.'carnet/preview.png"}, {"name":"Dark", "path":"'.$root.'dark", "preview":"'.$root.'dark/preview.png"}]');
+        return $root;
     }
      /**
      * @NoAdminRequired
      * @NoCSRFRequired
      */
      public function setAppTheme($url){
-         if(strpos($url, '/') !== false && strpos($url, 'http') !==0)
+         if(strpos($url, '/') !== 0 && strpos($url, 'http') !==0)
             throw new Exception("forbidden");
+        
         $meta = json_decode(file_get_contents($url."/metadata.json"),true);
         $browser = array();
         $editor = array();
         $settings = array();
+        if(strpos($url, $this->getCarnetElectronPath()) === 0){
+            $url = $this->getCarnetElectronUrl().substr($url, strlen($this->getCarnetElectronPath()), strlen($url));
+        }
         foreach($meta['browser'] as $css){
             array_push($browser, $url."/".$css);
         }
