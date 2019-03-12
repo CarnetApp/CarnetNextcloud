@@ -455,7 +455,7 @@
 			if(empty($path))
                 continue;
             try{
-                if(!array_key_exists($path, $metadataFromCache)){
+                if(!array_key_exists($path, $metadataFromCache) OR True){
                     $utils = new NoteUtils();
                     try{
                         $meta = $utils->getMetadata($this->CarnetFolder, $path);
