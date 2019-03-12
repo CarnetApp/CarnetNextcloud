@@ -23,10 +23,16 @@ class FSHooks {
         $this->folder = $this->Config->getUserValue($this->userId, $this->appName, "note_folder");
         if(empty($folder))
             $folder= 'Documents/QuickNote';
-        $this->carnetFolder = $UserFolder->get($folder);
+        try{
+            $this->carnetFolder = $UserFolder->get($folder);
+        } catch (\OCP\Files\NotFoundException $e){
+            $this->carnetFolder = null;
+        }
     }
     
     public function postWrite($node) {
+        if($this->carnetFolder == null)
+            return;
         try{
             if(substr($node->getName(), -3) === "sqd"){ // to avoid getting carnet's path each time a file is writen
                 //we check if is in our path
