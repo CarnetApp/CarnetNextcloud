@@ -47,7 +47,7 @@ class Application extends App {
 
     private function connectWatcher(IAppContainer $container) {
             /** @var IRootFolder $root */
-            $root = $container->query(IRootFolder::class);
+            /*$root = $container->query(IRootFolder::class);
              $root->listen('\OC\Files', 'postWrite', function (Node $node) use ($container) {
                 $c = $container->query('ServerContainer');
                 $user = $c->getUserSession()->getUser();
@@ -55,7 +55,7 @@ class Application extends App {
                     $watcher = new FSHooks($c->getUserFolder(), $user->getUID(), $c->getConfig(), 'carnet',$container->query(IDBConnection::class));
                     $watcher->postWrite($node);
                  }
-            });
+            });*/
     }
 }
 $app = new Application();

@@ -460,7 +460,7 @@
                     try{
                         $meta = $utils->getMetadata($this->CarnetFolder, $path);
                         $array[$path] = $meta;
-                        $cache->addToCache($path, $meta, $meta['lastmodfile']);
+                        //$cache->addToCache($path, $meta, $meta['lastmodfile']);
                     } catch(\PhpZip\Exception\ZipException $e){
 
                     }
