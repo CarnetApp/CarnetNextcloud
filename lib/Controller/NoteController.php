@@ -207,6 +207,18 @@
    * @NoAdminRequired
    * @NoCSRFRequired
    */
+   public function getLangJson($lang){
+     if($lang !== ".." && $lang !== "../")
+       return new StreamResponse(__DIR__.'/../../templates/CarnetElectron/i18n/'.$lang.".json");
+     else
+       die();
+   }
+
+
+   /**
+   * @NoAdminRequired
+   * @NoCSRFRequired
+   */
    public function getUbuntuFont(){
       $font = basename($_SERVER['REQUEST_URI']);
       if($font !== ".." && $font !== "../")

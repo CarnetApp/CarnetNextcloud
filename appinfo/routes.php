@@ -53,6 +53,7 @@ return [
        ['name' => 'note#getUbuntuFont', 'url' => '/templates/CarnetElectron/fonts/ubuntu.woff2', 'verb' => 'GET' ],
        ['name' => 'note#getMaterialFont', 'url' => '/templates/CarnetElectron/fonts/material-icons.woff2', 'verb' => 'GET' ],
        ['name' => 'note#getChangelog', 'url' => '/settings/changelog', 'verb' => 'GET' ],
+       ['name' => 'note#getLangJson', 'url' => '/settings/lang/json', 'verb' => 'GET' ],
 
     ]
 ];
