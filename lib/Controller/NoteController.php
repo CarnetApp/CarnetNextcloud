@@ -606,12 +606,12 @@
                 $size = getimagesize($fn);
                 $ratio = $size[0]/$size[1]; // width/height
                 if( $ratio > 1) {
-                    $width = 200;
-                    $height = 200/$ratio;
+                    $width = 400;
+                    $height = 400/$ratio;
                 }
                 else {
-                    $width = 200*$ratio;
-                    $height = 200;
+                    $width = 400*$ratio;
+                    $height = 400;
                 }
                 $src = imagecreatefromstring(file_get_contents($fn));
                 $dst = imagecreatetruecolor($width,$height);
