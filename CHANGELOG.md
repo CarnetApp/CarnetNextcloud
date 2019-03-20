@@ -1,3 +1,20 @@
+# Version 0.14.0
+
+Make website links clickable in editor
+
+Website links available in overview
+
+Custom dates
+
+Unarchive / restore to latest
+
+Langs + : French, Dutch (Heimen Stoffels), German (Christian Scholz)
+
+New Media bar
+
+Fix : keywords in overview
+
+
 # Version 0.13.0
 
 Cache on server side
