@@ -269,7 +269,11 @@
           }
           if($saveDB){
              usort($myDbContent->data, function($a, $b) {
-                 return $a->time <=> $b->time;
+                 if($a->time <= $b->time)
+                    return -1;
+                if($a->time >= $b->time)
+                    return 1;
+                return 0;
              });
              $myDb->putContent(json_encode($myDbContent));
           }
@@ -316,7 +320,11 @@
              }
              if($saveDB){
                 usort($myDbContent->data, function($a, $b) {
-                    return $a->time <=> $b->time;
+                    if($a->time <= $b->time)
+                        return -1;
+                    if($a->time >= $b->time)
+                        return 1;
+                    return 0;
                 });
                 $myDb->putContent(json_encode($myDbContent));
              }
