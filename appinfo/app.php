@@ -47,15 +47,23 @@ class Application extends App {
 
     private function connectWatcher(IAppContainer $container) {
             /** @var IRootFolder $root */
-            /*$root = $container->query(IRootFolder::class);
-             $root->listen('\OC\Files', 'postWrite', function (Node $node) use ($container) {
-                $c = $container->query('ServerContainer');
+            $root = $container->query(IRootFolder::class);
+            $root->listen('\OC\Files', 'postWrite', function (Node $node) use ($container) {
+                $c = $container->query('ServerContainer'); 
                 $user = $c->getUserSession()->getUser();
                 if($user != null){
                     $watcher = new FSHooks($c->getUserFolder(), $user->getUID(), $c->getConfig(), 'carnet',$container->query(IDBConnection::class));
                     $watcher->postWrite($node);
                  }
-            });*/
+            });
+            $root->listen('\OC\Files', 'postDelete', function (Node $node) use ($container) {
+                $c = $container->query('ServerContainer');
+                $user = $c->getUserSession()->getUser();
+                if($user != null){
+                    $watcher = new FSHooks($c->getUserFolder(), $user->getUID(), $c->getConfig(), 'carnet',$container->query(IDBConnection::class));
+                    $watcher->postDelete($node);
+                 }
+            });
     }
 }
 $app = new Application();

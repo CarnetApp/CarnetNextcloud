@@ -30,31 +30,52 @@ class FSHooks {
         }
     }
     
+    public function postDelete($node){
+        if($this->carnetFolder == null)
+            return;
+        if($this->isMine($node)){
+            $cacheManager = new CacheManager($this->db, $this->carnetFolder);
+            $cacheManager->deleteFromCache($this->getRelativePath($node->getPath()));
+        }   
+    }
+
+    private function isMine($node){
+        if(substr($node->getName(), -3) === "sqd"){ // to avoid getting carnet's path each time a file is writen
+            //we check if is in our path
+                    
+            if(substr($node->getPath(), 0, strlen($this->carnetFolder->getPath())) === $this->carnetFolder->getPath()){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private function getRelativePath($fullPath){
+        $relativePath = substr($fullPath, strlen($this->carnetFolder->getPath()));
+        if(substr($relativePath, 0, 1) === "/")
+            $relativePath = substr($relativePath, 1); 
+        return $relativePath;
+    }
+
     public function postWrite($node) {
         if($this->carnetFolder == null)
             return;
-        try{
-            if(substr($node->getName(), -3) === "sqd"){ // to avoid getting carnet's path each time a file is writen
-                //we check if is in our path
-                        
-                if(substr($node->getPath(), 0, strlen($this->carnetFolder->getPath())) === $this->carnetFolder->getPath()){
-                    $relativePath = substr($node->getPath(), strlen($this->carnetFolder->getPath()));
-                    if(substr($relativePath, 0, 1) === "/")
-                        $relativePath = substr($relativePath, 1); 
-                    /*if(NoteController::$lastWrite === $node->getPath()){
-                        return; //was already handled in save
-                    }*/
-                    $cacheManager = new CacheManager($this->db);
-                    $utils = new NoteUtils();
-                    $metadata = $utils->getMetadata($this->carnetFolder, $relativePath);
-                    $cacheManager->addToCache($relativePath, $metadata, $metadata['lastmodfile']);
-                }
-            }
-        } catch(\PhpZip\Exception\ZipException $e){
+        
+        if($this->isMine($node)){
+                try{
+                
+                /*if(NoteController::$lastWrite === $node->getPath()){
+                    return; //was already handled in save
+                }*/
+                $relativePath = $this->getRelativePath($node->getPath());
+                $cacheManager = new CacheManager($this->db, $this->carnetFolder);
+                $utils = new NoteUtils();
+                $metadata = $utils->getMetadata($this->carnetFolder, $relativePath);
+                $cacheManager->addToCache($relativePath, $metadata, $metadata['lastmodfile']);
+            } catch(\PhpZip\Exception\ZipException $e){
 
+            }
         }
-        
-        
     }
 
     public function postWritePath($node) {
