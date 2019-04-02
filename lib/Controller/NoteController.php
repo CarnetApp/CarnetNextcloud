@@ -471,7 +471,7 @@
 	 public function getMedia($note, $media){
         $tmppath = tempnam(sys_get_temp_dir(), uniqid().".zip");
         $node = $this->CarnetFolder->get($note);
-        $response = "pet";
+        $response = null;
         file_put_contents($tmppath, $node->fopen("r"));
         try{
             $zipFile = new \PhpZip\ZipFile();
