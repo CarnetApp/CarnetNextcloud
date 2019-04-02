@@ -116,12 +116,26 @@
 	 *          add it to any other method if you don't exactly know what it does
 	 *
 	 * @NoAdminRequired
-	 * @NoCSRFRequired
 	 */
 	public function getRecent() {
         
+        $recents = json_decode($this->getRecentFile()->getContent(),true);
+        $paths = array();
+        foreach($recents['data'] as $item){
+            $path = $item['path'];
+            if($item['newpath'] != null)
+                $path =$item['newpath'];
+            if(!in_array($path, $paths))
+                array_push($paths, $path);
+            
+        }
 
-        return json_decode($this->getRecentFile()->getContent(),true);
+        $cache = new CacheManager($this->db, $this->CarnetFolder);
+        $metadataFromCache = $cache->getFromCache($paths);
+        $return = array();
+        $return['metadata'] = $metadataFromCache;
+        $return['data'] = $recents['data'];
+        return $return;
     }
 
     /**
