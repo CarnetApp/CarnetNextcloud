@@ -38,6 +38,7 @@ return [
        ['name' => 'note#getRecent', 'url' => '/recentdb', 'verb' => 'GET'],
        ['name' => 'note#mergeRecentDB', 'url' => '/recentdb/merge', 'verb' => 'GET'],
        ['name' => 'note#getEditorUrl', 'url' => '/note/open/prepare', 'verb' => 'GET'],
+       ['name' => 'note#getMedia', 'url' => '/note/getmedia', 'verb' => 'GET'],
        ['name' => 'note#postActions', 'url' => '/recentdb/action', 'verb' => 'POST'],
        ['name' => 'note#getMetadata', 'url' => '/metadata', 'verg' => 'GET'],
        ['name' => 'note#getKeywordsDB', 'url' => '/keywordsdb', 'verb' => 'GET'],

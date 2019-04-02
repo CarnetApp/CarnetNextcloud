@@ -5,6 +5,7 @@
  use OCP\IRequest;
  use OCP\AppFramework\Controller;
  use OCP\AppFramework\Http\FileDisplayResponse;
+ use OCP\AppFramework\Http\DataDisplayResponse;
  use OCP\AppFramework\Http\RedirectResponse;
  use OCP\AppFramework\Http\StreamResponse;
  use OCA\Carnet\Misc\NoteUtils;
@@ -452,6 +453,28 @@
      /**
       * @NoAdminRequired
       * @NoCSRFRequired
+      */
+	 public function getMedia($note, $media){
+        $tmppath = tempnam(sys_get_temp_dir(), uniqid().".zip");
+        $node = $this->CarnetFolder->get($note);
+        $response = "pet";
+        file_put_contents($tmppath, $node->fopen("r"));
+        try{
+            $zipFile = new \PhpZip\ZipFile();
+            $zipFile->openFromStream(fopen($tmppath, "r")); //issue with encryption when open directly + unexpectedly faster to copy before Oo'
+            $response = new DataDisplayResponse($zipFile->getEntryContents($media));
+            $response->addHeader("Content-Type", "image/jpeg");
+
+        } catch(\PhpZip\Exception\ZipNotFoundEntry $e){
+            $response = $media;
+            
+        }
+        unlink($tmppath);
+        return $response;
+     }
+
+     /**
+      * @NoAdminRequired
       */
 	 public function getMetadata($paths){
 		$array = array();

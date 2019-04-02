@@ -25,7 +25,7 @@ class NoteUtils{
                 foreach($zipFile->getListFiles() as $f){
                     if(substr($f, 0, strlen("data/preview")) === "data/preview"){
 
-                        $meta['previews'][$i] = "data:image/jpeg;base64,".base64_encode($zipFile->getEntryContents($f));
+                        $meta['previews'][$i] = "./note/getmedia?note=".$path."&media=".$f;
                         $i++;
                         if($i>2)
                             break;
