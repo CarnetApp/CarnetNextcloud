@@ -489,19 +489,19 @@
 
      /**
       * @NoAdminRequired
+      * @NoCSRFRequired
       */
 	 public function getMetadata($paths){
 		$array = array();
         $pathsAr = explode(",",$paths);
         $cache = new CacheManager($this->db, $this->CarnetFolder);
         $metadataFromCache = $cache->getFromCache($pathsAr);
-       
 		foreach($pathsAr as $path){
 			if(empty($path))
                 continue;
             try{
                 
-                if(!array_key_exists($this->CarnetFolder->getFullPath($path), $metadataFromCache) OR True){
+                if(!array_key_exists($this->CarnetFolder->getFullPath($path), $metadataFromCache)){
                     $utils = new NoteUtils();
                     try{
                         $meta = $utils->getMetadata($this->CarnetFolder, $path);
