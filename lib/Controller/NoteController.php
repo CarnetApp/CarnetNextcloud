@@ -713,8 +713,12 @@
         $cache = $this->getCacheFolder();
         $folder = $cache->get("currentnote".$id);
         $zipFile = new MyZipFile();
-        $this->addFolderContentToArchive($folder,$zipFile,"");
-        //self::$lastWrite = $this->CarnetFolder->getPath()."/".$path; //to avoid FSHooks rewrite of metadata
+        $meta = array();
+        $meta["previews"] = array();
+        $previews = $this->addFolderContentToArchive($folder,$zipFile,"");
+        foreach($previews as $preview){
+            array_push($meta['previews'], "./note/getmedia?note=".$path."&media=".$preview);
+        }
         $file = $this->CarnetFolder->newFile($path);
         //tried to do with a direct fopen on $file but lead to bad size on nextcloud
         $tmppath = tempnam(sys_get_temp_dir(), uniqid().".sqd");
@@ -725,28 +729,39 @@
                 $this->CarnetFolder->get($path)->delete();
             } catch(\OCP\Files\NotFoundException $e) {
             }
-            //self::$lastWrite = $file->getPath();
-
+            
             $file->putContent($tmph);
             fclose($tmph);
+            $meta['metadata'] = $folder->get("metadata.json")->getContent();
+            $meta['shorttext'] = NoteUtils::getShortTextFromHTML($folder->get("index.html")->getContent());
+            $cache = new CacheManager($this->db, $this->CarnetFolder);
+            $cache->addToCache($path, $meta, $file->getFileInfo()->getMtime());
+
         } else 
             throw new Exception('Unable to create Zip');
 
         unlink($tmppath);
      } 
-
+     /*
+        returns previews
+     */
      private function addFolderContentToArchive($folder, $archive, $relativePath){
+         $previews = array();
         foreach($folder->getDirectoryListing() as $in){
             $inf = $in->getFileInfo();
             $path = $relativePath.$inf->getName();
             if($inf->getType() === "dir"){
                 $archive->addEmptyDir($path);
-                $this->addFolderContentToArchive($in, $archive, $path."/");
+                $previews = array_merge($previews, $this->addFolderContentToArchive($in, $archive, $path."/"));
             }else {
                 $archive->addFromStream($in->fopen("r"), $path, \PhpZip\ZipFile::METHOD_DEFLATED);
+                if(substr($path,0,strlen("data/preview_")) === "data/preview_"){
+                    array_push($previews, $path);
+                }
             }
 
         }
+        return $previews;
      }
 
      private function getCurrentnoteDir(){

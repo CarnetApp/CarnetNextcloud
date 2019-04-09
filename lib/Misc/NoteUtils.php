@@ -2,6 +2,9 @@
 namespace OCA\Carnet\Misc;
 class NoteUtils{
     public static $defaultCarnetNotePath = "Documents/QuickNote";
+    public static function getShortTextFromHTML($html){
+        return mb_substr(trim(preg_replace('#<[^>]+>#', ' ', $html)),0, 150);
+    }
     public function getMetadata($carnetFolder, $path){
         $meta = array();
         $tmppath = tempnam(sys_get_temp_dir(), uniqid().".zip");
@@ -18,7 +21,7 @@ class NoteUtils{
             }
             try{
             
-            $meta['shorttext'] = mb_substr(trim(preg_replace('#<[^>]+>#', ' ', $zipFile->getEntryContents("index.html"))),0, 150);
+            $meta['shorttext'] = self::getShortTextFromHTML($zipFile->getEntryContents("index.html"));
             $i=0;
             try{
                 foreach($zipFile->getListFiles() as $f){

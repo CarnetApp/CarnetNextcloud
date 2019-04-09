@@ -58,9 +58,10 @@ class FSHooks {
     }
 
     public function postWrite($node) {
-        if($this->carnetFolder == null)
+        if($this->carnetFolder == null || substr($_SERVER['REQUEST_URI'], -strlen('carnet/note/saveText')) === 'carnet/note/saveText')
+        { //cache is handled on save
             return;
-        
+        }
         if($this->isMine($node)){
                 try{
                 
