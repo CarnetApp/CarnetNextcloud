@@ -21,10 +21,10 @@ class FSHooks {
         $this->appName = $appName;
         $this->db = $connection;
         $this->folder = $this->Config->getUserValue($this->userId, $this->appName, "note_folder");
-        if(empty($folder))
-            $folder= 'Documents/QuickNote';
+        if(empty($this->folder))
+            $this->folder= NoteUtils::$defaultCarnetNotePath;
         try{
-            $this->carnetFolder = $UserFolder->get($folder);
+            $this->carnetFolder = $UserFolder->get($this->folder);
         } catch (\OCP\Files\NotFoundException $e){
             $this->carnetFolder = null;
         }
@@ -64,10 +64,7 @@ class FSHooks {
         }
         if($this->isMine($node)){
                 try{
-                
-                /*if(NoteController::$lastWrite === $node->getPath()){
-                    return; //was already handled in save
-                }*/
+               
                 $relativePath = $this->getRelativePath($node->getPath());
                 $cacheManager = new CacheManager($this->db, $this->carnetFolder);
                 $utils = new NoteUtils();
