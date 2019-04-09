@@ -51,7 +51,7 @@ protected function execute(InputInterface $input, OutputInterface $output) {
     }
     $this->searchCache = $this->getCacheFolder()->newFile("carnet_search");
     $this->searchCache->putContent("[]");
-    $folder = $this->Config->getUserValue($userId , $this->appName, "note_folder");
+    $folder = $this->Config->getUserValue($this->userId , $this->appName, "note_folder");
     
     if(empty($folder))
         $folder= 'Documents/QuickNote';
@@ -68,9 +68,10 @@ protected function execute(InputInterface $input, OutputInterface $output) {
         $path = substr($path, -1);
 
     $query = $input->getArgument('query');
-    $query = strtolower($query);
     $query = $this->removeAccents($query);
+    $query = strtolower($query);
 
+    echo "searching ".$query;
     $this->search($path, $this->CarnetFolder->get($path), $query,0);
     $data = json_decode( $this->searchCache->getContent());
     array_push($data, "end_of_search");
@@ -113,7 +114,7 @@ private function search($relativePath, $folder, $query, $curDepth){
         }
         else{
 
-            if(strstr($this->removeAccents(strtolower($in->getName())), $query)){
+            if(strstr(strtolower($this->removeAccents($in->getName())), $query)){
                 $this->writeFound($relativePath, $in);
                 continue;
             }
@@ -137,7 +138,7 @@ private function search($relativePath, $folder, $query, $curDepth){
                 } catch(Exception $e){
                 }
                 $index = $zipFile->getEntryContents("index.html");
-                if(strstr($this->removeAccents(strtolower($index)), $query)){
+                if(strstr(strtolower($this->removeAccents($index)), $query)){
                     $this->writeFound($relativePath,$in);
                 }
             } catch(\OCP\Files\NotFoundException $e) {
