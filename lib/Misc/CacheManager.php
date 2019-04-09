@@ -125,5 +125,25 @@ class CacheManager{
         $stmt->closeCursor();
         return $array;
     }
+
+    public function search($query){
+        $arrayFullPath = array();
+        $sql = 'SELECT * FROM `*PREFIX*carnet_metadata` ' . 
+        'WHERE path LIKE ? AND CONVERT(metadata USING utf8) LIKE _utf8 ? COLLATE utf8_general_ci';
+        $args = array();
+        array_push($args, $this->carnetFolder->getPath()."/%");
+
+        array_push($args, "%".$query."%");
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute($args);
+        $array = array();
+        $fetched = $stmt->fetchAll();
+        foreach ($fetched as $row){
+            $array[substr($row['path'], strlen($this->carnetFolder->getPath())+1)] = json_decode($row['last_modification_file']);
+        }
+
+        $stmt->closeCursor();
+        return $array;
+    }
 }
 ?>

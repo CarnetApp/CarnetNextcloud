@@ -10,7 +10,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 use OCP\Files\File;
 use OCP\Files\IRootFolder;
 use OCP\Files\NotFoundException;
-
+use OCA\Carnet\Misc\CacheManager;
+use OCP\IDBConnection;
 
 class Search extends Command {
     private $output;
@@ -23,10 +24,11 @@ class Search extends Command {
          * @param string $appName
          * @param IRootFolder $rootFolder
     */
-public function __construct($AppName, $RootFolder,  $Config){
+public function __construct($AppName, $RootFolder,  $Config, IDBConnection $IDBConnection){
     parent::__construct();
     $this->appName = $AppName;
     $this->Config = $Config;
+    $this->db = $IDBConnection;
     $this->rootFolder = $RootFolder;
 }
 
@@ -72,10 +74,35 @@ protected function execute(InputInterface $input, OutputInterface $output) {
     $query = strtolower($query);
 
     echo "searching ".$query;
+    $this->data = array();
+    $this->pathArray = array();
+    $this->searchInCache($query);
     $this->search($path, $this->CarnetFolder->get($path), $query,0);
-    $data = json_decode( $this->searchCache->getContent());
-    array_push($data, "end_of_search");
-    $this->searchCache->putContent(json_encode($data));
+    //$data = json_decode( $this->searchCache->getContent());
+    array_push($this->data, "end_of_search");
+    $this->searchCache->putContent(json_encode($this->data));
+}
+
+private function searchInCache($query){
+    $cache = new CacheManager($this->db, $this->CarnetFolder);
+    $metadataFromCache = $cache->search($query);
+    if($this->searchCache){
+        foreach($metadataFromCache as $path => $mTime){
+            $this->output->writeln('found in '.$path);
+        
+            $file = array();
+            $file['name'] = "none";
+            $file['path'] = $path;
+            $file['isDir'] = false;
+            $file['mtime'] = $mTime;
+            
+            array_push($this->data, $file);
+            array_push($this->pathArray, $path);
+            
+        }
+        $this->searchCache->putContent(json_encode($this->data));
+
+    }
 }
 
 private function getCacheFolder(){
@@ -96,9 +123,8 @@ private function writeFound($relativePath, $in){
         $file['path'] = $relativePath."/".$inf->getName();
         $file['isDir'] = $inf->getType() === "dir";
         $file['mtime'] = $inf->getMtime();
-        $data = json_decode( $this->searchCache->getContent());
-        array_push($data, $file);
-        $this->searchCache->putContent(json_encode($data));
+        array_push($this->data, $file);
+        $this->searchCache->putContent(json_encode($this->data));
     }
 }
 private function search($relativePath, $folder, $query, $curDepth){
@@ -113,7 +139,9 @@ private function search($relativePath, $folder, $query, $curDepth){
 
         }
         else{
-
+            if(in_array($relativePath."/".$in->getName(), $this->pathArray)){
+                continue;
+            }
             if(strstr(strtolower($this->removeAccents($in->getName())), $query)){
                 $this->writeFound($relativePath, $in);
                 continue;
