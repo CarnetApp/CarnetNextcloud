@@ -1,8 +1,7 @@
 <?php
 namespace OCA\Carnet\Misc;
-
 class NoteUtils{
-
+    public static $defaultCarnetNotePath = "Documents/QuickNote";
     public function getMetadata($carnetFolder, $path){
         $meta = array();
         $tmppath = tempnam(sys_get_temp_dir(), uniqid().".zip");

@@ -42,6 +42,9 @@ class Application extends App {
 
             return $c->query('ServerContainer')->getConfig();
         });
+        $container->registerService('UserManager', function($c) {
+            return $c->query('ServerContainer')->getUserManager();
+        });
         $this->connectWatcher($container);
     }
 

@@ -35,7 +35,7 @@
         $folder = $this->Config->getUserValue($this->userId, $this->appName, "note_folder");
         //$this->Config->setUserValue($this->userId, $this->appName, "note_folder", 'Documents/QuickNote');
         if(empty($folder))
-            $folder= 'Documents/QuickNote';
+            $folder= NoteUtils::$defaultCarnetNotePath;
         try {
             $this->CarnetFolder = $RootFolder->getUserFolder($this->userId)->get($folder);
         } catch(\OCP\Files\NotFoundException $e) {
