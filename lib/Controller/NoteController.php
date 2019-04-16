@@ -121,6 +121,8 @@
         
         $recents = json_decode($this->getRecentFile()->getContent(),true);
         $paths = array();
+        if($recents['data'] == null)
+            $recents['data'] = array();
         foreach($recents['data'] as $item){
             $path = $item['path'];
             if($item['newpath'] != null)
@@ -129,11 +131,13 @@
                 array_push($paths, $path);
             
         }
-
-        $cache = new CacheManager($this->db, $this->CarnetFolder);
-        $metadataFromCache = $cache->getFromCache($paths);
-        $return = array();
-        $return['metadata'] = $metadataFromCache;
+        if(sizeof($paths)>0){
+            $cache = new CacheManager($this->db, $this->CarnetFolder);
+            $metadataFromCache = $cache->getFromCache($paths);
+            $return = array();
+            $return['metadata'] = $metadataFromCache;
+        }
+ 
         $return['data'] = $recents['data'];
         return $return;
     }
@@ -732,7 +736,7 @@
             
             $file->putContent($tmph);
             fclose($tmph);
-            $meta['metadata'] = $folder->get("metadata.json")->getContent();
+            $meta['metadata'] = json_decode($folder->get("metadata.json")->getContent());
             $meta['shorttext'] = NoteUtils::getShortTextFromHTML($folder->get("index.html")->getContent());
             $cache = new CacheManager($this->db, $this->CarnetFolder);
             $cache->addToCache($path, $meta, $file->getFileInfo()->getMtime());
