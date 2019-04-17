@@ -129,7 +129,7 @@ class CacheManager{
     public function search($query){
         $arrayFullPath = array();
         $sql = 'SELECT * FROM `*PREFIX*carnet_metadata` ' . 
-        'WHERE path LIKE ? AND CONVERT(metadata USING utf8) LIKE _utf8 ? COLLATE utf8_general_ci';
+        'WHERE path LIKE ? AND metadata LIKE ? ';
         $args = array();
         array_push($args, $this->carnetFolder->getPath()."/%");
 
