@@ -41,6 +41,10 @@
         } catch(\OCP\Files\NotFoundException $e) {
             $this->CarnetFolder = $RootFolder->getUserFolder($this->userId)->newFolder($folder);
         }
+        if(!$this->Config->getSystemValue('has_rebuilt_cache')){
+            shell_exec('php occ carnet:cache rebuild > /dev/null 2>/dev/null &');
+            $this->Config->setSystemValue('has_rebuilt_cache', true);
+        }
        // \OC_Util::tearDownFS();
        // \OC_Util::setupFS($UserId);
 	}
