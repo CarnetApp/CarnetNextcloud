@@ -61,7 +61,7 @@
             $path = "";
         else if(substr($path, -1) !== '/' && !empty($path))
             $path .= "/";
-
+        $paths = array();
         $data = array();
         foreach($this->CarnetFolder->get($path)->getDirectoryListing() as $in){
             $inf = $in->getFileInfo();
@@ -70,10 +70,20 @@
             $file['path'] = $path.$inf->getName();
             $file['isDir'] = $inf->getType() === "dir";
             $file['mtime'] = $inf->getMtime();
+            if($inf->getType() !== "dir"){
+                array_push($paths, $file['path']);
+            }
             array_push($data,$file);
         }
-
-        return $data;
+        
+        $return = array();
+        if(sizeof($paths)>0){
+            $cache = new CacheManager($this->db, $this->CarnetFolder);
+            $metadataFromCache = $cache->getFromCache($paths);
+            $return['metadata'] = $metadataFromCache;
+        }
+        $return['files'] = $data;
+        return $return;
     }
 
     /*
@@ -131,10 +141,10 @@
                 array_push($paths, $path);
             
         }
+        $return = array();
         if(sizeof($paths)>0){
             $cache = new CacheManager($this->db, $this->CarnetFolder);
             $metadataFromCache = $cache->getFromCache($paths);
-            $return = array();
             $return['metadata'] = $metadataFromCache;
         }
  
