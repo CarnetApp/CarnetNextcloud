@@ -147,6 +147,21 @@
        }
        return substr($this->CarnetFolder->getInternalPath(),6);
    }
+
+   /**
+    * @NoAdminRequired
+    */
+    public function setBrowserSettings($jsonSettings) {
+        $this->Config->setUserValue($this->userId, $this->appName,"browser_settings",$jsonSettings);
+    }
+
+    /**
+    * @NoAdminRequired
+    */
+    public function getBrowserSettings() {
+        return $this->Config->getUserValue($this->userId, $this->appName,"browser_settings");
+    }
+
     private function getRecentFile(){
         try {
             return $this->CarnetFolder->get("quickdoc/recentdb/recentnc");

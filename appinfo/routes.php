@@ -55,6 +55,8 @@ return [
        ['name' => 'note#getMaterialFont', 'url' => '/templates/CarnetElectron/fonts/material-icons.woff2', 'verb' => 'GET' ],
        ['name' => 'note#getChangelog', 'url' => '/settings/changelog', 'verb' => 'GET' ],
        ['name' => 'note#getLangJson', 'url' => '/settings/lang/json', 'verb' => 'GET' ],
+       ['name' => 'note#getBrowserSettings', 'url' => '/settings/browser', 'verb' => 'GET' ],
+       ['name' => 'note#setBrowserSettings', 'url' => '/settings/browser', 'verb' => 'POST' ],
 
     ]
 ];
