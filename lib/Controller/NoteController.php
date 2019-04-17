@@ -551,18 +551,23 @@
      * @NoCSRFRequired
      */
     public function getSearchCache(){
+        $return = array();
+        $return["files"] = array();
+
         try {
             $c = json_decode($this->getCacheFolder()->get("carnet_search")->getContent());
-            if($c)
-                return $c;
+            if($c){
+                $return["files"] = $c;
+            }
+               
         } catch(\OCP\Files\NotFoundException $e) {  
         } catch(\OCP\Lock\LockedException $e){
             sleep(2);
             $c = json_decode($this->getCacheFolder()->get("carnet_search")->getContent());
             if($c)
-                return $c;
+                $return["files"] = $c;
         }
-        return array();
+        return $return;
     }
 
      /**
