@@ -42,8 +42,10 @@ class FSHooks {
     private function isMine($node){
         if(substr($node->getName(), -3) === "sqd"){ // to avoid getting carnet's path each time a file is writen
             //we check if is in our path
-                    
+
+
             if(substr($node->getPath(), 0, strlen($this->carnetFolder->getPath())) === $this->carnetFolder->getPath()){
+
                 return true;
             }
         }

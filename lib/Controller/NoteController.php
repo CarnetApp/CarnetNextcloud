@@ -53,7 +53,6 @@
 	 *          add it to any other method if you don't exactly know what it does
 	 *
 	 * @NoAdminRequired
-	 * @NoCSRFRequired
 	 */
 	public function listDir() {
         $path = $_GET['path'];
@@ -88,34 +87,10 @@
 
     /*
     * @NoAdminRequired
-    * @NoCSRFRequired
     */
     public function newFolder(){
         $path = $_POST['path'];
         $this->CarnetFolder->newFolder($path);
-    }
-
-    /**
-	 * CAUTION: the @Stuff turns off security checks; for this page no admin is
-	 *          required and no CSRF check. If you don't know what CSRF is, read
-	 *          it up in the docs or you might create a security hole. This is
-	 *          basically the only required method to add this exemption, don't
-	 *          add it to any other method if you don't exactly know what it does
-	 *
-	 * @NoAdminRequired
-	 * @NoCSRFRequired
-	 */
-	public function index() {
-        $data = array();
-        $note1 = array();
-        $note2 = array();
-
-        $note1['path'] = $path;
-        array_push($data, $note1);
-        $note2['path'] = "path2".$this->CarnetFolder->getPath();
-        array_push($data, $note2);
-
-        return $data;
     }
 
     /**
@@ -154,7 +129,6 @@
 
     /**
     * @NoAdminRequired
-    * @NoCSRFRequired
     */
 	public function getNotePath() {
         return substr($this->CarnetFolder->getInternalPath(),6);
@@ -162,7 +136,6 @@
 
     /**
     * @NoAdminRequired
-    * @NoCSRFRequired
     */
    public function setNotePath() {
        if(!empty($_POST['path'])&& $this->rootFolder->getUserFolder($this->userId)->isValidPath($_POST['path'])){
