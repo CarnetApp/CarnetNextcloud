@@ -1,3 +1,14 @@
+# Version 0.15.0
+
+Re-enabling cache
+
+Sort options
+
+Faster search
+
+Languages: Russian (Alex Sev), Czech (Leschek), Dutch (Heimen Stoffels), Slovak (Ivan Pleva)
+
+
 # Version 0.14.0
 
 Make website links clickable in editor
