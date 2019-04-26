@@ -19,8 +19,11 @@ $file = preg_replace_callback('/<script(.*?)src=\"(.*?\.js(?:\?.*?)?)"/s',functi
     return "<script".$matches[1]."src=\"".$matches[2]."?mtime=".filemtime($currentpath.$matches[2])."\"";
 }, $file);
 
-if($_['carnet_display_fullscreen']==="yes")
+if($_['carnet_display_fullscreen']==="yes"){
     script("carnet","../templates/CarnetElectron/compatibility/nextcloud/browser_fullscreen");
+    if($_['nc_version']>=16)
+        style("carnet","../templates/CarnetElectron/compatibility/nextcloud/nc16");
+}
 else {
     if($_['nc_version']>=14)
     style("carnet","../templates/CarnetElectron/compatibility/nextcloud/nc14-header");

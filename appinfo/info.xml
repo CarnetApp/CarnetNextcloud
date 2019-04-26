@@ -31,7 +31,7 @@ Mac, with sync capabilities
             <filesystem/>
     </types>
     <dependencies>
-        <nextcloud min-version="13" max-version="15"/>
+        <nextcloud min-version="13" max-version="16"/>
     </dependencies>
     <navigations>
         <navigation>
