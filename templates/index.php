@@ -28,7 +28,11 @@ else {
     if($_['nc_version']>=14)
     style("carnet","../templates/CarnetElectron/compatibility/nextcloud/nc14-header");
 }
-$file = str_replace("src=\"","defer nonce='".\OC::$server->getContentSecurityPolicyNonceManager()->getNonce()."' src=\"".$root."/CarnetElectron/",$file);
+$nonce = "";
+if (method_exists(\OC::$server, "getContentSecurityPolicyNonceManager")){
+    $nonce = \OC::$server->getContentSecurityPolicyNonceManager()->getNonce();
+}
+$file = str_replace("src=\"","defer nonce='".$nonce."' src=\"".$root."/CarnetElectron/",$file);
 echo $file;
 echo "<span style=\"display:none;\" id=\"root-url\">".$root."/CarnetElectron/</span>";
 ?>

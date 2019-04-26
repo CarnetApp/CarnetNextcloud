@@ -713,7 +713,8 @@
         $folder = $cache->get("currentnote".$id);
         $data = $folder->get("data");
         $f = $data->get($media);
-        $r = new FileDisplayResponse($f);
+        $r = new DataDisplayResponse($f->getContent());
+
         $r->addHeader("Content-Disposition", "attachment");
         $r->addHeader("Content-Type", $f->getMimeType());
 
@@ -738,6 +739,8 @@
         if($tmph){
             try{
                 $this->CarnetFolder->get($path)->delete();
+                $file = $this->CarnetFolder->newFile($path);
+
             } catch(\OCP\Files\NotFoundException $e) {
             }
             

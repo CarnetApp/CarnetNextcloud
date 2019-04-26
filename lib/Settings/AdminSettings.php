@@ -26,43 +26,44 @@ namespace OCA\Carnet\Settings;
 use OCP\AppFramework\Http\TemplateResponse;
 use OCP\IConfig;
 use OCP\Settings\ISettings;
+if (method_exists(\OC::$server, "getContentSecurityPolicyNonceManager")){
+	class AdminSettings implements ISettings {
 
-class AdminSettings implements ISettings {
+		/** @var IConfig */
+		private $config;
 
-	/** @var IConfig */
-	private $config;
+		/**
+		 * AdminSettings constructor.
+		 *
+		 * @param IConfig $config
+		 */
+		public function __construct(IConfig $config) {
+			$this->config = $config;
+		}
 
-	/**
-	 * AdminSettings constructor.
-	 *
-	 * @param IConfig $config
-	 */
-	public function __construct(IConfig $config) {
-		$this->config = $config;
-	}
+		/**
+		 * @return TemplateResponse
+		 */
+		public function getForm() {
+			$parameters = [
+				'carnet_display_fullscreen' => $this->config->getAppValue('carnet', 'carnetDisplayFullscreen', 'no'),
+			];
 
-	/**
-	 * @return TemplateResponse
-	 */
-	public function getForm() {
-		$parameters = [
-			'carnet_display_fullscreen' => $this->config->getAppValue('carnet', 'carnetDisplayFullscreen', 'no'),
-		];
+			return new TemplateResponse('carnet', 'settings/settings-admin', $parameters);
+		}
 
-		return new TemplateResponse('carnet', 'settings/settings-admin', $parameters);
-	}
+		/**
+		 * @return string
+		 */
+		public function getSection() {
+			return 'additional';
+		}
 
-	/**
-	 * @return string
-	 */
-	public function getSection() {
-		return 'additional';
-	}
-
-	/**
-	 * @return int
-	 */
-	public function getPriority() {
-		return 20;
+		/**
+		 * @return int
+		 */
+		public function getPriority() {
+			return 20;
+		}
 	}
 }

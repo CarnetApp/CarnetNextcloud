@@ -1,25 +1,5 @@
 <?php
-/**
- * @author Christoph Wurst <christoph@winzerhof-wurst.at>
- * @author Jan-Christoph Borchardt <hey@jancborchardt.net>
- * @author Thomas Imbreckx <zinks@iozero.be>
- * @author Thomas Müller <thomas.mueller@tmit.eu>
- *
- * Mail
- *
- * This code is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License, version 3,
- * as published by the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License, version 3,
- * along with this program.  If not, see <http://www.gnu.org/licenses/>
- *
- */
+
 namespace OCA\Carnet\AppInfo;
 use OCP\AppFramework\App;
 use OCA\Mail\HordeTranslationHandler;
@@ -42,10 +22,43 @@ class Application extends App {
 
             return $c->query('ServerContainer')->getConfig();
         });
+
+        $container->registerService('RootFolder', function($c) {
+
+            return $c->query('ServerContainer')->getRootFolder();
+        });
         $container->registerService('UserManager', function($c) {
             return $c->query('ServerContainer')->getUserManager();
         });
         $this->connectWatcher($container);
+
+        $appName = $container->query('AppName');
+        $container->query('OCP\INavigationManager')
+            ->add(
+                function () use ($container, $appName) {
+                    $urlGenerator = $container->query('OCP\IURLGenerator');
+    
+                    return [
+                                'id'    => $appName,
+    
+                                // Sorting weight for the navigation. The higher the number, the higher
+                                // will it be listed in the navigation
+                                'order' => 2,
+    
+                                // The route that will be shown on startup when called from within the GUI
+                                // Public links are using another route, see appinfo/routes.php
+                                'href'  => $urlGenerator->linkToRoute($appName . '.page.index'),
+    
+                                // The icon that will be shown in the navigation
+                                // This file needs to exist in img/
+                                'icon'  => $urlGenerator->imagePath($appName, 'app.svg'),
+    
+                                // The title of the application. This will be used in the
+                                // navigation or on the settings page
+                                'name'  => 'Carnet'
+                        ];
+                }
+        );
     }
 
     private function connectWatcher(IAppContainer $container) {

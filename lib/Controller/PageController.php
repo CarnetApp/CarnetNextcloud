@@ -9,12 +9,10 @@ use OCP\AppFramework\Controller;
 
 class PageController extends Controller {
 	private $userId;
-	private $RootFolder;
 	private $config;
-	public function __construct($AppName, IRequest $request, $UserId, $RootFolder, $Config){
+	public function __construct($AppName, IRequest $request, $UserId, $Config){
 		parent::__construct($AppName, $request);
 		$this->userId = $UserId;
-		$this->RootFolder = $RootFolder;
 		$this->config = $Config;
 	}
 

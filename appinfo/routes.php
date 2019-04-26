@@ -9,7 +9,7 @@
  */
 
 $this->create('carnet_writer','/writer')->actionInclude('carnet/templates/writer.php');
- 
+
 return [
     'routes' => [
        ['name' => 'page#index', 'url' => '/', 'verb' => 'GET'],

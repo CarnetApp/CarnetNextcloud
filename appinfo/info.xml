@@ -18,7 +18,7 @@ Mac, with sync capabilities
 - Statistics : words/sentences/characters
 - Sync with NextCloud
 - Online editor as a NextCloud App]]></description>
-    <version>0.15.2</version>
+    <version>0.15.3</version>
     <licence>agpl</licence>
     <author mail="phie@phie.ovh" >Phie</author>
     <namespace>Carnet</namespace>
@@ -32,6 +32,8 @@ Mac, with sync capabilities
     </types>
     <dependencies>
         <nextcloud min-version="13" max-version="16"/>
+         <owncloud min-version="10" max-version="12"/>
+
     </dependencies>
     <navigations>
         <navigation>
