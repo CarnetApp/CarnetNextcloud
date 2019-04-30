@@ -99,30 +99,34 @@ class CacheManager{
     }
 
     public function getFromCache($arrayRelativePath){
-        $arrayFullPath = array();
-        $sql = 'SELECT * FROM `*PREFIX*carnet_metadata` ' . 
-        'WHERE ';
-        for($i = 0; $i < sizeof($arrayRelativePath); $i++){
-            $sql .= "`path` = ? ";
-            if($i < sizeof($arrayRelativePath)-1)
-                $sql .= "OR ";
-            array_push($arrayFullPath, $this->carnetFolder->getFullPath($arrayRelativePath[$i]));
-        }
-       
-        $stmt = $this->db->prepare($sql);
-       /* foreach($arrayRelativePath as $relativePath){
-            $stmt->bindParam($i+1, $relativePath, \PDO::PARAM_STR);
-            $i++;
-        }*/
-        
-        $stmt->execute($arrayFullPath);
+        $total = 0;
         $array = array();
-        $fetched = $stmt->fetchAll();
-        foreach ($fetched as $row){
-            $array[substr($row['path'], strlen($this->carnetFolder->getPath())+1)] = json_decode($row['metadata']);
-        }
 
-        $stmt->closeCursor();
+        while($total < sizeof($arrayRelativePath)){
+            $arrayFullPath = array();
+            $sql = 'SELECT * FROM `*PREFIX*carnet_metadata` ' . 
+            'WHERE ';
+            for($i = $total; $i < sizeof($arrayRelativePath); $i++){
+                $sql .= "`path` = ? ";
+                
+                array_push($arrayFullPath, $this->carnetFolder->getFullPath($arrayRelativePath[$i]));
+                if($i < sizeof($arrayRelativePath)-1 && $i - $total < 100)
+                    $sql .= "OR ";
+                if($i - $total == 100)
+                    break;
+            }
+            $total = $total + 100;
+        
+            $stmt = $this->db->prepare($sql);
+            
+            $stmt->execute($arrayFullPath);
+            $fetched = $stmt->fetchAll();
+            foreach ($fetched as $row){
+                $array[substr($row['path'], strlen($this->carnetFolder->getPath())+1)] = json_decode($row['metadata']);
+            }
+
+            $stmt->closeCursor();
+        }
         return $array;
     }
 
