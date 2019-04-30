@@ -114,9 +114,19 @@
             $recents['data'] = array();
         foreach($recents['data'] as $item){
             $path = $item['path'];
-            if($item['newpath'] != null)
-                $path =$item['newpath'];
-            if(!in_array($path, $paths))
+            if(array_key_exists('newpath', $îtem) && $item['newpath'] != null){
+                $path = $item['newpath'];
+                if(in_array($item['path'], $paths)){
+                    array_splice($paths, array_search($item['path'], $paths), 1);
+                }
+
+            }
+            if($item['action'] == "remove"){
+                if(in_array($item['path'], $paths)){
+                    array_splice($paths, array_search($item['path'], $paths), 1);
+                }
+            } 
+            else if(!in_array($path, $paths))
                 array_push($paths, $path);
             
         }
