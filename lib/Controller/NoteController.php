@@ -189,8 +189,12 @@
       * @NoCSRFRequired
       */
      public function postKeywordsActions(){
+        return $this->internalPostKeywordsActions($_POST["data"]);
+     }
+
+     private function internalPostKeywordsActions($actions){
         $recent = $this->getKeywordsDB();
-        foreach($_POST["data"] as $action){
+        foreach($actions as $action){
             array_push($recent['data'],$action);
         }
         $this->internalSaveKeywordsDB(json_encode($recent));
@@ -336,8 +340,11 @@
              $thisDbContent = json_decode($inDB->getContent());
              $saveDB = false;
              foreach($thisDbContent->data as $action){
+               
                 $isIn = false;
                 foreach($myDbContent->data as $actionMy){
+                    if($actionMy->time < 10000000000)
+                        $actionMy->time  = $actionMy->time  * 1000; // fix old bug
                     if($actionMy->time === $action->time && $actionMy->path === $action->path && $actionMy->action === $action->action){
                         $isIn = true;
                         break;
@@ -594,8 +601,9 @@
        $actions[0]['action'] = "move";
        $actions[0]['path'] = $from;
        $actions[0]['newPath'] = $to;
-       $actions[0]['time'] = time();
+       $actions[0]['time'] = time()*1000;
        $this->internalPostActions($actions);
+       $this->internalPostKeywordsActions($actions);
     }
 
       /**
