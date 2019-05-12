@@ -1,3 +1,7 @@
+# Version 0.15.4
+
+Fix: move note leads to bug in latest
+
 # Version 0.15.0
 
 Re-enabling cache
