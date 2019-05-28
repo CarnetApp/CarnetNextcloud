@@ -3,6 +3,7 @@
       xsi:noNamespaceSchemaLocation="https://apps.nextcloud.com/schema/apps/info.xsd">
     <id>carnet</id>
     <name>Carnet</name>
+    <scope>carnet</scope>
     <summary>Powerful note taking app available on android</summary>
     <description><![CDATA[Carnet is a powerful note taking app which purpose is not only to write your shopping list but can also be used to write longer texts, stories, etc. Carnet is available on Android and Linux, on your web browser, Windows and
 Mac, with sync capabilities
@@ -16,9 +17,9 @@ Mac, with sync capabilities
 - Search amount your notes
 - Protect the app with a pin code (no encryption) on android
 - Statistics : words/sentences/characters
-- Sync with NextCloud
-- Online editor as a NextCloud App]]></description>
-    <version>0.15.4</version>
+- Sync with ownCloud/NextCloud
+- Online editor as a ownCloud/NextCloud App]]></description>
+    <version>0.15.6</version>
     <licence>agpl</licence>
     <author mail="phie@phie.ovh" >Phie</author>
     <namespace>Carnet</namespace>
@@ -32,7 +33,7 @@ Mac, with sync capabilities
     </types>
     <dependencies>
         <nextcloud min-version="13" max-version="16"/>
-         <owncloud min-version="10" max-version="12"/>
+         <owncloud min-version="10" max-version="10"/>
 
     </dependencies>
     <navigations>
