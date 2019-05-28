@@ -1,3 +1,20 @@
+# Version 0.16.0
+
+New feature : Reminders
+
+Multilines todolists
+
+
+UI:
+
+Title bar directly in editor
+
+
+Languages:
+
+Esperanto (mallabori), Spanish (Rafael Yáñez), Arabic (Butterfly of fire)
+
+
 # Version 0.15.4
 
 Fix: move note leads to bug in latest
