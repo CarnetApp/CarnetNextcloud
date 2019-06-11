@@ -1,3 +1,12 @@
+# Version 0.16.2
+
+Fix display theme dialog 
+
+Fix settings in owncloud
+
+Languages: Russian (Mac Guffin), Czech (Leschek), Italian (Gianluca De Moro), German (Christian Scholz), Chinese (水货)
+
+
 # Version 0.16.0
 
 New feature : Reminders
