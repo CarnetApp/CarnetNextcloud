@@ -1,3 +1,12 @@
+# Version 0.17.0
+
+reworked toolbar
+reworked color picker
+reworked todo-list
+better design for large screens
+translations:  Mac Guffin, Rafael Yáñez, Ian Beardslee, ButterflyOfFire, Henrik Larsson
+
+
 # Version 0.16.2
 
 Fix display theme dialog 
