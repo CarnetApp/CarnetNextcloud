@@ -281,8 +281,9 @@
   public function mergeKeywordsDB() {
       $myDb = $this->getKeywordsDBFile();
       $hasChanged = false;
+      $lastmod = $myDb->getMTime(); 
       foreach($this->CarnetFolder->get("quickdoc/keywords/")->getDirectoryListing() as $inDB){
-          if($inDB->getName() === $myDb->getName()){
+          if($inDB->getName() === $myDb->getName()||$inDB->getMTime()<$lastmod){
               continue;
           }
           $myDbContent = json_decode($myDb->getContent());
@@ -331,9 +332,10 @@
       */
      public function mergeRecentDB() {
          $myDb = $this->getRecentFile();
+         $lastmod = $myDb->getMTime(); 
          $hasChanged = false;
          foreach($this->CarnetFolder->get("quickdoc/recentdb/")->getDirectoryListing() as $inDB){
-             if($inDB->getName() === $myDb->getName()){
+             if($inDB->getName() === $myDb->getName()||$inDB->getMTime()<$lastmod){
                  continue;
              }
              $myDbContent = json_decode($myDb->getContent());
