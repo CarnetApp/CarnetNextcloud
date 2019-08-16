@@ -622,6 +622,7 @@
      * @NoCSRFRequired
      */
      public function saveTextToOpenNote(){
+        $this->waitEndOfExtraction($id)
         $id = $_POST['id'];
         $cache = $this->getCacheFolder();
         $folder = $cache->get("currentnote".$id);
@@ -647,6 +648,7 @@
      * @NoCSRFRequired
      */
     public function deleteMediaFromOpenNote($id){
+        $this->waitEndOfExtraction($id)
         $cache = $this->getCacheFolder();
         $folder = $cache->get("currentnote".$id);
         
@@ -664,6 +666,7 @@
      * @NoCSRFRequired
      */
      public function addMediaToOpenNote($id){
+        $this->waitEndOfExtraction($id)
         $cache = $this->getCacheFolder();
         $folder = $cache->get("currentnote".$id);
         
@@ -709,6 +712,7 @@
      * @NoCSRFRequired
      */
      public function listMediaOfOpenNote($id){
+        $this->waitEndOfExtraction($id)
         $cache = $this->getCacheFolder();
         $folder = $cache->get("currentnote".$id);
         $media = array();
@@ -729,6 +733,7 @@
      * @NoCSRFRequired
      */
      public function getMediaOfOpenNote($id, $media){
+        $this->waitEndOfExtraction($id)
         $cache = $this->getCacheFolder();
         $folder = $cache->get("currentnote".$id);
         $data = $folder->get("data");
@@ -808,51 +813,37 @@
         }
         return null;
      }
+
+     private function waitEndOfExtraction($id){
+        $cache = $this->getCacheFolder();
+        $folder = $cache->get("currentnote".$id);
+        do{
+         if($folder->nodeExists(".extraction_finished"))
+            return;
+        }while(true); 
+    }
+    
      
      /**
      * @NoAdminRequired
      * @NoCSRFRequired
      */
-     public function openNote(){
+    public function openNote(){
         $editUniqueID = uniqid();
         $data = array();
+
         $path = $_GET['path'];
         $cache = $this->getCacheFolder();
-        /*
-            because of an issue with nextcloud, working with a single currentnote folder is impossible...
-        */
-        $folder = $this->getCurrentnoteDir();
-        try{
-            if($folder !== null)
-                $folder->delete();
-        }
-        catch(\BadMethodCallException $e){
-        }
         $folder = $cache->newFolder("currentnote".$editUniqueID);
         try{
             $tmppath = tempnam(sys_get_temp_dir(), uniqid().".zip");
             file_put_contents($tmppath,$this->CarnetFolder->get($path)->fopen("r"));
-
             $zipFile = new MyZipFile();
             $zipFile->openFile($tmppath);
-            foreach($zipFile as $entryName => $contents){
-                if($contents === "" AND $zipFile->isDirectory($entryName)){
-                    $folder->newFolder($entryName);
-                }
-                else if($contents !== "" && $contents !== NULL){
-                    if($entryName === "index.html"){
-                        $data['html'] = $contents;
-                    } else if($entryName === "metadata.json"){
-                        $data['metadata'] = json_decode($contents);
-                    }
-                    $parent = dirname($entryName);
-                    if($parent !== "." && !$folder->nodeExists($parent)){
-                        $folder->newFolder($parent);
-                    }
-                    $folder->newFile($entryName)->putContent($contents);
-                }
-            }
+            $data['metadata'] = json_decode($zipFile['metadata.json']);
+            $data['html'] = $zipFile['index.html'];
             unlink($tmppath);
+	        shell_exec('php occ carnet:opennote '.escapeshellarg($this->userId).' '.escapeshellarg($path).' '.escapeshellarg($editUniqueID).'> /dev/null 2>/dev/null &');
         } catch(\OCP\Files\NotFoundException $e) {
             $data["error"] = "not found";
         }

@@ -49,6 +49,8 @@ Mac, with sync capabilities
     <commands>
         <command>OCA\Carnet\Command\Search</command>
         <command>OCA\Carnet\Command\Cache</command>
+        <command>OCA\Carnet\Command\OpenNote</command>
+
     </commands>
 
 </info>
