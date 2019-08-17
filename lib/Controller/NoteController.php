@@ -247,6 +247,7 @@
    public function getLangJson($lang){
      if($lang !== ".." && $lang !== "../"){
         $response = new StreamResponse(__DIR__.'/../../templates/CarnetElectron/i18n/'.$lang.".json");
+        $response->addHeader("Content-Type", "application/json");
         $response->cacheFor(604800);
         return $response;
      }
