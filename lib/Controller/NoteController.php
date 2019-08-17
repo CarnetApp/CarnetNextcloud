@@ -109,9 +109,14 @@
 	public function getRecent() {
         
         $recents = json_decode($this->getRecentFile()->getContent(),true);
+
         $paths = array();
         if($recents['data'] == null)
             $recents['data'] = array();
+        if($recents['metadata'] != null){ //fix an old bug 
+            unset($recents['metadata']);
+            $this->internalSaveRecent(json_encode($recents));
+        }
         foreach($recents['data'] as $item){
             $path = $item['path'];
             if(array_key_exists('newpath', $item) && $item['newpath'] != null){
@@ -337,8 +342,11 @@
       * @NoCSRFRequired
       */
      public function mergeRecentDB() {
+         if(!$this->CarnetFolder->nodeExists("quickdoc/recentdb/recentnc"))
+            $lastmod = -1;
          $myDb = $this->getRecentFile();
-         $lastmod = $myDb->getMTime(); 
+         if($lastmod != -1)
+            $lastmod = $myDb->getMTime(); 
          $hasChanged = false;
          foreach($this->CarnetFolder->get("quickdoc/recentdb/")->getDirectoryListing() as $inDB){
              if($inDB->getName() === $myDb->getName()||$inDB->getMTime()<$lastmod){
@@ -426,7 +434,7 @@
      }
 
      public function internalPostActions($actions){
-        $recent = $this->getRecent();
+        $recent = json_decode($this->getRecentFile()->getContent(),true);
         foreach($actions as $action){
             array_push($recent['data'],$action);
         }
