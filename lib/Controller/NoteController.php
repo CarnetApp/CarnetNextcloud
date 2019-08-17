@@ -843,7 +843,9 @@
             file_put_contents($tmppath,$this->CarnetFolder->get($path)->fopen("r"));
             $zipFile = new MyZipFile();
             $zipFile->openFile($tmppath);
-            $data['metadata'] = json_decode($zipFile['metadata.json']);
+            try{
+                $data['metadata'] = json_decode($zipFile['metadata.json']);
+            } catch(\PhpZip\Exception\ZipNotFoundEntry $e){}
             $data['html'] = $zipFile['index.html'];
             unlink($tmppath);
 	        shell_exec('php occ carnet:opennote '.escapeshellarg($this->userId).' '.escapeshellarg($path).' '.escapeshellarg($editUniqueID).'> /dev/null 2>/dev/null &');
