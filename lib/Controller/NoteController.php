@@ -245,8 +245,11 @@
    * @NoCSRFRequired
    */
    public function getLangJson($lang){
-     if($lang !== ".." && $lang !== "../")
-       return new StreamResponse(__DIR__.'/../../templates/CarnetElectron/i18n/'.$lang.".json");
+     if($lang !== ".." && $lang !== "../"){
+        $response = new StreamResponse(__DIR__.'/../../templates/CarnetElectron/i18n/'.$lang.".json");
+        $response->cacheFor(604800);
+        return $response;
+     }
      else
        die();
    }
