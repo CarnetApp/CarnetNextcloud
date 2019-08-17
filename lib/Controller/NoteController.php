@@ -539,6 +539,7 @@
                     }
                 }
 			} catch(\OCP\Files\NotFoundException $e) {
+            } catch(\OCP\Encryption\Exceptions\GenericEncryptionException $e){
             }
            
         }

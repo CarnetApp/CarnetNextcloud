@@ -85,6 +85,8 @@ class CacheManager{
                 $this->addToCacheFullPath($node->getPath(), $meta, $meta['lastmodfile']);
             } catch(\PhpZip\Exception\ZipException $e){
 
+            } catch(\OCP\Encryption\Exceptions\GenericEncryptionException $e){
+                
             }
         }
 
