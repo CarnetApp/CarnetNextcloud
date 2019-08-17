@@ -841,7 +841,6 @@
 
         $path = $_GET['path'];
         $cache = $this->getCacheFolder();
-        $folder = $cache->newFolder("currentnote".$editUniqueID);
         try{
             $tmppath = tempnam(sys_get_temp_dir(), uniqid().".zip");
             file_put_contents($tmppath,$this->CarnetFolder->get($path)->fopen("r"));
@@ -852,10 +851,11 @@
             } catch(\PhpZip\Exception\ZipNotFoundEntry $e){}
             $data['html'] = $zipFile['index.html'];
             unlink($tmppath);
-	        shell_exec('php occ carnet:opennote '.escapeshellarg($this->userId).' '.escapeshellarg($path).' '.escapeshellarg($editUniqueID).'> /dev/null 2>/dev/null &');
         } catch(\OCP\Files\NotFoundException $e) {
             $data["error"] = "not found";
         }
+        shell_exec('php occ carnet:opennote '.escapeshellarg($this->userId).' '.escapeshellarg($path).' '.escapeshellarg($editUniqueID).'> /dev/null 2>/dev/null &');
+
         $data['id'] = $editUniqueID;
         return $data; 
 
