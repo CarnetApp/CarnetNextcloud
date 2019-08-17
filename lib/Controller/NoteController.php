@@ -622,8 +622,8 @@
      * @NoCSRFRequired
      */
      public function saveTextToOpenNote(){
-        $this->waitEndOfExtraction($id)
         $id = $_POST['id'];
+        $this->waitEndOfExtraction($id);
         $cache = $this->getCacheFolder();
         $folder = $cache->get("currentnote".$id);
         try{
@@ -648,7 +648,7 @@
      * @NoCSRFRequired
      */
     public function deleteMediaFromOpenNote($id){
-        $this->waitEndOfExtraction($id)
+        $this->waitEndOfExtraction($id);
         $cache = $this->getCacheFolder();
         $folder = $cache->get("currentnote".$id);
         
@@ -666,7 +666,7 @@
      * @NoCSRFRequired
      */
      public function addMediaToOpenNote($id){
-        $this->waitEndOfExtraction($id)
+        $this->waitEndOfExtraction($id);
         $cache = $this->getCacheFolder();
         $folder = $cache->get("currentnote".$id);
         
@@ -712,7 +712,7 @@
      * @NoCSRFRequired
      */
      public function listMediaOfOpenNote($id){
-        $this->waitEndOfExtraction($id)
+        $this->waitEndOfExtraction($id);
         $cache = $this->getCacheFolder();
         $folder = $cache->get("currentnote".$id);
         $media = array();
@@ -733,7 +733,7 @@
      * @NoCSRFRequired
      */
      public function getMediaOfOpenNote($id, $media){
-        $this->waitEndOfExtraction($id)
+        $this->waitEndOfExtraction($id);
         $cache = $this->getCacheFolder();
         $folder = $cache->get("currentnote".$id);
         $data = $folder->get("data");
@@ -816,10 +816,10 @@
 
      private function waitEndOfExtraction($id){
         $cache = $this->getCacheFolder();
-        $folder = $cache->get("currentnote".$id);
         do{
-         if($folder->nodeExists(".extraction_finished"))
+         if($cache->nodeExists("currentnote".$id."/.extraction_finished"))
             return;
+            sleep(1);
         }while(true); 
     }
     
