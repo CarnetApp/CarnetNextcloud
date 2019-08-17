@@ -32,6 +32,8 @@ class PageController extends Controller {
 			'carnet_display_fullscreen' => $this->config->getAppValue('carnet', 'carnetDisplayFullscreen', 'no'),
 		];
 		$response = new TemplateResponse($this->appName,"index",$parameters);
+		if($this->config->getAppValue('carnet', 'carnetDisplayFullscreen', 'no') === "yes")
+			$response->renderAs("blank");
 		$policy = new ContentSecurityPolicy();
         $policy->addAllowedFrameDomain('\'self\'');
         $response->setContentSecurityPolicy($policy); // allow iframe
@@ -43,10 +45,13 @@ class PageController extends Controller {
 	* @NoCSRFRequired
 	*/
    public function settings() {
-	$parameters = [
-		'carnet_display_fullscreen' => $this->config->getAppValue('carnet', 'carnetDisplayFullscreen', 'no'),
-	];
-	   return new TemplateResponse($this->appName,"settings", $parameters); // templates/writer.php
+		$parameters = [
+			'carnet_display_fullscreen' => $this->config->getAppValue('carnet', 'carnetDisplayFullscreen', 'no'),
+		];
+		$response =  new TemplateResponse($this->appName,"settings", $parameters);
+		if($this->config->getAppValue('carnet', 'carnetDisplayFullscreen', 'no') === "yes")
+			$response->renderAs("blank");
+		return $response;
    }
 
 }

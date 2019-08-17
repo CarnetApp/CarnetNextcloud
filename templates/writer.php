@@ -22,9 +22,11 @@ $file = preg_replace_callback('/<link(.*?)href=\"(.*?\.css(?:\?.*?)?)"/s',functi
     $relativePath = str_replace("<!ROOTPATH>", "", $matches[2]);
     return "<link".$matches[1]."href=\"".$src."?mtime=".filemtime($currentpath.$relativePath)."\"";
 }, $file);
+// token is needed to pass the csfr check
+$file .= "<span style=\"display:none;\" id=\"token\">".$_['requesttoken']."</span>";
+$file .= "<script src=\"".$root."/CarnetElectron/compatibility/nextcloud/fullscreen.js?mtime=\"></script>";
 
 $file = str_replace("<!ROOTPATH>", $root."/CarnetElectron/", $file);
-
 $root = substr(__DIR__, strlen($_SERVER['DOCUMENT_ROOT']));
 $urlGenerator = \OC::$server->getURLGenerator();
 $file = str_replace("<!ROOTURL>", $root."/CarnetElectron/", $file);
