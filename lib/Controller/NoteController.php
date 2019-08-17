@@ -176,7 +176,8 @@
         try {
             return $this->CarnetFolder->get("quickdoc/recentdb/recentnc");
         } catch(\OCP\Files\NotFoundException $e) {
-            $this->CarnetFolder->newFolder('/quickdoc/recentdb', 0777, true);
+            if(!$this->CarnetFolder->nodeExists('/quickdoc/recentdb'))
+                $this->CarnetFolder->newFolder('/quickdoc/recentdb', 0777, true);
             $file = $this->CarnetFolder->newFile("quickdoc/recentdb/recentnc");
             $file->putContent("{\"data\":[]}");
             return $file;
@@ -231,7 +232,8 @@
        try {
            return $this->CarnetFolder->get("quickdoc/keywords/keywordsnc");
        } catch(\OCP\Files\NotFoundException $e) {
-           $this->CarnetFolder->newFolder('/quickdoc/keywords', 0777, true);
+           if(!$this->CarnetFolder->nodeExists('/quickdoc/keywords'))
+                $this->CarnetFolder->newFolder('/quickdoc/keywords', 0777, true);
            $file = $this->CarnetFolder->newFile("quickdoc/keywords/keywordsnc");
            $file->putContent("{\"data\":[]}");
            return $file;
