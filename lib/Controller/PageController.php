@@ -36,10 +36,21 @@ class PageController extends Controller {
 			$response->renderAs("blank");
 		$policy = new ContentSecurityPolicy();
         $policy->addAllowedFrameDomain('\'self\'');
-        $response->setContentSecurityPolicy($policy); // allow iframe
+		$response->setContentSecurityPolicy($policy); // allow iframe
+		$response->cacheFor(604800);
 		return $response;
 	}
 
+		/**
+	 * @NoAdminRequired
+	 * @NoCSRFRequired
+	 */
+	public function writer() {
+		$response = new TemplateResponse($this->appName,"writer");
+		$response->renderAs("blank");
+		$response->cacheFor(604800);
+		return $response;
+	}
 	/**
 	* @NoAdminRequired
 	* @NoCSRFRequired

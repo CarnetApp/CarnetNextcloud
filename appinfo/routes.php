@@ -8,11 +8,11 @@
  * it's instantiated in there
  */
 
-$this->create('carnet_writer','/writer')->actionInclude('carnet/templates/writer.php');
 
 return [
     'routes' => [
        ['name' => 'page#index', 'url' => '/', 'verb' => 'GET'],
+       ['name' => 'page#writer', 'url' => '/writer', 'verb' => 'GET'],
        ['name' => 'page#settings', 'url' => '/settings', 'verb' => 'GET'],
        ['name' => 'note#getNotePath', 'url' => '/settings/note_path', 'verb' => 'GET'],
        ['name' => 'note#setNotePath', 'url' => '/settings/note_path', 'verb' => 'POST'],
