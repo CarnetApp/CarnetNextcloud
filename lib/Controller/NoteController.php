@@ -119,8 +119,8 @@
         }
         foreach($recents['data'] as $item){
             $path = $item['path'];
-            if(array_key_exists('newpath', $item) && $item['newpath'] != null){
-                $path = $item['newpath'];
+            if(array_key_exists('newPath', $item) && $item['newPath'] != null){
+                $path = $item['newPath'];
                 if(in_array($item['path'], $paths)){
                     array_splice($paths, array_search($item['path'], $paths), 1);
                 }
