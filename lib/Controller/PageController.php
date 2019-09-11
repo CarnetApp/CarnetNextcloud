@@ -47,6 +47,9 @@ class PageController extends Controller {
 	 */
 	public function writer() {
 		$response = new TemplateResponse($this->appName,"writer");
+		$policy = new ContentSecurityPolicy();
+		$policy->addAllowedMediaDomain('blob:');
+		$response->setContentSecurityPolicy($policy);
 		$response->renderAs("blank");
 		$response->cacheFor(604800);
 		return $response;
