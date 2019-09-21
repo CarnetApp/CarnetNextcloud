@@ -1,3 +1,24 @@
+# Version 0.18.0
+
+
+Ability to remove rating
+Async load of notes
+
+Faster when fullscreen (see nextcloud admin settings): don't load nextcloud completely
+Faster load of languages
+Cache for recent DB (faster load)
+
+Fix heavy databases
+Fix metadata of moved notes
+Fix audio player with bromite
+Fix audio recording with Chrome
+Fix audio icon
+Fix checkbox with dark theme
+Fix save after moving item in todolist
+Fix scrollbar in dark theme
+
+Compatibility Nextcloud 17
+
 # Version 0.17.0
 
 reworked toolbar
