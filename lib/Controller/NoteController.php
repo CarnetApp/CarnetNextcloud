@@ -261,6 +261,41 @@
    }
 
 
+
+  /**
+  * @NoAdminRequired
+  * @NoCSRFRequired
+  */
+  public function getOpusDecoderJavascript(){
+    $response = new StreamResponse(__DIR__.'/../../templates/CarnetElectron/reader/libs/recorder/decoderWorker.min.js');
+    $response->addHeader("Content-Type", "application/javascript");
+    return $response;
+  }
+
+
+  /**
+  * @NoAdminRequired
+  * @NoCSRFRequired
+  */
+  public function getOpusEncoderJavascript(){
+    $response = new StreamResponse(__DIR__.'/../../templates/CarnetElectron/reader/libs/recorder/encoderWorker.min.js');
+    $response->addHeader("Content-Type", "application/javascript");
+    return $response;
+  }
+  /**
+	 * @PublicPage
+	 * @NoCSRFRequired
+     * @NoAdminRequired
+   * 
+*/
+public function getOpusEncoder(){
+    echo"bla";
+    return;
+  $response = new StreamResponse(__DIR__.'/../../templates/CarnetElectron/reader/libs/recorder/encoderWorker.min.wasm');
+  $response->addHeader("Content-Type", "application/wasm");
+  return $response;
+}
+  
    /**
    * @NoAdminRequired
    * @NoCSRFRequired

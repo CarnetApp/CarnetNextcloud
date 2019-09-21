@@ -57,6 +57,10 @@ return [
        ['name' => 'note#getLangJson', 'url' => '/settings/lang/json', 'verb' => 'GET' ],
        ['name' => 'note#getBrowserSettings', 'url' => '/settings/browser', 'verb' => 'GET' ],
        ['name' => 'note#setBrowserSettings', 'url' => '/settings/browser', 'verb' => 'POST' ],
+       ['name' => 'PublicApi#getOpusEncoder', 'url' => '/recorder/encoderWorker.min.wasm', 'verb' => 'GET' ],
+       ['name' => 'PublicApi#getOpusDecoder', 'url' => '/recorder/decoderWorker.min.wasm', 'verb' => 'GET' ],
+       ['name' => 'note#getOpusEncoderJavascript', 'url' => '/recorder/encoderWorker.min.js', 'verb' => 'GET' ],
+       ['name' => 'note#getOpusDecoderJavascript', 'url' => '/recorder/decoderWorker.min.js', 'verb' => 'GET' ],
 
     ]
 ];
