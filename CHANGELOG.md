@@ -18,6 +18,7 @@ Fix save after moving item in todolist
 Fix scrollbar in dark theme
 
 Compatibility Nextcloud 17
+translations:  Mac Guffin, ButterflyOfFire, Devfreedom, Christian Scholz
 
 # Version 0.17.0
 
