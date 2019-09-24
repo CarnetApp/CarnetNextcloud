@@ -29,8 +29,8 @@ if($_['carnet_display_fullscreen']==="yes"){
     <link rel=\"icon\" href=\"".image_path('', 'favicon.ico')."\">
     <link rel=\"mask-icon\" sizes=\"any\" href=\"".image_path('', 'favicon-mask.svg')."\" color=\"".$theme->getColorPrimary()."\">
     <link rel=\"manifest\" href=\"".image_path('', 'manifest.json')."\">
+    <script src=\"compatibility/nextcloud/fullscreen.js?mtime=\"></script>
     </head>", $file);
-    $file .= "<script src=\"compatibility/nextcloud/fullscreen.js?mtime=\"></script>";
     if($_['nc_version']>=16)
         style("carnet","../templates/CarnetElectron/compatibility/nextcloud/nc16");
     
