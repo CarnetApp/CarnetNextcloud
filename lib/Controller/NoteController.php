@@ -107,13 +107,14 @@
 	 * @NoAdminRequired
 	 */
 	public function getRecent() {
-        
+        if(!$this->CarnetFolder->nodeExists("quickdoc/recentdb/recentnc"))
+            $this->mergeRecentDB();
         $recents = json_decode($this->getRecentFile()->getContent(),true);
 
         $paths = array();
         if($recents['data'] == null)
             $recents['data'] = array();
-        if($recents['metadata'] != null){ //fix an old bug 
+        if(isset($recents['metadata'])){ //fix an old bug 
             unset($recents['metadata']);
             $this->internalSaveRecent(json_encode($recents));
         }
@@ -229,7 +230,8 @@
     * @NoCSRFRequired
     */
     public function getKeywordsDB() {  
-
+        if(!$this->CarnetFolder->nodeExists("quickdoc/keywords/keywordsnc"))
+            $this->mergeKeywordsDB();
         return json_decode($this->getKeywordsDBFile()->getContent(),true);
     }
     
@@ -325,9 +327,13 @@ public function getOpusEncoder(){
    * @NoCSRFRequired
    */
   public function mergeKeywordsDB() {
+      $lastmod = 0;
+      if(!$this->CarnetFolder->nodeExists("quickdoc/keywords/keywordsnc"))
+        $lastmod = -1;
       $myDb = $this->getKeywordsDBFile();
       $hasChanged = false;
-      $lastmod = $myDb->getMTime(); 
+      if($lastmod != -1)
+        $lastmod = $myDb->getMTime();
       foreach($this->CarnetFolder->get("quickdoc/keywords/")->getDirectoryListing() as $inDB){
           if($inDB->getName() === $myDb->getName()||$inDB->getMTime()<$lastmod){
               continue;
@@ -338,7 +344,7 @@ public function getOpusEncoder(){
           foreach($thisDbContent->data as $action){
              $isIn = false;
              foreach($myDbContent->data as $actionMy){
-                 if($actionMy->keyword === $action->keyword && $actionMy->time === $action->time && $actionMy->path === $action->path && $actionMy->action === $action->action){
+                 if($actionMy == $action){
                      $isIn = true;
                      break;
                   }         
