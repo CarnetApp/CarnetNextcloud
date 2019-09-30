@@ -1,3 +1,7 @@
+# Version 0.18.3
+
+Fixes save bugs + multiple php errors and errors with keywords db
+
 # Version 0.18.0
 
 
