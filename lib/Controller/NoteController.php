@@ -380,6 +380,7 @@ public function getOpusEncoder(){
       * @NoCSRFRequired
       */
      public function mergeRecentDB() {
+        $lastmod = 0;
          if(!$this->CarnetFolder->nodeExists("quickdoc/recentdb/recentnc"))
             $lastmod = -1;
          $myDb = $this->getRecentFile();
