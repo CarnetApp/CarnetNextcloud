@@ -166,14 +166,14 @@
    /**
     * @NoAdminRequired
     */
-    public function setUISettings($jsonSettings) {
+    public function setBrowserSettings($jsonSettings) {
         $this->Config->setUserValue($this->userId, $this->appName,"browser_settings",$jsonSettings);
     }
 
     /**
     * @NoAdminRequired
     */
-    public function getUISettings() {
+    public function getBrowserSettings() {
         return $this->Config->getUserValue($this->userId, $this->appName,"browser_settings");
     }
 
