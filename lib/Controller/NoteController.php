@@ -901,12 +901,54 @@ public function getOpusEncoder(){
         } catch(\OCP\Files\NotFoundException $e) {
             $data["error"] = "not found";
         }
-        shell_exec('php occ carnet:opennote '.escapeshellarg($this->userId).' '.escapeshellarg($path).' '.escapeshellarg($editUniqueID).'> /dev/null 2>/dev/null &');
 
         $data['id'] = $editUniqueID;
         return $data; 
 
      }
+
+     /**
+     * @NoAdminRequired
+     * @NoCSRFRequired
+     */
+    public function extractNote(){
+        $path = $_GET['path'];
+        $editUniqueID = $_GET['id'];
+        $cache = $this->getCacheFolder();
+        /*
+            because of an issue with nextcloud, working with a single currentnote folder is impossible...
+        */    
+        foreach($cache->getDirectoryListing() as $in){
+            if(substr($in->getName(), 0, strlen("currentnote")) === "currentnote"){
+                $in->delete();
+            }
+        }
+        $folder = $cache->newFolder("currentnote".$editUniqueID);
+        try{
+            $tmppath = tempnam(sys_get_temp_dir(), uniqid().".zip");
+            file_put_contents($tmppath,$this->CarnetFolder->get($path)->fopen("r"));
+            $zipFile = new \PhpZip\ZipFile();
+            $zipFile->openFile($tmppath);
+            foreach($zipFile as $entryName => $contents){
+            if($entryName === ".extraction_finished")
+            continue;    
+            if($contents === "" AND $zipFile->isDirectory($entryName)){
+                $folder->newFolder($entryName);
+            }
+            else if($contents !== "" && $contents !== NULL){
+                $parent = dirname($entryName);
+                if($parent !== "." && !$folder->nodeExists($parent)){
+                    $folder->newFolder($parent);
+                }
+                $folder->newFile($entryName)->putContent($contents);
+            }
+        }
+        unlink($tmppath);
+        } catch(\OCP\Files\NotFoundException $e) {
+        }
+        $folder->newFile(".extraction_finished");
+    }
+
      /**
       * @NoAdminRequired
       *

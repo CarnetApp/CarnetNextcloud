@@ -25,6 +25,7 @@ return [
 
        ['name' => 'page#do_echo', 'url' => '/echo', 'verb' => 'POST'],
        ['name' => 'note#openNote', 'url' => '/note/open', 'verb' => 'GET'],
+       ['name' => 'note#extractNote', 'url' => '/note/extract', 'verb' => 'GET'],
        ['name' => 'note#createNote', 'url' => '/note/create', 'verb' => 'GET'],
        ['name' => 'note#saveTextToOpenNote', 'url' => '/note/saveText', 'verb' => 'POST'],
        ['name' => 'note#addMediaToOpenNote', 'url' => '/note/open/{id}/addMedia', 'verb' => 'POST'],
