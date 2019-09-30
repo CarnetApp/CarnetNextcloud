@@ -67,7 +67,7 @@ class CacheManager{
 
     private function recursiveAddToCache($carnetFolder, $node, $cache){
         if($node instanceof \OCP\Files\Folder){
-            foreach($node->get($path)->getDirectoryListing() as $inNode){
+            foreach($node->getDirectoryListing() as $inNode){
                 echo $inNode->getPath();
                 $this->recursiveAddToCache($carnetFolder, $inNode, $cache);
             }
