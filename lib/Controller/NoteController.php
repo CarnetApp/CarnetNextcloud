@@ -174,10 +174,7 @@
     * @NoAdminRequired
     */
     public function getUISettings() {
-        $settings = $this->Config->getUserValue($this->userId, $this->appName,"browser_settings");
-        if(empty($settings))
-            $settings = "{}";
-        return json_decode($settings);
+        return $this->Config->getUserValue($this->userId, $this->appName,"browser_settings");
     }
 
     private function getRecentFile(){
