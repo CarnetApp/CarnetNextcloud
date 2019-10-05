@@ -49,7 +49,10 @@ class PageController extends Controller {
 		$response = new TemplateResponse($this->appName,"writer");
 		$policy = new ContentSecurityPolicy();
 		$policy->addAllowedMediaDomain('blob:');
-		$policy->addAllowedWorkerSrcDomain('\'self\'');
+		if (method_exists($policy, "addAllowedWorkerSrcDomain")){
+			$policy->addAllowedWorkerSrcDomain('\'self\'');
+
+		}
 		$response->setContentSecurityPolicy($policy);
 		$response->renderAs("blank");
 		$response->cacheFor(604800);

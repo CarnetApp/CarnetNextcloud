@@ -43,6 +43,10 @@ $nonce = "";
 if (method_exists(\OC::$server, "getContentSecurityPolicyNonceManager")){
     $nonce = \OC::$server->getContentSecurityPolicyNonceManager()->getNonce();
 }
+else{
+    style("carnet","../templates/CarnetElectron/compatibility/nextcloud/owncloud");
+}
+
 $file = str_replace("src=\"","defer nonce='".$nonce."' src=\"".$root."/CarnetElectron/",$file);
 echo $file;
 echo "<span style=\"display:none;\" id=\"root-url\">".$root."/CarnetElectron/</span>";
