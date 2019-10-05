@@ -873,11 +873,14 @@ public function getOpusEncoder(){
 
      private function waitEndOfExtraction($id){
         $cache = $this->getCacheFolder();
+        $i=0;
         do{
          if($cache->nodeExists("currentnote".$id."/.extraction_finished"))
             return;
-            sleep(1);
-        }while(true); 
+          sleep(1);
+          $i++;
+        }while($i < 30); 
+        throw new Exception ("timeout");
     }
     
      
@@ -923,10 +926,15 @@ public function getOpusEncoder(){
         */    
         foreach($cache->getDirectoryListing() as $in){
             if(substr($in->getName(), 0, strlen("currentnote")) === "currentnote"){
-                $in->delete();
+                try{
+                    $in->delete();
+                } catch (\OCP\Lock\LockedException $e){
+
+                }
             }
         }
         $folder = $cache->newFolder("currentnote".$editUniqueID);
+       
         try{
             $tmppath = tempnam(sys_get_temp_dir(), uniqid().".zip");
             file_put_contents($tmppath,$this->CarnetFolder->get($path)->fopen("r"));
@@ -949,7 +957,14 @@ public function getOpusEncoder(){
         unlink($tmppath);
         } catch(\OCP\Files\NotFoundException $e) {
         }
-        $folder->newFile(".extraction_finished");
+
+        try{
+            $folder->newFile(".extraction_finished");
+        } catch (\OCP\Lock\LockedException $e){
+            $folder->get(".extraction_finished")->unlock(\OCP\Lock\ILockingProvider::LOCK_EXCLUSIVE);
+            $folder->newFile(".extraction_finished");
+
+        }
     }
 
      /**
