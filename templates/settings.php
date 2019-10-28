@@ -1,21 +1,25 @@
 <?php
 global $fullscreen;
+global $appVersion;
 $fullscreen = $_['carnet_display_fullscreen'];
 $currentpath = __DIR__."/CarnetElectron/";
+$appVersion = $_['app_version'];
+
 $root = \OCP\Util::linkToAbsolute("carnet","templates");
 $root = parse_url($root, PHP_URL_PATH); 
 $file = file_get_contents($currentpath."settings.html");
 $file = str_replace("href=\"","href=\"".$root."/CarnetElectron/",$file);
 $file = preg_replace_callback('/<script(.*?)src=\"(.*?\.js(?:\?.*?)?)"/s',function ($matches) {
     global $currentpath;
+    global $appVersion;
     if($matches[2] === "libs/jquery.min.js" AND $fullscreen === "no")
         return "<script src=\"\"";
-    return "<script".$matches[1]."src=\"".$matches[2]."?mtime=".filemtime($currentpath.$matches[2])."\"";
+    return "<script".$matches[1]."src=\"".$matches[2]."?v=".$appVersion."\"";
 }, $file);
 // token is needed to pass the csfr check
 $file .= "<span style=\"display:none;\" id=\"token\">".$_['requesttoken']."</span>";
 if($_['carnet_display_fullscreen']==="yes"){
-    $file .= "<script src=\"compatibility/nextcloud/fullscreen.js?mtime=\"></script>";
+    $file .= "<script src=\"compatibility/nextcloud/fullscreen.js??v=".$appVersion."\"></script>";
     if($_['nc_version']>=16)
         style("carnet","../templates/CarnetElectron/compatibility/nextcloud/nc16");
 }

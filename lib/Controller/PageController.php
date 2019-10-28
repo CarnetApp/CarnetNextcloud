@@ -1,6 +1,7 @@
 <?php
 namespace OCA\Carnet\Controller;
 
+use OCP\App;
 use OCP\IRequest;
 use OCP\AppFramework\Http\ContentSecurityPolicy;
 use OCP\AppFramework\Http\TemplateResponse;
@@ -14,6 +15,7 @@ class PageController extends Controller {
 		parent::__construct($AppName, $request);
 		$this->userId = $UserId;
 		$this->config = $Config;
+		$this->$appName = $AppName;
 	}
 
 	/**
@@ -30,6 +32,7 @@ class PageController extends Controller {
 		$parameters = [
 			'nc_version' => \OCP\Util::getVersion()[0],
 			'carnet_display_fullscreen' => $this->config->getAppValue('carnet', 'carnetDisplayFullscreen', 'no'),
+			'app_version' => App::getAppInfo($this->appName)['version'],
 		];
 		$response = new TemplateResponse($this->appName,"index",$parameters);
 		if($this->config->getAppValue('carnet', 'carnetDisplayFullscreen', 'no') === "yes")
@@ -46,7 +49,10 @@ class PageController extends Controller {
 	 * @NoCSRFRequired
 	 */
 	public function writer() {
-		$response = new TemplateResponse($this->appName,"writer");
+		$parameters = [
+			'app_version' => App::getAppInfo($this->appName)['version'],
+		];
+		$response = new TemplateResponse($this->appName,"writer",$parameters);
 		$policy = new ContentSecurityPolicy();
 		$policy->addAllowedMediaDomain('blob:');
 		if (method_exists($policy, "addAllowedWorkerSrcDomain")){
@@ -65,6 +71,7 @@ class PageController extends Controller {
    public function settings() {
 		$parameters = [
 			'carnet_display_fullscreen' => $this->config->getAppValue('carnet', 'carnetDisplayFullscreen', 'no'),
+			'app_version' => App::getAppInfo($this->appName)['version'],
 		];
 		$response =  new TemplateResponse($this->appName,"settings", $parameters);
 		if($this->config->getAppValue('carnet', 'carnetDisplayFullscreen', 'no') === "yes")
