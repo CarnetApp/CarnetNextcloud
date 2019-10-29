@@ -29,13 +29,13 @@ $file = preg_replace_callback('/<script(.*?)src=\"(.*?\.js(?:\?.*?)?)"/s',functi
 // token is needed to pass the csfr check
 $file .= "<span style=\"display:none;\" id=\"token\">".$_['requesttoken']."</span>";
 if($_['carnet_display_fullscreen']==="yes"){
-
+    
     $file = str_replace('</head>', "
     <link rel=\"apple-touch-icon-precomposed\" href=\"".image_path('', 'favicon-touch.png')."\" />
     <link rel=\"icon\" href=\"".image_path('', 'favicon.ico')."\">
     <link rel=\"mask-icon\" sizes=\"any\" href=\"".image_path('', 'favicon-mask.svg')."\" color=\"".$theme->getColorPrimary()."\">
     <link rel=\"manifest\" href=\"".image_path('', 'manifest.json')."\">
-    <script src=\"compatibility/nextcloud/fullscreen.js?v="+$appVersion+"\"></script>
+    <script src=\"compatibility/nextcloud/fullscreen.js?v=".$appVersion."\"></script>
     </head>", $file);
     if($_['nc_version']>=16)
         style("carnet","../templates/CarnetElectron/compatibility/nextcloud/nc16");
