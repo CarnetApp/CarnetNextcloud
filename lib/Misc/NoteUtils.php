@@ -22,15 +22,17 @@ class NoteUtils{
             try{
             
             $meta['shorttext'] = self::getShortTextFromHTML($zipFile->getEntryContents("index.html"));
+            $meta['media'] = array();
+            $meta['previews'] = array();
+
             $i=0;
             try{
                 foreach($zipFile->getListFiles() as $f){
                     if(substr($f, 0, strlen("data/preview")) === "data/preview"){
-
                         $meta['previews'][$i] = "./note/getmedia?note=".$path."&media=".$f;
                         $i++;
-                        if($i>2)
-                            break;
+                    } else if(substr($f, 0, strlen("data/")) === "data/") {
+                        $meta['media'][$i] = "./note/getmedia?note=".$path."&media=".$f;
                     }
                     
                 }

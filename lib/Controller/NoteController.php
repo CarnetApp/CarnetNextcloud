@@ -812,9 +812,14 @@ public function getOpusEncoder(){
         $zipFile = new MyZipFile();
         $meta = array();
         $meta["previews"] = array();
-        $previews = $this->addFolderContentToArchive($folder,$zipFile,"");
-        foreach($previews as $preview){
+        $meta["media"] = array();
+
+        $res = $this->addFolderContentToArchive($folder,$zipFile,"");
+        foreach($res['previews'] as $preview){
             array_push($meta['previews'], "./note/getmedia?note=".$path."&media=".$preview);
+        }
+        foreach($res['media'] as $media){
+            array_push($meta['media'], "./note/getmedia?note=".$path."&media=".$media);
         }
         $file = $this->CarnetFolder->newFile($path);
         //tried to do with a direct fopen on $file but lead to bad size on nextcloud
@@ -846,21 +851,29 @@ public function getOpusEncoder(){
      */
      private function addFolderContentToArchive($folder, $archive, $relativePath){
          $previews = array();
+         $media = array();
+
         foreach($folder->getDirectoryListing() as $in){
             $inf = $in->getFileInfo();
             $path = $relativePath.$inf->getName();
             if($inf->getType() === "dir"){
                 $archive->addEmptyDir($path);
-                $previews = array_merge($previews, $this->addFolderContentToArchive($in, $archive, $path."/"));
+                $res = $this->addFolderContentToArchive($in, $archive, $path."/");
+                $previews = array_merge($previews, $res['previews']);
+                $media = array_merge($media, $res['media']);
+
             }else {
                 $archive->addFromStream($in->fopen("r"), $path, \PhpZip\ZipFile::METHOD_DEFLATED);
                 if(substr($path,0,strlen("data/preview_")) === "data/preview_"){
                     array_push($previews, $path);
+                } else if(substr($path,0,strlen("data/")) === "data/"){
+                    array_push($media, $path);
                 }
             }
 
         }
-        return $previews;
+       
+        return array("previews" => $previews, "media" => $media);
      }
 
      private function getCurrentnoteDir(){
