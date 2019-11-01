@@ -40,7 +40,6 @@ class PageController extends Controller {
 		$policy = new ContentSecurityPolicy();
         $policy->addAllowedFrameDomain('\'self\'');
 		$response->setContentSecurityPolicy($policy); // allow iframe
-		$response->cacheFor(604800);
 		return $response;
 	}
 
@@ -61,7 +60,6 @@ class PageController extends Controller {
 		}
 		$response->setContentSecurityPolicy($policy);
 		$response->renderAs("blank");
-		$response->cacheFor(604800);
 		return $response;
 	}
 	/**
