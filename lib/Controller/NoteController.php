@@ -51,7 +51,7 @@
 
 
     public function isNote($node){
-        return $node->getType() !== "dir" || substr($node->getName(), 0, strlen("note$")) === "note$";
+        return $node->getType() !== "dir" || substr($node->getName(), strlen($node->getName()) -strlen(".sqd"),strlen($node->getName())) === ".sqd";
     }
 	/**
 	 * CAUTION: the @Stuff turns off security checks; for this page no admin is
@@ -71,12 +71,12 @@
         $paths = array();
         $data = array();
         foreach($this->CarnetFolder->get($path)->getDirectoryListing() as $in){
-            
+        
             $inf = $in->getFileInfo();
             $file = array();
             $file['name'] = $inf->getName();
             $file['path'] = $path.$inf->getName();
-            $file['isDir'] = !$this->isNote($inf);
+            $file['isDir'] = $inf->getType() === "dir";
             $file['mtime'] = $inf->getMtime();
             if($inf->getType() !== "dir"){
                 array_push($paths, $file['path']);
