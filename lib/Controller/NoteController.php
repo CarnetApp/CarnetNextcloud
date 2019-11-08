@@ -49,6 +49,10 @@
        // \OC_Util::setupFS($UserId);
 	}
 
+
+    public function isNote($node){
+        return $node->getType() !== "dir" || substr($node->getName(), 0, strlen("note$")) === "note$";
+    }
 	/**
 	 * CAUTION: the @Stuff turns off security checks; for this page no admin is
 	 *          required and no CSRF check. If you don't know what CSRF is, read
@@ -67,11 +71,12 @@
         $paths = array();
         $data = array();
         foreach($this->CarnetFolder->get($path)->getDirectoryListing() as $in){
+            
             $inf = $in->getFileInfo();
             $file = array();
             $file['name'] = $inf->getName();
             $file['path'] = $path.$inf->getName();
-            $file['isDir'] = $inf->getType() === "dir";
+            $file['isDir'] = !$this->isNote($inf);
             $file['mtime'] = $inf->getMtime();
             if($inf->getType() !== "dir"){
                 array_push($paths, $file['path']);
@@ -909,17 +914,26 @@ public function getOpusEncoder(){
         $data = array();
 
         $path = $_GET['path'];
-        $cache = $this->getCacheFolder();
         try{
-            $tmppath = tempnam(sys_get_temp_dir(), uniqid().".zip");
-            file_put_contents($tmppath,$this->CarnetFolder->get($path)->fopen("r"));
-            $zipFile = new MyZipFile();
-            $zipFile->openFile($tmppath);
-            try{
-                $data['metadata'] = json_decode($zipFile['metadata.json']);
-            } catch(\PhpZip\Exception\ZipNotFoundEntry $e){}
-            $data['html'] = $zipFile['index.html'];
-            unlink($tmppath);
+            $noteNode = $this->CarnetFolder->get($path);
+            if($noteNode->getType() === "dir"){
+                $data['html'] = $noteNode->get('index.html')->getContent();
+                try{
+                    $data['metadata'] = json_decode($noteNode->get('metadata.json')->getContent());
+                } catch(\OCP\Files\NotFoundException $e) {
+                }
+            }
+            else {
+                $tmppath = tempnam(sys_get_temp_dir(), uniqid().".zip");
+                file_put_contents($tmppath,$noteNode->fopen("r"));
+                $zipFile = new MyZipFile();
+                $zipFile->openFile($tmppath);
+                try{
+                    $data['metadata'] = json_decode($zipFile['metadata.json']);
+                } catch(\PhpZip\Exception\ZipNotFoundEntry $e){}
+                $data['html'] = $zipFile['index.html'];
+                unlink($tmppath);
+            }
         } catch(\OCP\Files\NotFoundException $e) {
             $data["error"] = "not found";
         }
@@ -949,28 +963,36 @@ public function getOpusEncoder(){
                 }
             }
         }
-        $folder = $cache->newFolder("currentnote".$editUniqueID);
-       
+        
+        $noteFolderName = "currentnote".$editUniqueID;
         try{
-            $tmppath = tempnam(sys_get_temp_dir(), uniqid().".zip");
-            file_put_contents($tmppath,$this->CarnetFolder->get($path)->fopen("r"));
-            $zipFile = new \PhpZip\ZipFile();
-            $zipFile->openFile($tmppath);
-            foreach($zipFile as $entryName => $contents){
-            if($entryName === ".extraction_finished")
-            continue;    
-            if($contents === "" AND $zipFile->isDirectory($entryName)){
-                $folder->newFolder($entryName);
+
+            $noteNode = $this->CarnetFolder->get($path);
+            if($noteNode->getType() === "dir"){
+                $folder = $noteNode->copy($cache->getFullPath($noteFolderName));
             }
-            else if($contents !== "" && $contents !== NULL){
-                $parent = dirname($entryName);
-                if($parent !== "." && !$folder->nodeExists($parent)){
-                    $folder->newFolder($parent);
+            else{
+                $folder = $cache->newFolder($noteFolderNam);
+                $tmppath = tempnam(sys_get_temp_dir(), uniqid().".zip");
+                file_put_contents($tmppath,$noteNode->fopen("r"));
+                $zipFile = new \PhpZip\ZipFile();
+                $zipFile->openFile($tmppath);
+                foreach($zipFile as $entryName => $contents){
+                    if($entryName === ".extraction_finished")
+                    continue;    
+                    if($contents === "" AND $zipFile->isDirectory($entryName)){
+                        $folder->newFolder($entryName);
+                    }
+                    else if($contents !== "" && $contents !== NULL){
+                        $parent = dirname($entryName);
+                        if($parent !== "." && !$folder->nodeExists($parent)){
+                            $folder->newFolder($parent);
+                        }
+                        $folder->newFile($entryName)->putContent($contents);
+                    }
                 }
-                $folder->newFile($entryName)->putContent($contents);
+                unlink($tmppath);
             }
-        }
-        unlink($tmppath);
         } catch(\OCP\Files\NotFoundException $e) {
         }
 
