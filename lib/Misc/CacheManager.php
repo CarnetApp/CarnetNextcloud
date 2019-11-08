@@ -124,7 +124,7 @@ class CacheManager{
             $stmt->execute($arrayFullPath);
             $fetched = $stmt->fetchAll();
             foreach ($fetched as $row){
-                $array[substr($row['path'], strlen($this->carnetFolder->getPath())+1)] = json_decode($row['metadata']);
+                $array[substr($row['path'], strlen($this->carnetFolder->getPath())+1)] = json_decode($row['metadata'], true);
             }
 
             $stmt->closeCursor();

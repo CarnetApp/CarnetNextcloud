@@ -703,8 +703,48 @@ public function getOpusEncoder(){
             $file = $folder->newFile("metadata.json");
         }
         $file->putContent($_POST['metadata']);
+        $path = $_POST['path'];
+        $mtime = $this->saveFiles($folder, array(0 => "index.html", 1 =>"metadata.json"), $_POST['path'], $id);
+        if($mtime !== false){
+            //we need to refresh cache
+            $cache = new CacheManager($this->db, $this->CarnetFolder);
+            $cached = $cache->getFromCache(array(0=>$path));
+            $meta = array();
+            if(isset($cached[$path])){
+                $meta = $cached[$path];
+            }
 
+
+
+            $meta['shorttext'] = NoteUtils::getShortTextFromHTML($_POST['html']);
+            $meta['metadata'] = json_decode($_POST['metadata']);
+            $cache->addToCache($path, $meta, $mtime);
+
+        }
+        
+     }
+     /*
+
+        returns false if target note is not a folder or mTime if it is
+     */
+     private function saveFiles($inFolder, $files, $path, $id){
+
+        try{
+            $outFolder = $this->CarnetFolder->get($path);
+            if($this->CarnetFolder->get($path)->getType() === "dir"){
+                $meta = array();
+                foreach($files as $file){
+                    $inFolder->get($file)->copy($outFolder->getFullPath($file));
+                }
+
+                
+                return $outFolder->getFileInfo()->getMtime();
+            }
+        } catch(\OCP\Files\NotFoundException $e) {
+        }
+        
         $this->saveOpenNote($_POST['path'],$id);
+        return false;
      }
 
 
@@ -972,7 +1012,7 @@ public function getOpusEncoder(){
                 $folder = $noteNode->copy($cache->getFullPath($noteFolderName));
             }
             else{
-                $folder = $cache->newFolder($noteFolderNam);
+                $folder = $cache->newFolder($noteFolderName);
                 $tmppath = tempnam(sys_get_temp_dir(), uniqid().".zip");
                 file_put_contents($tmppath,$noteNode->fopen("r"));
                 $zipFile = new \PhpZip\ZipFile();
@@ -994,6 +1034,7 @@ public function getOpusEncoder(){
                 unlink($tmppath);
             }
         } catch(\OCP\Files\NotFoundException $e) {
+            $folder = $cache->newFolder($noteFolderName);
         }
 
         try{
