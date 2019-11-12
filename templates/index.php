@@ -23,7 +23,7 @@ $file = preg_replace_callback('/<script(.*?)src=\"(.*?\.js(?:\?.*?)?)"/s',functi
     global $appVersion;
 
     if($matches[2] === "libs/jquery.min.js" AND $fullscreen === "no")
-        return "<script src=\"\"";
+        return "<script ";
     return "<script".$matches[1]."src=\"".$matches[2]."?v=".$appVersion."\"";
 }, $file);
 // token is needed to pass the csfr check
