@@ -558,21 +558,27 @@ public function getOpusEncoder(){
       * @NoCSRFRequired
       */
 	 public function getMedia($note, $media){
-        $tmppath = tempnam(sys_get_temp_dir(), uniqid().".zip");
         $node = $this->CarnetFolder->get($note);
         $response = null;
-        file_put_contents($tmppath, $node->fopen("r"));
-        try{
-            $zipFile = new \PhpZip\ZipFile();
-            $zipFile->openFromStream(fopen($tmppath, "r")); //issue with encryption when open directly + unexpectedly faster to copy before Oo'
-            $response = new DataDisplayResponse($zipFile->getEntryContents($media));
+        if($node->getType()==="dir"){
+            $response = new FileDisplayResponse($node->get($media));
             $response->addHeader("Content-Type", "image/jpeg");
 
-        } catch(\PhpZip\Exception\ZipNotFoundEntry $e){
-            $response = $media;
-            
+        } else {
+            $tmppath = tempnam(sys_get_temp_dir(), uniqid().".zip");
+            file_put_contents($tmppath, $node->fopen("r"));
+            try{
+                $zipFile = new \PhpZip\ZipFile();
+                $zipFile->openFromStream(fopen($tmppath, "r")); //issue with encryption when open directly + unexpectedly faster to copy before Oo'
+                $response = new DataDisplayResponse($zipFile->getEntryContents($media));
+                $response->addHeader("Content-Type", "image/jpeg");
+
+            } catch(\PhpZip\Exception\ZipNotFoundEntry $e){
+                $response = $media;
+                
+            }
+            unlink($tmppath);
         }
-        unlink($tmppath);
         return $response;
      }
 
@@ -724,7 +730,6 @@ public function getOpusEncoder(){
         
      }
      /*
-
         returns false if target note is not a folder or mTime if it is
      */
      private function saveFiles($inFolder, $files, $path, $id){
@@ -747,6 +752,32 @@ public function getOpusEncoder(){
         return false;
      }
 
+     /*
+        returns false if target note is not a folder or mTime if it is
+     */
+    private function deleteFiles($inFolder, $files, $path, $id){
+
+        try{
+            $outFolder = $this->CarnetFolder->get($path);
+            if($this->CarnetFolder->get($path)->getType() === "dir"){
+                $meta = array();
+                foreach($files as $file){
+                    try{
+                        $outFolder->get($file)->delete();
+                    } catch(\OCP\Files\NotFoundException $e) {
+                    }
+                }
+
+                
+                return $outFolder->getFileInfo()->getMtime();
+            }
+        } catch(\OCP\Files\NotFoundException $e) {
+        }
+        
+        $this->saveOpenNote($_POST['path'],$id);
+        return false;
+     }
+
 
      /**
      * @NoAdminRequired
@@ -756,13 +787,43 @@ public function getOpusEncoder(){
         $this->waitEndOfExtraction($id);
         $cache = $this->getCacheFolder();
         $folder = $cache->get("currentnote".$id);
-        
+        $files = array();
         $folder->get("data/".$_GET['media'])->delete();
+        array_push($files, "data/".$_GET['media']);
+        $media = $_GET['media'];
         try{
             $folder->get("data/preview_".$_GET['media'].".jpg")->delete();
+            $preview = "preview_".$_GET['media'].".jpg";
+            array_push($files, "data/preview_".$_GET['media'].".jpg");
         } catch(\OCP\Files\NotFoundException $e) {
         }
-        $this->saveOpenNote($_GET['path'],$id);
+        
+        $mtime = $this->deleteFiles($folder, $files, $_GET['path'],$id);
+        if($mtime !== false){
+            //we need to refresh cache
+            $cache = new CacheManager($this->db, $this->CarnetFolder);
+            $cached = $cache->getFromCache(array(0=>$path));
+            $meta = array();
+            if(isset($cached[$path])){
+                $meta = $cached[$path];
+            }
+            if(isset($preview)){
+                if(isset($meta['previews'])){
+                    $key = array_search($preview, $meta['previews']);
+                    if ($key !== false) {
+                        unset($meta['previews'][$key]);
+                    }
+                }
+            }
+            if(isset($meta['media'])){
+                $key = array_search($media, $meta['media']);
+                if ($key !== false) {
+                    unset($meta['previews'][$key]);
+                }
+            }
+            $cache->addToCache($path, $meta, $mtime);
+
+        }
         return $this->listMediaOfOpenNote($id);
 
     }
@@ -774,7 +835,14 @@ public function getOpusEncoder(){
         $this->waitEndOfExtraction($id);
         $cache = $this->getCacheFolder();
         $folder = $cache->get("currentnote".$id);
-        
+        $files = array();
+        foreach($res['previews'] as $preview){
+            array_push($meta['previews'], "./note/getmedia?note=".$path."&media=".$preview);
+        }
+        foreach($res['media'] as $media){
+            array_push($meta['media'], "./note/getmedia?note=".$path."&media=".$media);
+        }
+
         try{
             $data = $folder->get("data");
         } catch(\OCP\Files\NotFoundException $e) {
@@ -785,7 +853,10 @@ public function getOpusEncoder(){
             throw new Exception('Media doesn\'t exist');
         } else {
             $fileOut = $data->newFile($_FILES['media']['name'][0]);
+            array_push($files, "data/".$_FILES['media']['name'][0]);
             $fileOut->putContent($fileIn);
+            $media = "./note/getmedia?note=".$_POST['path']."&media=".$_FILES['media']['name'][0];
+
             if(@is_array(getimagesize($_FILES['media']['tmp_name'][0]))){
                 $fn = $_FILES['media']['tmp_name'][0];
                 $size = getimagesize($fn);
@@ -803,12 +874,39 @@ public function getOpusEncoder(){
                 imagecopyresampled($dst,$src,0,0,0,0,$width,$height,$size[0],$size[1]);
                 imagedestroy($src);
                 $fileOut = $data->newFile("preview_".$_FILES['media']['name'][0].".jpg");
+                array_push($files, "data/"."preview_".$_FILES['media']['name'][0].".jpg");
+
                 imagejpeg($dst,$fileOut->fopen("w"));
                 imagedestroy($dst);
+                $preview = "./note/getmedia?note=".$_POST['path']."&media="."preview_".$_FILES['media']['name'][0].".jpg";
             }
             fclose($fileIn);
         }
-        $this->saveOpenNote($_POST['path'],$id);
+        
+        $mtime = $this->saveFiles($folder,$files, $_POST['path'],$id);
+        if($mtime !== false){
+            //we need to refresh cache
+            $cache = new CacheManager($this->db, $this->CarnetFolder);
+            $cached = $cache->getFromCache(array(0=>$path));
+            $meta = array();
+            if(isset($cached[$path])){
+                $meta = $cached[$path];
+            }
+            $meta['shorttext'] = NoteUtils::getShortTextFromHTML($_POST['html']);
+            $meta['metadata'] = json_decode($_POST['metadata']);
+            if(isset($preview)){
+                if(!isset($meta['previews']))
+                    $meta['previews'] = array();
+                if(!in_array($meta['previews'],$preview))
+                    array_push($meta['previews'],$preview);
+            }
+            if(!isset($meta['media']))
+                    $meta['media'] = array();
+            if(!in_array($meta['media'],$media))
+                array_push($meta['media'],$media);
+            $cache->addToCache($path, $meta, $mtime);
+
+        }
         return $this->listMediaOfOpenNote($id);
      }
 
