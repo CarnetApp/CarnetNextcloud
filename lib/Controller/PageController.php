@@ -15,7 +15,6 @@ class PageController extends Controller {
 		parent::__construct($AppName, $request);
 		$this->userId = $UserId;
 		$this->config = $Config;
-		$this->$appName = $AppName;
 	}
 
 	/**
