@@ -1,3 +1,9 @@
+# Version 0.18.12
+Issues with Start with browser option: 
+- Fix 3 dots menu
+- Fix note creation
+
+
 # Version 0.18.7
 
 Todolists:
