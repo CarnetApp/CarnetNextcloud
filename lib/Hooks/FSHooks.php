@@ -39,15 +39,24 @@ class FSHooks {
         }   
     }
 
-    private function isMine($node){
-        if(substr($node->getName(), -3) === "sqd"){ // to avoid getting carnet's path each time a file is writen
-            //we check if is in our path
-
-
-            if(substr($node->getPath(), 0, strlen($this->carnetFolder->getPath())) === $this->carnetFolder->getPath()){
-
-                return true;
+    private function getSQDNode($node){
+        if(substr($node->getName(), -3) === "sqd")
+            return $node;
+        $parent = $node->getParent();
+        if($parent != NULL){
+            if($parent->getName() === "data"){
+                $parent = $parent->getParent();
             }
+            if(substr($parent->getName(), -3) === "sqd"){
+                return $parent;
+        }
+        }
+        return false;
+    }
+
+    private function isMine($node){
+        if(substr($node->getPath(), 0, strlen($this->carnetFolder->getPath())) === $this->carnetFolder->getPath()){
+            return true;
         }
         return false;
     }
@@ -66,7 +75,9 @@ class FSHooks {
         }
         if($this->isMine($node)){
                 try{
-               
+                $node = $this->getSQDNode($node);
+                if(!$node)
+                    return;
                 $relativePath = $this->getRelativePath($node->getPath());
                 $cacheManager = new CacheManager($this->db, $this->carnetFolder);
                 $utils = new NoteUtils();
