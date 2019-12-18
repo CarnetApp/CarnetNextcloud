@@ -90,8 +90,7 @@ class FSHooks {
     }
 
     public function postWritePath($node) {
-        if($node != Null)
-        file_put_contents("dump.txt", $node."\n", FILE_APPEND);
+       
     }
 }
 
