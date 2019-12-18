@@ -11,8 +11,8 @@ fi
 
 branch=$(git symbolic-ref --short -q HEAD)
 
-if [ "$branch" != "master" ]; then
-  echo "Need to be on develop branch."
+if [ "$branch" != "stable" ]; then
+  echo "Need to be on stable branch."
   exit -1
 fi
 
@@ -57,12 +57,11 @@ rm carnet-*-v*
   sudo chown www-data "$tmp" -R
   sudo chown www-data "/home/$USER/.owncloud/certificates/" -R
 
-  sudo -u www-data /var/www/html/owncloud/owncloud/./occ integrity:sign-app \
+  sudo -u www-data /var/www/html/owncloud/./occ integrity:sign-app \
   --privateKey=/home/$USER/.owncloud/certificates/carnet.key \
   --certificate=/home/$USER/.owncloud/certificates/carnet.crt \
   --path="$tmp"/carnet
   sudo chown $USER "/home/$USER/.owncloud/certificates/" -R
-
   tar zcvf   "$cur""/$tar_oc_name" carnet
   cd "$cur"
 
