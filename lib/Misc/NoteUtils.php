@@ -21,14 +21,12 @@ class NoteUtils{
                 $meta['media'] = array();
                 $meta['previews'] = array();
 
-                $i=0;
                 try{
                     foreach($node->get('data')->getDirectoryListing() as $in){
                         if(substr($in->getName(), 0, strlen("preview")) === "preview"){
-                            $meta['previews'][$i] = "./note/getmedia?note=".$path."&media=data/".$in->getName();
-                            $i++;
+                            array_push($meta['previews'],"./note/getmedia?note=".$path."&media=data/".$in->getName());
                         } else  {
-                            $meta['media'][$i] = "./note/getmedia?note=".$path."&media=data/".$in->getName();
+                            array_push($meta['media'], "./note/getmedia?note=".$path."&media=data/".$in->getName());
                         }
                         
                     }
@@ -59,14 +57,12 @@ class NoteUtils{
                 $meta['media'] = array();
                 $meta['previews'] = array();
 
-                $i=0;
                 try{
                     foreach($zipFile->getListFiles() as $f){
                         if(substr($f, 0, strlen("data/preview")) === "data/preview"){
-                            $meta['previews'][$i] = "./note/getmedia?note=".$path."&media=".$f;
-                            $i++;
+                            array_push($meta['previews'],"./note/getmedia?note=".$path."&media=".$f);
                         } else if(substr($f, 0, strlen("data/")) === "data/") {
-                            $meta['media'][$i] = "./note/getmedia?note=".$path."&media=".$f;
+                            array_push($meta['media'],"./note/getmedia?note=".$path."&media=".$f);
                         }
                         
                     }
