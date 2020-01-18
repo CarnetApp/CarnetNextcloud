@@ -2,8 +2,23 @@
 namespace OCA\Carnet\Misc;
 class NoteUtils{
     public static $defaultCarnetNotePath = "Documents/QuickNote";
-    public static function getShortTextFromHTML($html){
-        return mb_substr(trim(preg_replace('#<[^>]+>#', ' ', $html)),0, 150);
+    public static function getShortTextFromHTML($html){ //not optimized at alllll....
+        return mb_substr(
+            //remove first and last br
+            preg_replace('/^(<br\s*\/?>)*|(<br\s*\/?>)*$/i', '',
+            //multiple to single br
+            preg_replace('/(<br[^>]*>\s*){2,}/', '<br/>',
+            //white spaces
+            trim(
+            //putting back [linebr] to br
+            str_replace('[linebr]', '<br>',
+            //removing html tags
+            preg_replace('#<[^>]+>#', ' ', 
+            //replacing all br by linebr
+            preg_replace('/(<br\ ?\/?>)/', '[linebr]', 
+            //all div to [linebr]
+            preg_replace("/<div>(.*?)<\/div>/", "[linebr]$1",$html)
+        )))))),0, 150);
     }
     public function getMetadata($carnetFolder, $path){
         $meta = array();
