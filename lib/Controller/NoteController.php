@@ -1198,7 +1198,7 @@ public function getOpusEncoder(){
      */
     public function getAppThemes(){
         $root = $this->getCarnetElectronUrl()."/css/";
-        return json_decode('[{"name":"Carnet", "path":"'.$this->getCarnetElectronPath().'/css/carnet", "preview":"'.$root.'carnet/preview.png"}, {"name":"Dark", "path":"'.$this->getCarnetElectronPath().'/css/dark", "preview":"'.$root.'dark/preview.png"}]');
+        return json_decode('[{"name":"Carnet", "path":"'.$this->getCarnetElectronPath().'/css/carnet", "preview":"'.$root.'carnet/preview.png"}, {"name":"Dark", "path":"'.$this->getCarnetElectronPath().'/css/dark", "preview":"'.$root.'dark/preview.png"}, {"name":"Black", "path":"'.$this->getCarnetElectronPath().'/css/black", "preview":"'.$root.'black/preview.png"}]');
     }
 
     private function getCarnetElectronPath(){
