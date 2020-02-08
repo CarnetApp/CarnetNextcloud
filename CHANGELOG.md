@@ -1,3 +1,13 @@
+# Version 0.20.0
+
+New black theme
+New editor UI
+New keywords selector
+New note color dialog
+Authorize Url with capitalize letters
+Fix text resize on firefox
+Keep new line in short text
+
 # Version 0.19.0
 
 Direct recording button
