@@ -11,7 +11,7 @@
  use OCA\Carnet\Misc\NoteUtils;
  use OCA\Carnet\Misc\CacheManager;
  use OCP\IDBConnection;
- use OCA\Carnet\Command\Search;
+ use OCA\Carnet\Misc\Search;
  //require_once 'vendor/autoload.php';
 
  class MyZipFile extends \PhpZip\ZipFile {

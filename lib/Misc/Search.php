@@ -1,11 +1,6 @@
 <?php
 
-namespace OCA\Carnet\Command;
-
-use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputArgument;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
+namespace OCA\Carnet\Misc;
 
 use OCP\Files\File;
 use OCP\Files\IRootFolder;
@@ -13,7 +8,7 @@ use OCP\Files\NotFoundException;
 use OCA\Carnet\Misc\CacheManager;
 use OCP\IDBConnection;
 
-class Search extends Command {
+class Search {
     private $output;
     private $appName;
     private $CarnetFolder;
@@ -28,7 +23,6 @@ class Search extends Command {
          * @param IRootFolder $rootFolder
     */
 public function __construct($AppName, $RootFolder,  $Config, IDBConnection $IDBConnection, $userId){
-    parent::__construct();
     $this->appName = $AppName;
     $this->Config = $Config;
     $this->db = $IDBConnection;
@@ -72,43 +66,6 @@ public function startSearch($query, $from) {
     $result['next'] = $this->current;
     $result['files'] = $this->data;
     return $result;
-}
-
-/**
-* @param InputInterface $input
-* @param OutputInterface $output
-* @return int
-*/
-protected function execute(InputInterface $input, OutputInterface $output) {
-    $this->output = $output;
-    $this->userId = $input->getArgument('user_id');
-    try {
-        $this->getCacheFolder()->get("carnet_search")->delete();
-    } catch(\OCP\Files\NotFoundException $e) {
-        
-    }
-    $this->searchCache = $this->getCacheFolder()->newFile("carnet_search");
-    $this->searchCache->putContent("[]");
-    
-    $output->writeln('starting '.$this->appName.' user '.$input->getArgument('user_id'));
-
-    $output->writeln('searching '.$input->getArgument('query')." in ".$this->CarnetFolder->getFullPath($input->getArgument('root')));
-    $path = $input->getArgument('root');
-    if (!empty($path) && substr($path, -1) !== '/' || $path !== ".")
-        $path = substr($path, -1);
-
-    $query = $input->getArgument('query');
-    $query = $this->removeAccents($query);
-    $query = strtolower($query);
-
-    echo "searching ".$query;
-    $this->data = array();
-    $this->pathArray = array();
-    $this->searchInCache($query);
-    $this->search($path, $this->CarnetFolder->get($path), $query,0);
-    //$data = json_decode( $this->searchCache->getContent());
-    array_push($this->data, "end_of_search");
-    $this->searchCache->putContent(json_encode($this->data));
 }
 
 private function searchInCache($query){
