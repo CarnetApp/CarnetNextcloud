@@ -1,7 +1,7 @@
 #!/bin/bash
 
 version=$(sed -n -e 's/.*<version>\(.*\)<\/version>.*/\1/p' appinfo/info.xml)
-git branch -d stable
+git branch -D stable
 git push origin --delete stable
 git checkout master
 git checkout -b stable
