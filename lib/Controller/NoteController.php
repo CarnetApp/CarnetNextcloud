@@ -11,6 +11,7 @@
  use OCA\Carnet\Misc\NoteUtils;
  use OCA\Carnet\Misc\CacheManager;
  use OCP\IDBConnection;
+ use OCA\Carnet\Command\Search;
  //require_once 'vendor/autoload.php';
 
  class MyZipFile extends \PhpZip\ZipFile {
@@ -619,14 +620,10 @@ public function getOpusEncoder(){
       * @NoAdminRequired
       * @NoCSRFRequired
       */
-	 public function search($from, $query){
-        try {
-            $this->getCacheFolder()->get("carnet_search")->delete();
-        } catch(\OCP\Files\NotFoundException $e) {
-            
-        }
-        shell_exec('php occ carnet:search '.escapeshellarg($this->userId).' '.escapeshellarg($query).' '.escapeshellarg($from).'> /dev/null 2>/dev/null &');
-    }
+	 public function search($from, $query, $path){
+        $SearchEngine = new Search($this->appName, $this->rootFolder,  $this->Config, $this->db, $this->userId);
+        return $SearchEngine->startSearch($query, $from);
+     }
 
      /**
      * @NoAdminRequired

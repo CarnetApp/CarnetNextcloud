@@ -20,22 +20,58 @@ class Search extends Command {
     private $Config;
     private $rootFolder;
     private $searchCache;
+    private $current=0;
+    private $from;
+
     /**
          * @param string $appName
          * @param IRootFolder $rootFolder
     */
-public function __construct($AppName, $RootFolder,  $Config, IDBConnection $IDBConnection){
+public function __construct($AppName, $RootFolder,  $Config, IDBConnection $IDBConnection, $userId){
     parent::__construct();
     $this->appName = $AppName;
     $this->Config = $Config;
     $this->db = $IDBConnection;
     $this->rootFolder = $RootFolder;
+    $this->userId = $userId;
+    $folder = $this->Config->getUserValue($this->userId , $this->appName, "note_folder");
+    
+    if(empty($folder))
+        $folder= 'Documents/QuickNote';
+    try {
+        $this->CarnetFolder = $this->rootFolder->getUserFolder($this->userId)->get($folder);
+    } catch(\OCP\Files\NotFoundException $e) {
+        $this->CarnetFolder = $this->rootFolder->getUserFolder($this->userId)->newFolder($folder);
+    }
 }
 
 protected function removeAccents($str) {
     $a = array('À', 'Á', 'Â', 'Ã', 'Ä', 'Å', 'Æ', 'Ç', 'È', 'É', 'Ê', 'Ë', 'Ì', 'Í', 'Î', 'Ï', 'Ð', 'Ñ', 'Ò', 'Ó', 'Ô', 'Õ', 'Ö', 'Ø', 'Ù', 'Ú', 'Û', 'Ü', 'Ý', 'ß', 'à', 'á', 'â', 'ã', 'ä', 'å', 'æ', 'ç', 'è', 'é', 'ê', 'ë', 'ì', 'í', 'î', 'ï', 'ñ', 'ò', 'ó', 'ô', 'õ', 'ö', 'ø', 'ù', 'ú', 'û', 'ü', 'ý', 'ÿ', 'Ā', 'ā', 'Ă', 'ă', 'Ą', 'ą', 'Ć', 'ć', 'Ĉ', 'ĉ', 'Ċ', 'ċ', 'Č', 'č', 'Ď', 'ď', 'Đ', 'đ', 'Ē', 'ē', 'Ĕ', 'ĕ', 'Ė', 'ė', 'Ę', 'ę', 'Ě', 'ě', 'Ĝ', 'ĝ', 'Ğ', 'ğ', 'Ġ', 'ġ', 'Ģ', 'ģ', 'Ĥ', 'ĥ', 'Ħ', 'ħ', 'Ĩ', 'ĩ', 'Ī', 'ī', 'Ĭ', 'ĭ', 'Į', 'į', 'İ', 'ı', 'Ĳ', 'ĳ', 'Ĵ', 'ĵ', 'Ķ', 'ķ', 'Ĺ', 'ĺ', 'Ļ', 'ļ', 'Ľ', 'ľ', 'Ŀ', 'ŀ', 'Ł', 'ł', 'Ń', 'ń', 'Ņ', 'ņ', 'Ň', 'ň', 'ŉ', 'Ō', 'ō', 'Ŏ', 'ŏ', 'Ő', 'ő', 'Œ', 'œ', 'Ŕ', 'ŕ', 'Ŗ', 'ŗ', 'Ř', 'ř', 'Ś', 'ś', 'Ŝ', 'ŝ', 'Ş', 'ş', 'Š', 'š', 'Ţ', 'ţ', 'Ť', 'ť', 'Ŧ', 'ŧ', 'Ũ', 'ũ', 'Ū', 'ū', 'Ŭ', 'ŭ', 'Ů', 'ů', 'Ű', 'ű', 'Ų', 'ų', 'Ŵ', 'ŵ', 'Ŷ', 'ŷ', 'Ÿ', 'Ź', 'ź', 'Ż', 'ż', 'Ž', 'ž', 'ſ', 'ƒ', 'Ơ', 'ơ', 'Ư', 'ư', 'Ǎ', 'ǎ', 'Ǐ', 'ǐ', 'Ǒ', 'ǒ', 'Ǔ', 'ǔ', 'Ǖ', 'ǖ', 'Ǘ', 'ǘ', 'Ǚ', 'ǚ', 'Ǜ', 'ǜ', 'Ǻ', 'ǻ', 'Ǽ', 'ǽ', 'Ǿ', 'ǿ', 'Ά', 'ά', 'Έ', 'έ', 'Ό', 'ό', 'Ώ', 'ώ', 'Ί', 'ί', 'ϊ', 'ΐ', 'Ύ', 'ύ', 'ϋ', 'ΰ', 'Ή', 'ή');
     $b = array('A', 'A', 'A', 'A', 'A', 'A', 'AE', 'C', 'E', 'E', 'E', 'E', 'I', 'I', 'I', 'I', 'D', 'N', 'O', 'O', 'O', 'O', 'O', 'O', 'U', 'U', 'U', 'U', 'Y', 's', 'a', 'a', 'a', 'a', 'a', 'a', 'ae', 'c', 'e', 'e', 'e', 'e', 'i', 'i', 'i', 'i', 'n', 'o', 'o', 'o', 'o', 'o', 'o', 'u', 'u', 'u', 'u', 'y', 'y', 'A', 'a', 'A', 'a', 'A', 'a', 'C', 'c', 'C', 'c', 'C', 'c', 'C', 'c', 'D', 'd', 'D', 'd', 'E', 'e', 'E', 'e', 'E', 'e', 'E', 'e', 'E', 'e', 'G', 'g', 'G', 'g', 'G', 'g', 'G', 'g', 'H', 'h', 'H', 'h', 'I', 'i', 'I', 'i', 'I', 'i', 'I', 'i', 'I', 'i', 'IJ', 'ij', 'J', 'j', 'K', 'k', 'L', 'l', 'L', 'l', 'L', 'l', 'L', 'l', 'l', 'l', 'N', 'n', 'N', 'n', 'N', 'n', 'n', 'O', 'o', 'O', 'o', 'O', 'o', 'OE', 'oe', 'R', 'r', 'R', 'r', 'R', 'r', 'S', 's', 'S', 's', 'S', 's', 'S', 's', 'T', 't', 'T', 't', 'T', 't', 'U', 'u', 'U', 'u', 'U', 'u', 'U', 'u', 'U', 'u', 'U', 'u', 'W', 'w', 'Y', 'y', 'Y', 'Z', 'z', 'Z', 'z', 'Z', 'z', 's', 'f', 'O', 'o', 'U', 'u', 'A', 'a', 'I', 'i', 'O', 'o', 'U', 'u', 'U', 'u', 'U', 'u', 'U', 'u', 'U', 'u', 'A', 'a', 'AE', 'ae', 'O', 'o', 'Α', 'α', 'Ε', 'ε', 'Ο', 'ο', 'Ω', 'ω', 'Ι', 'ι', 'ι', 'ι', 'Υ', 'υ', 'υ', 'υ', 'Η', 'η');
     return str_replace($a, $b, $str);
+}
+
+
+public function startSearch($query, $from) {
+    $query = $this->removeAccents($query);
+    $query = strtolower($query);
+    $this->data = array();
+    $this->startTime = time();
+    $this->from=$from;
+    $searchInPath = true;
+    if($from==0){
+        $this->searchInCache($query);
+        if(sizeof($this->data)>0)
+            $searchInPath = false;
+    }    
+    $this->current = 1;    
+    $result = array();
+    $result['end'] = false;
+    if($searchInPath)
+        $result['end'] = $this->search("", $this->CarnetFolder, $query,0);
+    $result['next'] = $this->current;
+    $result['files'] = $this->data;
+    return $result;
 }
 
 /**
@@ -53,15 +89,7 @@ protected function execute(InputInterface $input, OutputInterface $output) {
     }
     $this->searchCache = $this->getCacheFolder()->newFile("carnet_search");
     $this->searchCache->putContent("[]");
-    $folder = $this->Config->getUserValue($this->userId , $this->appName, "note_folder");
     
-    if(empty($folder))
-        $folder= 'Documents/QuickNote';
-    try {
-        $this->CarnetFolder = $this->rootFolder->getUserFolder($this->userId)->get($folder);
-    } catch(\OCP\Files\NotFoundException $e) {
-        $this->CarnetFolder = $this->rootFolder->getUserFolder($this->userId)->newFolder($folder);
-    }
     $output->writeln('starting '.$this->appName.' user '.$input->getArgument('user_id'));
 
     $output->writeln('searching '.$input->getArgument('query')." in ".$this->CarnetFolder->getFullPath($input->getArgument('root')));
@@ -100,7 +128,7 @@ private function searchInCache($query){
             array_push($this->pathArray, $path);
             
         }
-        $this->searchCache->putContent(json_encode($this->data));
+       // $this->searchCache->putContent(json_encode($this->data));
 
     }
 }
@@ -115,31 +143,30 @@ private function getCacheFolder(){
 }
 
 private function writeFound($relativePath, $in){
-    $this->output->writeln('found in '.$in->getPath());
-    if($this->searchCache){
         $inf = $in->getFileInfo();
+
         $file = array();
         $file['name'] = $inf->getName();
-        $file['path'] = $relativePath."/".$inf->getName();
+        $file['path'] = $relativePath.$inf->getName();
         $file['isDir'] = $inf->getType() === "dir";
         $file['mtime'] = $inf->getMtime();
         array_push($this->data, $file);
-        $this->searchCache->putContent(json_encode($this->data));
-    }
+        //$this->searchCache->putContent(json_encode($this->data));
+    
 }
 private function search($relativePath, $folder, $query, $curDepth){
     $array = array();
-
+    $endWell = true;
     foreach($folder->getDirectoryListing() as $in){
+        $this->current = $this->current+1;
         //$this->output->writeln('in '.$in->getPath());
         
         if($in->getFileInfo()->getType() === "dir"){
             if($curDepth<30) //might be a problem in nc db
-            $this->search(($relativePath!==""?relativePath."/":"").$in->getName(), $in, $query, $curDepth+1);
-
+            $endWell = $this->search(($relativePath!==""?$relativePath."/":"").$in->getName()."/", $in, $query, $curDepth+1);
         }
-        else{
-            if(in_array($relativePath."/".$in->getName(), $this->pathArray)){
+        else if($this->current > $this->from){
+            if(in_array($relativePath.$in->getName(), $this->pathArray)){
                 continue;
             }
             if(strstr(strtolower($this->removeAccents($in->getName())), $query)){
@@ -160,8 +187,9 @@ private function search($relativePath, $folder, $query, $curDepth){
                             break;
                         }
                     }
-                    if($hasFound)
+                    if($hasFound){
                         continue;
+                    }
                     
                 } catch(Exception $e){
                 }
@@ -173,8 +201,11 @@ private function search($relativePath, $folder, $query, $curDepth){
             } catch(\PhpZip\Exception\ZipException $e){
             }
         }
+        if(time() - $this->startTime>=2){
+            return false;
+        }
     }
-     return $array;
+     return $endWell;
 }
 
 protected function configure() {
