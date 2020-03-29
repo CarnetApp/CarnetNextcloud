@@ -47,9 +47,7 @@ Mac, with sync capabilities
         <admin>OCA\Carnet\Settings\AdminSettings</admin>
     </settings>
     <commands>
-        <command>OCA\Carnet\Command\Search</command>
         <command>OCA\Carnet\Command\Cache</command>
-
     </commands>
 
 </info>
