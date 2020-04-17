@@ -13,6 +13,8 @@ return [
     'routes' => [
        ['name' => 'page#index', 'url' => '/', 'verb' => 'GET'],
        ['name' => 'page#writer', 'url' => '/writer', 'verb' => 'GET'],
+       ['name' => 'page#importer', 'url' => '/importer', 'verb' => 'GET'],
+
        ['name' => 'page#settings', 'url' => '/settings', 'verb' => 'GET'],
        ['name' => 'note#getNotePath', 'url' => '/settings/note_path', 'verb' => 'GET'],
        ['name' => 'note#setNotePath', 'url' => '/settings/note_path', 'verb' => 'POST'],
@@ -62,6 +64,9 @@ return [
        ['name' => 'PublicApi#getOpusDecoder', 'url' => '/recorder/decoderWorker.min.wasm', 'verb' => 'GET' ],
        ['name' => 'note#getOpusEncoderJavascript', 'url' => '/recorder/encoderWorker.min.js', 'verb' => 'GET' ],
        ['name' => 'note#getOpusDecoderJavascript', 'url' => '/recorder/decoderWorker.min.js', 'verb' => 'GET' ],
+
+
+       ['name' => 'note#importNote', 'url' => '/note/import', 'verb' => 'POST'],
 
     ]
 ];

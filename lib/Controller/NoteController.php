@@ -1180,13 +1180,6 @@ public function getOpusEncoder(){
         return new RedirectResponse("../../../../../index.php/apps/files/ajax/download.php?files=".$this->getNotePath());
      }
 
-     /**
-     * @NoAdminRequired
-     * @NoCSRFRequired
-     */
-     public function importNote(){
-    
-     }
 
 
      /**
@@ -1275,5 +1268,60 @@ public function getOpusEncoder(){
     }
 
 
+     /**
+     * @NoAdminRequired
+     * @NoCSRFRequired
+     */
+    public function importNote($path, $metadata, $add_to_recent, $is_pinned){
+        $notePath = (empty($path)?"":($path."/")).$_FILES['media']['name'][0];
+        $fileIn = fopen($_FILES['media']['tmp_name'][0],"r");
+        if (!$fileIn) {
+            throw new Exception('Media doesn\'t exist');
+        } else {
+            if(empty($path)){
+                $folder = $this->CarnetFolder;
+            }
+            else{
+                try {
+                    $folder = $this->CarnetFolder->get($path);
+                } catch(\OCP\Files\NotFoundException $e) {
+                    $folder = $this->CarnetFolder->newFolder($path);
+                }
+            }
+                
+            $note = $folder->newFile($_FILES['media']['name'][0]);
+            $note->putContent($fileIn);
+            $meta = json_decode($metadata);
+            $kbactions = array();
+            foreach($meta->keywords as $keyword){
+                $kbaction = array();
+                $kbaction["action"] = "add";
+                $kbaction["time"] = $meta->creation_date;
+                $kbaction["keyword"] = $keyword;
+                $kbaction["path"] = $notePath;
+
+                array_push($kbactions,$kbaction); 
+            }
+            $this->internalPostKeywordsActions($kbactions);
+            $add_to_recent = $_POST['add_to_recent'];
+            if($add_to_recent){
+                $dbactions = array();
+                $dbaction = array();
+                $dbaction["action"] = "add";
+                $dbaction["time"] = $meta->creation_date;
+                $dbaction["path"] = $notePath;
+                array_push($dbactions,$dbaction); 
+                if($is_pinned == "true"){
+                    $dbaction = array();
+                    $dbaction["action"] = "pin";
+                    $dbaction["time"] = $meta->creation_date;
+                    $dbaction["path"] = $notePath;
+                    array_push($dbactions,$dbaction);
+                }
+            
+                $this->internalPostActions($dbactions);
+            }
+        }
+    }
  }
 ?>
