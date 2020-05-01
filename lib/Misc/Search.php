@@ -71,9 +71,7 @@ public function startSearch($query, $from) {
 private function searchInCache($query){
     $cache = new CacheManager($this->db, $this->CarnetFolder);
     $metadataFromCache = $cache->search($query);
-    foreach($metadataFromCache as $path => $mTime){
-        $this->output->writeln('found in '.$path);
-    
+    foreach($metadataFromCache as $path => $mTime){    
         $file = array();
         $file['name'] = "none";
         $file['path'] = $path;
