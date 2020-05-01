@@ -71,22 +71,18 @@ public function startSearch($query, $from) {
 private function searchInCache($query){
     $cache = new CacheManager($this->db, $this->CarnetFolder);
     $metadataFromCache = $cache->search($query);
-    if($this->searchCache){
-        foreach($metadataFromCache as $path => $mTime){
-            $this->output->writeln('found in '.$path);
+    foreach($metadataFromCache as $path => $mTime){
+        $this->output->writeln('found in '.$path);
+    
+        $file = array();
+        $file['name'] = "none";
+        $file['path'] = $path;
+        $file['isDir'] = false;
+        $file['mtime'] = $mTime;
         
-            $file = array();
-            $file['name'] = "none";
-            $file['path'] = $path;
-            $file['isDir'] = false;
-            $file['mtime'] = $mTime;
-            
-            array_push($this->data, $file);
-            array_push($this->pathArray, $path);
-            
-        }
-       // $this->searchCache->putContent(json_encode($this->data));
-
+        array_push($this->data, $file);
+        array_push($this->pathArray, $path);
+        
     }
 }
 
@@ -156,6 +152,7 @@ private function search($relativePath, $folder, $query, $curDepth){
                 }
             } catch(\OCP\Files\NotFoundException $e) {
             } catch(\PhpZip\Exception\ZipException $e){
+            } catch(Exception $e){
             }
         }
         if(time() - $this->startTime>=2){
