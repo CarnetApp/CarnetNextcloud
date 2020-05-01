@@ -1,3 +1,15 @@
+# Version 0.20.1
+
+Translations:
+Piotr Jezusek (Polish), Mac Guffin (Russian), Christian Scholz (German), Alberto Cañete (Spanish)
+
+New Google keep importer (json) compatible with nextcloud
+Design improvement based on Xananax suggestions
+Display as list
+Minimize/maximize todolist in overview
+Better Search on Nextcloud
+
+
 # Version 0.20.0
 
 New black theme
