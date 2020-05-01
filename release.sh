@@ -1,9 +1,6 @@
 #!/bin/bash
-
-if [ -z "$1" ]; then
-  echo "Need version as argument"
-  exit -1
-fi
+version=v$(sed -n -e 's/.*<version>\(.*\)<\/version>.*/\1/p' appinfo/info.xml)
+git checkout stable
 if [ -z "$GITHUB_TOKEN" ]; then
   echo "Need GITHUB_TOKEN env set."
   exit -1
@@ -16,7 +13,7 @@ if [ "$branch" != "stable" ]; then
   exit -1
 fi
 
-version="v$1"
+#version="v$1"
 
 directory_name="carnet-nc-$version"
 zip_name="carnet-nc-$version.zip"
