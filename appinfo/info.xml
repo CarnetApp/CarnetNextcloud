@@ -26,8 +26,9 @@ Mac, with sync capabilities
     <category>office</category>
     <category>organization</category>
     <category>tools</category>
-    <screenshot>https://raw.githubusercontent.com/PhieF/CarnetDocumentation/master/intro/overview.png</screenshot>
-    <bugs>https://github.com/PhieF/CarnetNextcloud/issues</bugs>
+    <screenshot>https://raw.githubusercontent.com/CarnetApp/CarnetDocumentation/master/intro/overview.png</screenshot>
+    <bugs>https://github.com/CarnetApp/CarnetNextcloud/issues</bugs>
+    <website>https://github.com/CarnetApp/CarnetNextcloud</website>
     <types>
             <filesystem/>
     </types>
