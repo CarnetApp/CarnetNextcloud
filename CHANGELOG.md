@@ -1,3 +1,11 @@
+# Version 0.22.0
+
+Better handle right to left languages
+
+Translation:
+
+Raphaël Legouix (Hebrew), Leschek (Czech)
+
 # Version 0.21.0
 
 Translations:
