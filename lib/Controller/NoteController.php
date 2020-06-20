@@ -947,6 +947,7 @@ public function getOpusEncoder(){
      }
 
      private function saveOpenNote($path,$id){
+        $this->waitEndOfExtraction($id);
         $cache = $this->getCacheFolder();
         $folder = $cache->get("currentnote".$id);
         $zipFile = new MyZipFile();
