@@ -1,3 +1,7 @@
+# Version 0.22.1
+
+Fixing an awful mistake when deleting a media
+
 # Version 0.22.0
 
 Better handle right to left languages
