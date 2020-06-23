@@ -771,7 +771,7 @@ public function getOpusEncoder(){
         } catch(\OCP\Files\NotFoundException $e) {
         }
         
-        $this->saveOpenNote($_POST['path'],$id);
+        $this->saveOpenNote($path,$id);
         return false;
      }
 
