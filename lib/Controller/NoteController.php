@@ -1324,5 +1324,16 @@ public function getOpusEncoder(){
             }
         }
     }
+    /**
+     * @NoAdminRequired
+     * @NoCSRFRequired
+     */
+    public function getNote($path){
+        $f = $this->CarnetFolder->get($path);
+        $r = new DataDisplayResponse($f->getContent());
+        $r->addHeader("Content-Disposition", "attachment; filename=\"".$f->getName()."\"");
+        $r->addHeader("Content-Type", $f->getMimeType());
+        return $r;
+    }
  }
 ?>

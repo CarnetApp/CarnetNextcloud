@@ -68,5 +68,7 @@ return [
 
        ['name' => 'note#importNote', 'url' => '/note/import', 'verb' => 'POST'],
 
+
+       ['name' => 'note#getNote', 'url' => '/note/get_note', 'verb' => 'GET'],
     ]
 ];

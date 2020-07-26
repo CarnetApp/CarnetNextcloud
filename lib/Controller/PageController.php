@@ -37,7 +37,9 @@ class PageController extends Controller {
 		if($this->config->getAppValue('carnet', 'carnetDisplayFullscreen', 'no') === "yes")
 			$response->renderAs("blank");
 		$policy = new ContentSecurityPolicy();
-        $policy->addAllowedFrameDomain('\'self\'');
+		$policy->addAllowedFrameDomain('\'self\'');
+		$policy->addAllowedFrameDomain('data:');
+
 		$response->setContentSecurityPolicy($policy); // allow iframe
 		return $response;
 	}
