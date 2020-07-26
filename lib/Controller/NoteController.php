@@ -866,9 +866,27 @@ public function getOpusEncoder(){
                     $width = 400*$ratio;
                     $height = 400;
                 }
-                $src = imagecreatefromstring(file_get_contents($fn));
+                $srcFile = file_get_contents($fn);
+                $src = imagecreatefromstring($srcFile);
+                
+               
                 $dst = imagecreatetruecolor($width,$height);
                 imagecopyresampled($dst,$src,0,0,0,0,$width,$height,$size[0],$size[1]);
+                $exif = exif_read_data($fn, 0, true);
+                if(!empty($exif)){
+                    $orientation = $exif['IFD0']['Orientation'];
+                    switch($orientation) {
+                        case 3:
+                            $dst = imagerotate($dst, 180, 0);
+                            break;
+                        case 6:
+                            $dst = imagerotate($dst, -90, 0);
+                            break;
+                        case 8:
+                            $dst = imagerotate($dst, 90, 0);
+                            break;
+                    }
+                }
                 imagedestroy($src);
                 $fileOut = $data->newFile("preview_".$_FILES['media']['name'][0].".jpg");
                 array_push($files, "data/"."preview_".$_FILES['media']['name'][0].".jpg");
