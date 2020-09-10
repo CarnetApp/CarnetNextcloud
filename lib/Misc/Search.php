@@ -132,11 +132,14 @@ private function search($relativePath, $folder, $query, $curDepth){
                 try {
                     $metadata = json_decode($zipFile->getEntryContents("metadata.json"));
                     $hasFound = false;
-                    foreach($metadata->keywords as $keyword){
-                        if(strstr($this->removeAccents(strtolower($keyword)), $query)){
-                            $this->writeFound($relativePath,$in);
-                            $hasFound = true;
-                            break;
+                    if (is_object ($metadata))
+                    {
+                        foreach($metadata->keywords as $keyword){
+                            if(strstr($this->removeAccents(strtolower($keyword)), $query)){
+                                $this->writeFound($relativePath,$in);
+                                $hasFound = true;
+                                break;
+                            }
                         }
                     }
                     if($hasFound){
