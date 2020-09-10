@@ -653,9 +653,11 @@ public function getOpusEncoder(){
       * @NoAdminRequired
       * @NoCSRFRequired
       */
-	 public function deleteNote($path){
-		$this->CarnetFolder->get($path)->delete();
-     }
+      public function deleteNote($path){
+          if ($path === "untitleddonotedit.sqd")
+              return;
+          $this->CarnetFolder->get($path)->delete();
+      }
 
      /**
       * @NoAdminRequired
@@ -665,6 +667,8 @@ public function getOpusEncoder(){
         if($this->CarnetFolder->nodeExists($to)){
             throw new Exception("Already exists");
         }
+       if ($from === "untitleddonotedit.sqd")
+           return;
        $this->CarnetFolder->get($from)->move($this->CarnetFolder->getFullPath($to));
        $actions = array();
        $actions[0] = array();
