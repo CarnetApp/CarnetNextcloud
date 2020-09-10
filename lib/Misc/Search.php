@@ -149,7 +149,7 @@ private function search($relativePath, $folder, $query, $curDepth){
                 } catch(Exception $e){
                 }
                 $index = $zipFile->getEntryContents("index.html");
-                if(strstr(strtolower($this->removeAccents($index)), $query)){
+                if(trim ($query) !== "" && strstr(strtolower($this->removeAccents($index)), $query)){
                     $this->writeFound($relativePath,$in);
                 }
             } catch(\OCP\Files\NotFoundException $e) {
