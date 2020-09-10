@@ -998,7 +998,9 @@ public function getOpusEncoder(){
             }
             
             $file->putContent($tmph);
-            fclose($tmph);
+            // Do not close $tmph, it is closed by putContent, and a log is displayed as
+            // fclose can not work
+            //fclose($tmph);
             $meta['metadata'] = json_decode($folder->get("metadata.json")->getContent());
             $meta['shorttext'] = NoteUtils::getShortTextFromHTML($folder->get("index.html")->getContent());
             $cache = new CacheManager($this->db, $this->CarnetFolder);
