@@ -17,6 +17,7 @@ class Search {
     private $searchCache;
     private $current=0;
     private $from;
+    private $pathArray = array ();
 
     /**
          * @param string $appName
