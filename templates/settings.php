@@ -25,7 +25,7 @@ if($_['carnet_display_fullscreen']==="yes"){
     if($_['nc_version']>=16)
         style("carnet","../templates/CarnetElectron/compatibility/nextcloud/nc16");
 }
-else if($_['nc_version']>=14)
+else if(isset ($_['nc_version']) && $_['nc_version']>=14)
     style("carnet","../templates/CarnetElectron/compatibility/nextcloud/nc14-header");
 $nonce = "";
 if (method_exists(\OC::$server, "getContentSecurityPolicyNonceManager")){
