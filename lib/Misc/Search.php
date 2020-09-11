@@ -17,6 +17,7 @@ class Search {
     private $searchCache;
     private $current=0;
     private $from;
+    private $pathArray = array ();
 
     /**
          * @param string $appName
@@ -131,11 +132,14 @@ private function search($relativePath, $folder, $query, $curDepth){
                 try {
                     $metadata = json_decode($zipFile->getEntryContents("metadata.json"));
                     $hasFound = false;
-                    foreach($metadata->keywords as $keyword){
-                        if(strstr($this->removeAccents(strtolower($keyword)), $query)){
-                            $this->writeFound($relativePath,$in);
-                            $hasFound = true;
-                            break;
+                    if (is_object ($metadata))
+                    {
+                        foreach($metadata->keywords as $keyword){
+                            if(strstr($this->removeAccents(strtolower($keyword)), $query)){
+                                $this->writeFound($relativePath,$in);
+                                $hasFound = true;
+                                break;
+                            }
                         }
                     }
                     if($hasFound){
@@ -145,7 +149,7 @@ private function search($relativePath, $folder, $query, $curDepth){
                 } catch(Exception $e){
                 }
                 $index = $zipFile->getEntryContents("index.html");
-                if(strstr(strtolower($this->removeAccents($index)), $query)){
+                if(trim ($query) !== "" && strstr(strtolower($this->removeAccents($index)), $query)){
                     $this->writeFound($relativePath,$in);
                 }
             } catch(\OCP\Files\NotFoundException $e) {
