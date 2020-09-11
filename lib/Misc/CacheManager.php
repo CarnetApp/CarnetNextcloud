@@ -95,7 +95,8 @@ class CacheManager{
     public function deleteFromCache($relativePath){
         $sql = 'DELETE FROM `*PREFIX*carnet_metadata` WHERE `path` = ?';
         $stmt = $this->db->prepare($sql);
-        $stmt->bindParam(1, $this->carnetFolder->getFullPath($relativePath), \PDO::PARAM_STR);
+        $param = $this->carnetFolder->getFullPath($relativePath);
+        $stmt->bindParam(1, $param, \PDO::PARAM_STR);
         $stmt->execute();
 
     }
