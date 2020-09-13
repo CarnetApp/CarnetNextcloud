@@ -1329,7 +1329,7 @@ public function getOpusEncoder(){
             }
             $this->internalPostKeywordsActions($kbactions);
             $add_to_recent = $_POST['add_to_recent'];
-            if($add_to_recent){
+            if($add_to_recent == "true"){
                 $dbactions = array();
                 $dbaction = array();
                 $dbaction["action"] = "add";
