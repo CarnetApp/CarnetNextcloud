@@ -55,6 +55,8 @@ class PageController extends Controller {
 		$response = new TemplateResponse($this->appName,"writer",$parameters);
 		$policy = new ContentSecurityPolicy();
 		$policy->addAllowedMediaDomain('blob:');
+		$policy->addAllowedFrameDomain('\'self\'');
+		$policy->addAllowedFrameDomain('data:');
 		if (method_exists($policy, "addAllowedWorkerSrcDomain")){
 			$policy->addAllowedWorkerSrcDomain('\'self\'');
 
@@ -90,6 +92,20 @@ class PageController extends Controller {
 			'app_version' => App::getAppInfo($this->appName)['version'],
 		];
 		$response =  new TemplateResponse($this->appName,"importer", $parameters);
+		$response->renderAs("blank");
+		
+		return $response;
+   }
+
+   /**
+	* @NoAdminRequired
+	* @NoCSRFRequired
+	*/
+	public function exporter() {
+		$parameters = [
+			'app_version' => App::getAppInfo($this->appName)['version'],
+		];
+		$response =  new TemplateResponse($this->appName,"exporter", $parameters);
 		$response->renderAs("blank");
 		
 		return $response;
