@@ -82,7 +82,7 @@ class FSHooks {
                 $cacheManager = new CacheManager($this->db, $this->carnetFolder);
                 $utils = new NoteUtils();
                 $metadata = $utils->getMetadata($this->carnetFolder, $relativePath);
-                $cacheManager->addToCache($relativePath, $metadata, $metadata['lastmodfile']);
+                $cacheManager->addToCache($relativePath, $metadata, $metadata['lastmodfile'], $metadata['text']);
             } catch(\PhpZip\Exception\ZipException $e){
 
             }

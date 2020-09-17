@@ -602,7 +602,7 @@ public function getOpusEncoder(){
                     try{
                         $meta = $utils->getMetadata($this->CarnetFolder, $path);
                         $array[$path] = $meta;
-                        $cache->addToCache($path, $meta, $meta['lastmodfile']);
+                        $cache->addToCache($path, $meta, $meta['lastmodfile'], $meta['text']);
                     } catch(\PhpZip\Exception\ZipException $e){
 
                     }
@@ -722,10 +722,10 @@ public function getOpusEncoder(){
             }
 
 
-
-            $meta['shorttext'] = NoteUtils::getShortTextFromHTML($_POST['html']);
+            $text = NoteUtils::getTextFromHTML($_POST['html']);
+            $meta['shorttext'] = NoteUtils::getShortText($text);
             $meta['metadata'] = json_decode($_POST['metadata']);
-            $cache->addToCache($path, $meta, $mtime);
+            $cache->addToCache($path, $meta, $mtime, $text);
 
         }
         
@@ -803,10 +803,10 @@ public function getOpusEncoder(){
         if($mtime !== false){
             //we need to refresh cache
             $cache = new CacheManager($this->db, $this->CarnetFolder);
-            $cached = $cache->getFromCache(array(0=>$path));
+            $cached = $cache->getFromCache2(array(0=>$path), true);
             $meta = array();
             if(isset($cached[$path])){
-                $meta = $cached[$path];
+                $meta = $cached[$path]['metadata'];
             }
             if(isset($preview)){
                 if(isset($meta['previews'])){
@@ -822,7 +822,7 @@ public function getOpusEncoder(){
                     unset($meta['previews'][$key]);
                 }
             }
-            $cache->addToCache($path, $meta, $mtime);
+            $cache->addToCache($path, $meta, $mtime, $cached['low_case_text']);
 
         }
         return $this->listMediaOfOpenNote($id);
@@ -911,7 +911,8 @@ public function getOpusEncoder(){
             if(isset($cached[$path])){
                 $meta = $cached[$path];
             }
-            $meta['shorttext'] = NoteUtils::getShortTextFromHTML($_POST['html']);
+            $text = NoteUtils::getTextFromHTML($_POST['html']);
+            $meta['shorttext'] = NoteUtils::getShortText($text);
             $meta['metadata'] = json_decode($_POST['metadata']);
             if(isset($preview)){
                 if(!isset($meta['previews']))
@@ -923,7 +924,7 @@ public function getOpusEncoder(){
                     $meta['media'] = array();
             if(!in_array($meta['media'],$media))
                 array_push($meta['media'],$media);
-            $cache->addToCache($path, $meta, $mtime);
+            $cache->addToCache($path, $meta, $mtime, $text);
 
         }
         return $this->listMediaOfOpenNote($id);
@@ -1001,10 +1002,11 @@ public function getOpusEncoder(){
             // Do not close $tmph, it is closed by putContent, and a log is displayed as
             // fclose can not work
             //fclose($tmph);
+            $text = NoteUtils::getTextFromHTML($folder->get("index.html")->getContent());
             $meta['metadata'] = json_decode($folder->get("metadata.json")->getContent());
-            $meta['shorttext'] = NoteUtils::getShortTextFromHTML($folder->get("index.html")->getContent());
+            $meta['shorttext'] = NoteUtils::getShortText($text);
             $cache = new CacheManager($this->db, $this->CarnetFolder);
-            $cache->addToCache($path, $meta, $file->getFileInfo()->getMtime());
+            $cache->addToCache($path, $meta, $file->getFileInfo()->getMtime(), $text);
 
         } else 
             throw new Exception('Unable to create Zip');

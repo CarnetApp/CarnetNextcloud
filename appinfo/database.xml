@@ -30,7 +30,11 @@
         <name>last_modification_file</name>
         <type>integer</type>
     </field>
-        
+    <field>
+        <name>low_case_text</name>
+        <type>text</type>
+        <length>10000000</length>
+    </field>
   </declaration>
 </table>
 </database>
