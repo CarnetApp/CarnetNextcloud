@@ -12,7 +12,7 @@ class CacheManager{
     }
 
     public function addToCache($relativePath, $metadata, $lastmodfile, $text){
-        $this->addToCacheFullPath($this->carnetFolder->getFullPath($relativePath), $metadata, $lastmodfile, $low_case_text);
+        $this->addToCacheFullPath($this->carnetFolder->getFullPath($relativePath), $metadata, $lastmodfile, $text);
     }
 
     public function addToCacheFullPath($fullPath, $metadata, $lastmodfile, $text){
@@ -74,7 +74,7 @@ class CacheManager{
     private function recursiveAddToCache($carnetFolder, $node, $cache){
         if($node instanceof \OCP\Files\Folder){
             foreach($node->getDirectoryListing() as $inNode){
-                echo $inNode->getPath();
+                echo $inNode->getPath()."\n";
                 $this->recursiveAddToCache($carnetFolder, $inNode, $cache);
             }
         } else if(substr($node->getName(), -3) === "sqd"){

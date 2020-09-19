@@ -81,7 +81,7 @@ class NoteUtils{
                 try{
                 $text = self::getTextFromHTML($zipFile->getEntryContents("index.html"));
                 $meta['shorttext'] = self::getShortText($text);
-                $meta['lower_case_text'] = strtolower(self::removeAccents($text));
+                $meta['text'] = strtolower(self::removeAccents($text));
                 $meta['media'] = array();
                 $meta['previews'] = array();
 
