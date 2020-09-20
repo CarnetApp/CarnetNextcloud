@@ -1203,8 +1203,12 @@ public function getOpusEncoder(){
      * @NoCSRFRequired
      */
      public function downloadArchive(){
-
-        return new RedirectResponse("../../../../../index.php/apps/files/ajax/download.php?files=".$this->getNotePath());
+	$tmp = substr($_SERVER['REQUEST_URI'],1);
+	$tmp = strchr($tmp,"/", "true");
+	if ($tmp == "index.php") {
+	$tmp = "";
+	}
+	return new RedirectResponse("../../../../../".$tmp."/index.php/apps/files/ajax/download.php?files=".$this->getNotePath());
      }
 
 
