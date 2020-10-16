@@ -588,11 +588,11 @@ public function getOpusEncoder(){
       * @NoCSRFRequired
       */
 	 public function getMetadata($paths){
-		$array = array();
-        $pathsAr = explode(",",$paths);
+        $array = array();
         $cache = new CacheManager($this->db, $this->CarnetFolder);
         $metadataFromCache = $cache->getFromCache($pathsAr);
-		foreach($pathsAr as $path){
+		foreach($paths as $path){
+
 			if(empty($path))
                 continue;
             try{
