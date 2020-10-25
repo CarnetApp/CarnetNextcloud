@@ -68,7 +68,7 @@ return [
 
 
        ['name' => 'note#importNote', 'url' => '/note/import', 'verb' => 'POST'],
-
+       ['name' => 'note#importArchive', 'url' => '/note/import_archive', 'verb' => 'POST'],
 
        ['name' => 'note#getNote', 'url' => '/note/get_note', 'verb' => 'GET'],
     ]

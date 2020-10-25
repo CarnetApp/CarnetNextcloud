@@ -13,7 +13,23 @@
  use OCP\IDBConnection;
  use OCA\Carnet\Misc\Search;
  //require_once 'vendor/autoload.php';
+ function endsWith($string, $endString) 
+ { 
+     $len = strlen($endString); 
+     if ($len == 0) { 
+         return true; 
+     } 
+     return (substr($string, -$len) === $endString); 
+ }
 
+ function startsWith($string, $startString) 
+ { 
+     $len = strlen($startString); 
+     if ($len == 0) { 
+         return true; 
+     } 
+     return (substr($string, 0, $len) === $startString); 
+ } 
  class MyZipFile extends \PhpZip\ZipFile {
      public function getInputStream(){
         return $this->inputStream;
@@ -331,6 +347,36 @@ public function getOpusEncoder(){
       die();
  }
 
+  private function mergeWithMyKeywordsDB($myDb, $otherKeywordsDBParsed){
+    $myDbContent = json_decode($myDb->getContent());
+    $thisDbContent = $otherKeywordsDBParsed;
+    $saveDB = false;
+    foreach($thisDbContent->data as $action){
+       $isIn = false;
+       foreach($myDbContent->data as $actionMy){
+           if($actionMy == $action){
+               $isIn = true;
+               break;
+            }         
+        }
+        if(!$isIn){
+           $hasChanged = true;
+           $saveDB = true;
+           array_push($myDbContent->data,$action);
+        }
+    }
+    if($saveDB){
+       usort($myDbContent->data, function($a, $b) {
+           if($a->time <= $b->time)
+              return -1;
+          if($a->time >= $b->time)
+              return 1;
+          return 0;
+       });
+       $myDb->putContent(json_encode($myDbContent));
+    }
+
+  }
    /**
    * @NoAdminRequired
    * @NoCSRFRequired
@@ -349,31 +395,11 @@ public function getOpusEncoder(){
           }
           $myDbContent = json_decode($myDb->getContent());
           $thisDbContent = json_decode($inDB->getContent());
-          $saveDB = false;
-          foreach($thisDbContent->data as $action){
-             $isIn = false;
-             foreach($myDbContent->data as $actionMy){
-                 if($actionMy == $action){
-                     $isIn = true;
-                     break;
-                  }         
-              }
-              if(!$isIn){
-                 $hasChanged = true;
-                 $saveDB = true;
-                 array_push($myDbContent->data,$action);
-              }
+          $savedDB = $this->mergeWithMyKeywordsDB($myDb, $thisDbContent);
+          if(!$hasChanged){
+            $hasChanged = $savedDB;
           }
-          if($saveDB){
-             usort($myDbContent->data, function($a, $b) {
-                 if($a->time <= $b->time)
-                    return -1;
-                if($a->time >= $b->time)
-                    return 1;
-                return 0;
-             });
-             $myDb->putContent(json_encode($myDbContent));
-          }
+          
       }
       return $hasChanged;
   }
@@ -387,6 +413,44 @@ public function getOpusEncoder(){
         }
     }
 
+
+    public function mergeWithMyRecentDB($myDb, $otherRecentDBParsed){
+        $myDbContent = json_decode($myDb->getContent());
+        $thisDbContent = $otherRecentDBParsed;
+        $saveDB = "";
+        foreach($thisDbContent->data as $action){
+          
+           $isIn = false;
+           foreach($myDbContent->data as $actionMy){
+               if($actionMy->time < 10000000000)
+                   $actionMy->time  = $actionMy->time  * 1000; // fix old bug
+                if(empty($action->time)){
+                    //old bug
+                    $isIn = true;
+                    break;
+                }
+               if($actionMy->time === $action->time && $actionMy->path === $action->path && $actionMy->action === $action->action){
+                   $isIn = true;
+                   break;
+                }         
+            }
+            if(!$isIn){
+                $saveDB = $saveDB." action: ".$action->action." time ".$action->time." ".$action->path." not in ";
+               array_push($myDbContent->data,$action);
+            }
+        }
+        if(!empty($saveDB)){
+           usort($myDbContent->data, function($a, $b) {
+               if($a->time <= $b->time)
+                   return -1;
+               if($a->time >= $b->time)
+                   return 1;
+               return 0;
+           });
+           $myDb->putContent(json_encode($myDbContent));
+        }
+        return $saveDB;
+    }
     /**
       * @NoAdminRequired
       * @NoCSRFRequired
@@ -403,35 +467,10 @@ public function getOpusEncoder(){
              if($inDB->getName() === $myDb->getName()||$inDB->getMTime()<$lastmod){
                  continue;
              }
-             $myDbContent = json_decode($myDb->getContent());
              $thisDbContent = json_decode($inDB->getContent());
-             $saveDB = false;
-             foreach($thisDbContent->data as $action){
-               
-                $isIn = false;
-                foreach($myDbContent->data as $actionMy){
-                    if($actionMy->time < 10000000000)
-                        $actionMy->time  = $actionMy->time  * 1000; // fix old bug
-                    if($actionMy->time === $action->time && $actionMy->path === $action->path && $actionMy->action === $action->action){
-                        $isIn = true;
-                        break;
-                     }         
-                 }
-                 if(!$isIn){
-                    $hasChanged = true;
-                    $saveDB = true;
-                    array_push($myDbContent->data,$action);
-                 }
-             }
-             if($saveDB){
-                usort($myDbContent->data, function($a, $b) {
-                    if($a->time <= $b->time)
-                        return -1;
-                    if($a->time >= $b->time)
-                        return 1;
-                    return 0;
-                });
-                $myDb->putContent(json_encode($myDbContent));
+             $savedDB = !empty($this->mergeWithMyRecentDB($myDb, $thisDbContent));
+             if(!$hasChanged){
+                $hasChanged = $savedDB;
              }
          }
          return $hasChanged;
@@ -1121,7 +1160,29 @@ public function getOpusEncoder(){
                 try{
                     $in->delete();
                 } catch (\OCP\Lock\LockedException $e){
-
+                    try{
+                        $in->delete();
+                    } catch (\OCP\Lock\LockedException $e){
+                        try{
+                            $in->delete();
+                        } catch (\OCP\Lock\LockedException $e2){
+        
+                        }
+                    } catch(\Doctrine\DBAL\Exception\LockWaitTimeoutException $e){
+                        
+                    }
+                } catch(\Doctrine\DBAL\Exception\LockWaitTimeoutException $e){
+                    try{
+                        $in->delete();
+                    } catch (\OCP\Lock\LockedException $e){
+                        try{
+                            $in->delete();
+                        } catch (\OCP\Lock\LockedException $e2){
+        
+                        }
+                    } catch(\Doctrine\DBAL\Exception\LockWaitTimeoutException $e){
+                        
+                    }
                 }
             }
         }
@@ -1298,6 +1359,165 @@ public function getOpusEncoder(){
         return json_decode($css);
     }
 
+
+    /**
+     * @NoAdminRequired
+     * @NoCSRFRequired
+     */
+    public function importArchive(){
+        $fileIn = fopen($_FILES['media']['tmp_name'][0],"r");
+        if (!$fileIn) {
+            throw new Exception('Media doesn\'t exist');
+        } else {
+            // open and store every db
+            // if need to change note name, replace in DB
+            // instead of copying db, merge them
+            $zipFile = new \PhpZip\ZipFile();
+            $zipFile->openFromStream($fileIn);
+            $prefix = "";
+            $j=0;
+            foreach($zipFile->getListFiles() as $f){
+                $i = strpos($f,"/");
+                $j++;
+                if($i<=0) {
+                    if(!$zipFile->isDirectory($f))
+                        $prefix = Null;
+                }
+                  
+                if($i>0){
+                    $curprefix = substr($f, 0, $i);
+                   if($prefix == "")
+                        $prefix = $curprefix;
+                     if($curprefix != $prefix){
+                        $prefix = Null;
+
+                    }
+
+                }   
+            }
+            $array = array();
+            $keywordsDB = array();
+            $recentDB = array();
+            $renamed = array();
+            $log = array();
+            foreach($zipFile as $f => $contents){
+                if($prefix != Null){
+                    $relativePath = substr($f, strlen($prefix."/"));
+                } else {
+                    $relativePath = $f;
+                }
+                if($relativePath == "")
+                    continue;
+                
+                if(endsWith($relativePath, ".sqd") ){
+                    $newPath = $relativePath;
+                    if($this->CarnetFolder->nodeExists($relativePath)){    
+                        $newPath = substr($relativePath, 0, strlen($relativePath)-4)." ".bin2hex(random_bytes(2)).".sqd";
+                        
+                    }
+                    
+                    if($contents !== "" && $contents !== NULL){
+                        $parent = dirname($f);
+                        array_push($log, "parent "+$parent);
+                        if($parent !== "." && !$this->CarnetFolder->nodeExists($parent)){
+                            $this->CarnetFolder->newFolder($parent);
+                        }
+                        $file = $this->CarnetFolder->newFile($newPath);
+                        $file->putContent($contents);
+                        if($newPath != $relativePath){
+                            array_push($log, "file already exists ");
+                            $sum =  $file->getChecksum();
+                            $sum2 = $this->CarnetFolder->get($relativePath)->getChecksum();
+                            if($sum=="") {
+                                array_push($log, "checksum is empty");
+                                $sum = md5($contents);
+                                array_push($log, "md51 ".$sum);
+                            }
+                            if($sum2=="") {
+                                array_push($log, "checksum2 is empty");
+                                $sum2 = md5($this->CarnetFolder->get($relativePath)->getContent());
+                                array_push($log, "md52 ".$sum2);
+
+                            }
+                            if($sum == $sum2){
+                                array_push($log, "file is the same ".$sum);
+                                $file->delete();
+
+                            } else {
+                                $renamed[$relativePath] = substr($relativePath, 0, strlen($relativePath)-4)." ".substr(str_shuffle(str_repeat("abcdefghijklmnopqrstuvwxyz", 5)), 0, 5).".sqd";
+                            }
+                            
+                        }
+                    }
+                } else if(startsWith($relativePath, "quickdoc")){
+                    array_push($log, "is quickdoc");
+                    
+
+                    if(startsWith($relativePath, "quickdoc/keywords/")){
+
+                        if($contents !== "" && $contents !== NULL){
+                            array_push($keywordsDB, $f);
+
+                        }
+                    }
+                    else  if(startsWith($relativePath, "quickdoc/recentdb/")){
+                        if($contents !== "" && $contents !== NULL){
+                            array_push($recentDB, $f);
+
+                        }
+                    }
+                }
+            }
+
+            $myKeywordsDb = NULL;
+            $myRecentDb = NULL;
+            foreach($keywordsDB as $dbPath){
+                $contents = $zipFile[$dbPath];
+                array_push($log, "is keywords db");
+                if($myKeywordsDb == NULL){
+                    $myKeywordsDb = $this->getKeywordsDBFile();
+                }
+                $thisKeywordsDB = json_decode($contents);
+                foreach($renamed as $oldNotePath => $newNotePath){
+                    foreach($thisKeywordsDB->data as $item){
+                        if($item->path == $oldNotePath){
+                            $item->path = $newNotePath; 
+                        }
+                    }
+                }
+                $this->mergeWithMyKeywordsDB($myKeywordsDb, $thisKeywordsDB);
+
+            }
+    
+            foreach($recentDB as $dbPath){
+                array_push($log, "is recent db");
+                $contents = $zipFile[$dbPath];
+                if($myRecentDb == NULL){
+                    //load it
+                    $myRecentDb = $this->getRecentFile();
+                }
+                $thisRecentDB = json_decode($contents);
+                foreach($renamed as $oldNotePath => $newNotePath){
+                    foreach($thisRecentDB->data as $item){
+                        if($item->path == $oldNotePath){
+                            $item->path = $newNotePath;
+                        }
+                    }
+                }
+                $res = $this->mergeWithMyRecentDB($myRecentDb, $thisRecentDB);
+                if(!empty($res)){
+                    array_push($log, "recent db has changed ".$res);
+                } else 
+                array_push($log, "recent db hasn't changed");
+                    
+            }
+            $return = array();
+            $return['log'] = $log;
+            $return['renamed'] = $renamed;
+            return $return;
+
+        }
+    }
 
      /**
      * @NoAdminRequired
