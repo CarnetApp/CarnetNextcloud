@@ -1,3 +1,14 @@
+# Version 0.23.0
+
+Indexing for faster search
+Export note as HTML
+Print note picture
+Import Carnet Archive
+Fix add to recent
+Fix note export when using a different nextcloud directory (by Vacy)
+
+
+
 # Version 0.22.1
 
 Fixing an awful mistake when deleting a media
