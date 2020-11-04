@@ -1386,11 +1386,11 @@ public function getOpusEncoder(){
                   
                 if($i>0){
                     $curprefix = substr($f, 0, $i);
-                   if($prefix == "")
+                    if($prefix == "")
                         $prefix = $curprefix;
-                     if($curprefix != $prefix){
+                    else if($curprefix != $prefix){
                         $prefix = Null;
-
+                        break;
                     }
 
                 }   
@@ -1409,7 +1409,7 @@ public function getOpusEncoder(){
                 if($relativePath == "")
                     continue;
                 
-                if(endsWith($relativePath, ".sqd") ){
+                if(endsWith($relativePath, ".sqd") ){    
                     $newPath = $relativePath;
                     if($this->CarnetFolder->nodeExists($relativePath)){    
                         $newPath = substr($relativePath, 0, strlen($relativePath)-4)." ".bin2hex(random_bytes(2)).".sqd";
@@ -1444,7 +1444,7 @@ public function getOpusEncoder(){
                                 $file->delete();
 
                             } else {
-                                $renamed[$relativePath] = substr($relativePath, 0, strlen($relativePath)-4)." ".substr(str_shuffle(str_repeat("abcdefghijklmnopqrstuvwxyz", 5)), 0, 5).".sqd";
+                                $renamed[$relativePath] = $newPath;
                             }
                             
                         }
