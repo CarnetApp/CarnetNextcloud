@@ -1269,7 +1269,7 @@ public function getOpusEncoder(){
 	if ($tmp == "index.php") {
 	$tmp = "";
 	}
-	return new RedirectResponse("../../../../../".$tmp."/index.php/apps/files/ajax/download.php?files=".$this->getNotePath());
+	return new RedirectResponse("../../../../../../".$tmp."/index.php/apps/files/ajax/download.php?files=".$this->getNotePath());
      }
 
 
