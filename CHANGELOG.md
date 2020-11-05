@@ -1,13 +1,23 @@
 # Version 0.23.0
 
-Indexing for faster search
+Indexing for faster search (please as admin, execute "php occ carnet:cache rebuild")
 Export note as HTML
 Print note picture
 Import Carnet Archive
+Faster load for editor (optionnal)
+Minified JS
 Fix add to recent
 Fix note export when using a different nextcloud directory (by Vacy)
 
-
+Translations:
+Farsi (mtashackori)
+Hebrew (Raphaël Legouix)
+Russian (Mac Guffin)
+German (Christian Scholz)
+Dutch (Wesley Frikken)
+Czech (Leschek)
+Spanish (Orestes Sánchez)
+Italian (Marco Manieri)
 
 # Version 0.22.1
 
