@@ -45,6 +45,7 @@ rm carnet-*-v*
 
   sudo rm templates/CarnetElectron/dist/ -R
   sudo rm .Trash-1000 -R
+  bash minify.sh
   cd ..
   
   # archive creation + signing
