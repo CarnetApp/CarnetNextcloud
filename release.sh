@@ -45,8 +45,11 @@ rm carnet-*-v*
 
   sudo rm templates/CarnetElectron/dist/ -R
   sudo rm .Trash-1000 -R
+  sudo rm ACRA*
+  cd templates/CarnetElectron/
   bash minify.sh
-  cd ..
+  cd ../../../
+
   
   # archive creation + signing
   zip -r "$cur""/$zip_name" carnet
