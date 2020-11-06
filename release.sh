@@ -47,7 +47,7 @@ rm carnet-*-v*
   sudo rm .Trash-1000 -R
   sudo rm ACRA*
   cd templates/CarnetElectron/
-  bash minify.sh
+  #bash minify.sh
   cd ../../../
 
   
