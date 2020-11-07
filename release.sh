@@ -81,5 +81,6 @@ rm carnet-*-v*
   github-release upload --user phief --repo exode --tag "$version" --name "$zip_name" --file "$zip_name"
   git push origin master
   openssl dgst -sha512 -sign ~/.nextcloud/certificates/carnet.key "$tar_name" | openssl base64
-
+  echo "https://github.com/CarnetApp/CarnetNextcloud/releases/download/$version/carnet-nc-$version.tar.gz"
+  git checkout master
 )
