@@ -1,3 +1,7 @@
+# Version 0.23.5
+
+fix recordings
+
 # Version 0.23.0
 
 Indexing for faster search (please as admin, execute "php occ carnet:cache rebuild")
