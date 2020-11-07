@@ -57,6 +57,8 @@ class PageController extends Controller {
 		$policy->addAllowedMediaDomain('blob:');
 		$policy->addAllowedFrameDomain('\'self\'');
 		$policy->addAllowedFrameDomain('data:');
+		//needed by record encoder
+		$policy->addAllowedScriptDomain('*');
 		if (method_exists($policy, "addAllowedWorkerSrcDomain")){
 			$policy->addAllowedWorkerSrcDomain('\'self\'');
 
