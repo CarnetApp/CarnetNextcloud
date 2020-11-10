@@ -1,3 +1,8 @@
+# Versio 0.23.7
+
+Loading view when extracting media
+Fix todolist when preloading editor
+
 # Version 0.23.5
 
 fix recordings
