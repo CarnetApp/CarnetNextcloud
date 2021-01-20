@@ -109,7 +109,7 @@ private function search($relativePath, $folder, $query, $curDepth){
         $this->current = $this->current+1;
         //$this->output->writeln('in '.$in->getPath());
         
-        if($in->getFileInfo()->getType() === "dir"){
+        if($in->getFileInfo()->getType() === "dir" && !NoteUtils::isNote($in->getName())){
             if($curDepth<30) //might be a problem in nc db
             $endWell = $this->search(($relativePath!==""?$relativePath."/":"").$in->getName()."/", $in, $query, $curDepth+1);
         }
@@ -123,10 +123,8 @@ private function search($relativePath, $folder, $query, $curDepth){
             }
 
             try {
-                $zipFile = new \PhpZip\ZipFile();
-                $zipFile->openFromStream($in->fopen("r"));
-                try {
-                    $metadata = json_decode($zipFile->getEntryContents("metadata.json"));
+                if($in->getFileInfo()->getType() === "dir"){
+                    $metadata = json_decode($in->get("metadata.json")->getContent());
                     $hasFound = false;
                     if (is_object ($metadata))
                     {
@@ -141,12 +139,37 @@ private function search($relativePath, $folder, $query, $curDepth){
                     if($hasFound){
                         continue;
                     }
-                    
-                } catch(Exception $e){
+                    $index = $in->get("index.html")->getContent();
+                    if(trim ($query) !== "" && strstr(strtolower(NoteUtils::removeAccents($index)), $query)){
+                        $this->writeFound($relativePath,$in);
+                    }
                 }
-                $index = $zipFile->getEntryContents("index.html");
-                if(trim ($query) !== "" && strstr(strtolower(NoteUtils::removeAccents($index)), $query)){
-                    $this->writeFound($relativePath,$in);
+                else {
+                    $zipFile = new \PhpZip\ZipFile();
+                    $zipFile->openFromStream($in->fopen("r"));
+                    try {
+                        $metadata = json_decode($zipFile->getEntryContents("metadata.json"));
+                        $hasFound = false;
+                        if (is_object ($metadata))
+                        {
+                            foreach($metadata->keywords as $keyword){
+                                if(strstr(NoteUtils::removeAccents(strtolower($keyword)), $query)){
+                                    $this->writeFound($relativePath,$in);
+                                    $hasFound = true;
+                                    break;
+                                }
+                            }
+                        }
+                        if($hasFound){
+                            continue;
+                        }
+                        
+                    } catch(Exception $e){
+                    }
+                    $index = $zipFile->getEntryContents("index.html");
+                    if(trim ($query) !== "" && strstr(strtolower(NoteUtils::removeAccents($index)), $query)){
+                        $this->writeFound($relativePath,$in);
+                    }
                 }
             } catch(\OCP\Files\NotFoundException $e) {
             } catch(\PhpZip\Exception\ZipException $e){

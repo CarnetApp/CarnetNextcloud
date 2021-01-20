@@ -2,6 +2,15 @@
 namespace OCA\Carnet\Misc;
 class NoteUtils{
     public static $defaultCarnetNotePath = "Documents/QuickNote";
+
+    public static function endsWith($string, $endString) 
+    { 
+        $len = strlen($endString); 
+        if ($len == 0) { 
+            return true; 
+        } 
+        return (substr($string, -$len) === $endString); 
+    }
     public static function getTextFromHTML($html){ //not optimized at alllll....
         return 
             //remove first and last br
@@ -22,6 +31,10 @@ class NoteUtils{
     }
     public static function getShortText($text){ //not optimized at alllll....
         return mb_substr($text, 0, 150);
+    }
+
+    public static function isNote($path){
+        return self::endsWith($path, ".sqd");
     }
 
     public static function removeAccents($str) {
