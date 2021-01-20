@@ -777,19 +777,50 @@ public function getOpusEncoder(){
         try{
             $outFolder = $this->CarnetFolder->get($path);
             if($this->CarnetFolder->get($path)->getType() === "dir"){
-                $meta = array();
-                foreach($files as $file){
-                    $inFolder->get($file)->copy($outFolder->getFullPath($file));
-                }
-
-                
-                return $outFolder->getFileInfo()->getMtime();
+                return $this->saveOpenNoteAsDir($inFolder, $files, $path, $id);
+            } else {
+                $this->saveOpenNote($_POST['path'],$id);
+                return false;
             }
         } catch(\OCP\Files\NotFoundException $e) {
+            if($this->shouldUseFolderNotes()){
+                return $this->saveOpenNoteAsDir($inFolder, $files, $path, $id);
+            } else {
+                $this->saveOpenNote($_POST['path'],$id);
+                return false;
+            }
         }
         
-        $this->saveOpenNote($_POST['path'],$id);
+
         return false;
+     }
+
+     private function saveOpenNoteAsDir($inFolder, $files, $path, $id){
+         if($this->CarnetFolder->nodeExists($path)){
+            $outFolder = $this->CarnetFolder->get($path);
+         } 
+         else {
+            $outFolder = $this->CarnetFolder->newFolder($path);
+         }
+        
+
+
+        $meta = array();
+        foreach($files as $file){
+            $parent = dirname($file);
+            if($parent != "/" AND $parent != "" AND $parent != Null AND !empty($parent) AND $parent != "."){
+                if(!$outFolder->nodeExists($parent)){
+                    $outFolder->newFolder($parent);
+                   
+                }
+               
+              //  
+
+                
+            }
+            $inFolder->get($file)->copy($outFolder->getFullPath($file));
+        }        
+        return $outFolder->getFileInfo()->getMtime();
      }
 
      /*
@@ -1248,6 +1279,18 @@ public function getOpusEncoder(){
       */
      public function update($id, $title, $content) {
          // empty for now
+     }
+
+     public function shouldUseFolderNotes(){
+        return $this->Config->getUserValue($this->userId, $this->appName, "should_use_folder_notes",false);
+     }
+
+     /**
+     * @NoAdminRequired
+     * @NoCSRFRequired
+     */
+     public function setShouldUseFolderNotes($useFolder){
+        return $this->Config->setUserValue($this->userId, $this->appName, "should_use_folder_notes", $useFolder);
      }
 
      /**

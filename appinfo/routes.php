@@ -71,5 +71,10 @@ return [
        ['name' => 'note#importArchive', 'url' => '/note/import_archive', 'verb' => 'POST'],
 
        ['name' => 'note#getNote', 'url' => '/note/get_note', 'verb' => 'GET'],
+
+       ['name' => 'note#setShouldUseFolderNotes', 'url' => '/settings/note_folder', 'verb' => 'POST' ],
+       ['name' => 'note#shouldUseFolderNotes', 'url' => '/settings/note_folder', 'verb' => 'GET' ],
+
+
     ]
 ];
