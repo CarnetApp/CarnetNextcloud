@@ -1623,7 +1623,15 @@ public function getOpusEncoder(){
      */
     public function getNote($path){
         $f = $this->CarnetFolder->get($path);
-        $r = new DataDisplayResponse($f->getContent());
+        if($f->getFileInfo()->getType() === "dir" ){
+            $zipFile = new MyZipFile();
+            $res = $this->addFolderContentToArchive($f,$zipFile,"");
+            $r = new DataDisplayResponse($zipFile->outputAsString());
+        }
+        else {
+            $r = new DataDisplayResponse($f->getContent());
+        }
+        
         $r->addHeader("Content-Disposition", "attachment; filename=\"".$f->getName()."\"");
         $r->addHeader("Content-Type", $f->getMimeType());
         return $r;
