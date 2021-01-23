@@ -1443,6 +1443,19 @@ public function getOpusEncoder(){
             $recentDB = array();
             $renamed = array();
             $log = array();
+            $folderNoteAssociation = array();
+            foreach($zipFile->getListFiles() as $f){
+                
+                $pos = strpos($f, ".sqd/");
+                if($pos != false){ 
+                    $parent = substr($f, 0, $pos+strlen(".sqd/"));
+                    if($parent != $f){
+                        if(!array_key_exists($parent,$folderNoteAssociation))
+                            $folderNoteAssociation[$parent] = array();
+                        array_push($folderNoteAssociation[$parent], $f);
+                    }
+                }
+            }
             foreach($zipFile as $f => $contents){
                 if($prefix != Null){
                     $relativePath = substr($f, strlen($prefix."/"));
@@ -1451,8 +1464,31 @@ public function getOpusEncoder(){
                 }
                 if($relativePath == "")
                     continue;
-                
-                if(endsWith($relativePath, ".sqd") ){    
+                if(endsWith($relativePath, ".sqd/") ){  //folder
+                    $newPath = $relativePath;
+                    if($this->CarnetFolder->nodeExists($relativePath)){    
+                        $newPath = substr($relativePath, 0, strlen($relativePath)-5)." ".bin2hex(random_bytes(2)).".sqd/";
+                        $renamed[$relativePath] = $newPath;
+                        
+                    }
+                    $this->CarnetFolder->newFolder($newPath);
+                    foreach($folderNoteAssociation[$f] as $inNoteFile){
+                        if($prefix != Null){
+                            $inNoteFileRelative = substr($inNoteFile, strlen($prefix."/"));
+                        } else {
+                            $inNoteFileRelative = $inNoteFile;
+                        }
+                        $newInNotePath = str_replace($relativePath,$newPath,  $inNoteFileRelative);
+                        if(endsWith($inNoteFile, "/")){
+                            $this->CarnetFolder->newFolder($newInNotePath);
+                        } else {
+                            $file = $this->CarnetFolder->newFile($newInNotePath);
+                            $file->putContent($zipFile[$inNoteFile]);
+                        }
+                    }
+
+                }
+                else if(endsWith($relativePath, ".sqd") ){    
                     $newPath = $relativePath;
                     if($this->CarnetFolder->nodeExists($relativePath)){    
                         $newPath = substr($relativePath, 0, strlen($relativePath)-4)." ".bin2hex(random_bytes(2)).".sqd";
@@ -1623,7 +1659,7 @@ public function getOpusEncoder(){
      */
     public function getNote($path){
         $f = $this->CarnetFolder->get($path);
-        if($f->getFileInfo()->getType() === "dir" ){
+        if($f->getFileInfo()->getType() === "dir"){
             $zipFile = new MyZipFile();
             $res = $this->addFolderContentToArchive($f,$zipFile,"");
             $r = new DataDisplayResponse($zipFile->outputAsString());
