@@ -46,6 +46,7 @@ rm carnet-*-v*
   sudo rm templates/CarnetElectron/dist/ -R
   sudo rm .Trash-1000 -R
   sudo rm ACRA*
+  sudo rm ./vendor/bin/phpunit #avoid issue with nextcloud when extracting an archive with a symlink
   cd templates/CarnetElectron/
   #bash minify.sh
   cd ../../../
