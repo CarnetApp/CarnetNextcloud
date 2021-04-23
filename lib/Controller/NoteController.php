@@ -629,7 +629,7 @@ public function getOpusEncoder(){
 	 public function getMetadata($paths){
         $array = array();
         $cache = new CacheManager($this->db, $this->CarnetFolder);
-        $metadataFromCache = $cache->getFromCache($pathsAr);
+        $metadataFromCache = $cache->getFromCache($paths);
 		foreach($paths as $path){
 
 			if(empty($path))
