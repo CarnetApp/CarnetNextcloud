@@ -11,6 +11,7 @@
  use OCA\Carnet\Misc\NoteUtils;
  use OCA\Carnet\Misc\CacheManager;
  use OCP\IDBConnection;
+ use OCP\IURLGenerator;
  use OCA\Carnet\Misc\Search;
  //require_once 'vendor/autoload.php';
  function endsWith($string, $endString) 
@@ -35,20 +36,21 @@
         return $this->inputStream;
      }
  }
- $test = "bla";
  class NoteController extends Controller {
 	private $userId;
     private $bla;
     private $storage;
     private $CarnetFolder;
     private $db;
+    private $urlGenerator;
     public static $lastWrite = null;
-	public function __construct($AppName, IRequest $request, $UserId, $RootFolder, $Config,  IDBConnection $IDBConnection){
+    public function __construct($AppName, IRequest $request, $UserId, $RootFolder, $Config,  IDBConnection $IDBConnection, IURLGenerator $urlGenerator){
         parent::__construct($AppName, $request);
         $this->userId = $UserId;
         $this->db = $IDBConnection;
         $this->Config = $Config;
         $this->rootFolder = $RootFolder;
+        $this->urlGenerator = $urlGenerator;
         $folder = $this->Config->getUserValue($this->userId, $this->appName, "note_folder");
         //$this->Config->setUserValue($this->userId, $this->appName, "note_folder", 'Documents/QuickNote');
         if(empty($folder))
@@ -1307,12 +1309,7 @@ public function getOpusEncoder(){
      * @NoCSRFRequired
      */
      public function downloadArchive(){
-	$tmp = substr($_SERVER['REQUEST_URI'],1);
-	$tmp = strchr($tmp,"/", "true");
-	if ($tmp == "index.php") {
-	$tmp = "";
-	}
-	return new RedirectResponse("../../../../../../".$tmp."/index.php/apps/files/ajax/download.php?files=".$this->getNotePath());
+      return new RedirectResponse($this->urlGenerator->getBaseUrl()."/index.php/apps/files/ajax/download.php?files=".$this->getNotePath());
      }
 
 
