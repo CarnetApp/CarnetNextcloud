@@ -1057,19 +1057,21 @@ public function getOpusEncoder(){
         foreach($res['media'] as $media){
             array_push($meta['media'], "./note/getmedia?note=".$path."&media=".$media);
         }
-        $file = $this->CarnetFolder->newFile($path);
         //tried to do with a direct fopen on $file but lead to bad size on nextcloud
         $tmppath = tempnam(sys_get_temp_dir(), uniqid().".sqd");
         $zipFile->saveAsFile($tmppath);
         $tmph = fopen($tmppath, "r");
         if($tmph){
-            try{
-                $this->CarnetFolder->get($path)->delete();
-                $file = $this->CarnetFolder->newFile($path);
+            if($this->CarnetFolder->nodeExists($path)){
+                try{
+                    $this->CarnetFolder->get($path)->delete();
 
-            } catch(\OCP\Files\NotFoundException $e) {
+                } catch(\OCP\Files\NotFoundException $e) {
+                }
             }
-            
+        
+            $file = $this->CarnetFolder->newFile($path);
+
             $file->putContent($tmph);
             // Do not close $tmph, it is closed by putContent, and a log is displayed as
             // fclose can not work
@@ -1222,33 +1224,36 @@ public function getOpusEncoder(){
         
         $noteFolderName = "currentnote".$editUniqueID;
         try{
-
-            $noteNode = $this->CarnetFolder->get($path);
-            if($noteNode->getType() === "dir"){
-                $folder = $noteNode->copy($cache->getFullPath($noteFolderName));
-            }
-            else{
-                $folder = $cache->newFolder($noteFolderName);
-                $tmppath = tempnam(sys_get_temp_dir(), uniqid().".zip");
-                file_put_contents($tmppath,$noteNode->fopen("r"));
-                $zipFile = new \PhpZip\ZipFile();
-                $zipFile->openFile($tmppath);
-                foreach($zipFile as $entryName => $contents){
-                    if($entryName === ".extraction_finished")
-                    continue;    
-                    if($contents === "" AND $zipFile->isDirectory($entryName)){
-                        $folder->newFolder($entryName);
-                    }
-                    else if($contents !== "" && $contents !== NULL){
-                        $parent = dirname($entryName);
-                        if($parent !== "." && !$folder->nodeExists($parent)){
-                            $folder->newFolder($parent);
-                        }
-                        $folder->newFile($entryName)->putContent($contents);
-                    }
+            if($this->CarnetFolder->nodeExists($path)){                
+                $noteNode = $this->CarnetFolder->get($path);
+                if($noteNode->getType() === "dir"){
+                    $folder = $noteNode->copy($cache->getFullPath($noteFolderName));
                 }
-                unlink($tmppath);
+                else{
+                    $folder = $cache->newFolder($noteFolderName);
+                    $tmppath = tempnam(sys_get_temp_dir(), uniqid().".zip");
+                    file_put_contents($tmppath,$noteNode->fopen("r"));
+                    $zipFile = new \PhpZip\ZipFile();
+                    $zipFile->openFile($tmppath);
+                    foreach($zipFile as $entryName => $contents){
+                        if($entryName === ".extraction_finished")
+                        continue;    
+                        if($contents === "" AND $zipFile->isDirectory($entryName)){
+                            $folder->newFolder($entryName);
+                        }
+                        else if($contents !== "" && $contents !== NULL){
+                            $parent = dirname($entryName);
+                            if($parent !== "." && !$folder->nodeExists($parent)){
+                                $folder->newFolder($parent);
+                            }
+                            $folder->newFile($entryName)->putContent($contents);
+                        }
+                    }
+                    unlink($tmppath);
+                }
             }
+            else 
+                $folder = $cache->newFolder($noteFolderName);
         } catch(\OCP\Files\NotFoundException $e) {
             $folder = $cache->newFolder($noteFolderName);
         }
