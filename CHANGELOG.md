@@ -1,4 +1,16 @@
-# Versio 0.23.7
+# Version 0.24.0
+
+Option to create note as folder (beta for dev)
+
+Fix:
+Nextcloud 21
+Export all notes (by Yamanq)
+Metadata (by hobbsecky)
+Search in folder notes
+
+
+
+# Version 0.23.7
 
 Loading view when extracting media
 Fix todolist when preloading editor

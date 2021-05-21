@@ -12,3 +12,8 @@ git checkout -b stable-$version
 git push origin stable-$version
 git push framagit stable-$version
 git checkout master
+cd templates/CarnetElectron
+git checkout -b nextcloud-stable-$version
+git push origin nextcloud-stable-$version
+git push framagit nextcloud-stable-$version
+git checkout main
