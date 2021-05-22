@@ -1,4 +1,4 @@
-# Version 0.24.0
+# Version 0.24.0 - 0.24.1
 
 Option to create note as folder (beta for dev)
 
@@ -8,6 +8,15 @@ Export all notes (by Yamanq)
 Metadata (by hobbsecky)
 Search in folder notes
 
+Translations:
+
+Galician (Xosé M)
+German (Christien Scholz)
+Polish (Przemek Poland)
+Spanish (Maira Belmonte)
+Chinese (Lurenjia)
+Russian (Mac Guffin)
+French (Aznörth)
 
 
 # Version 0.23.7
