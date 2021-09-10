@@ -36,7 +36,7 @@ class Version002401Date20210711195249 extends SimpleMigrationStep {
 			$table = $schema->createTable('carnet_metadata');
 			$table->addColumn('path', 'string', [
 				'notnull' => true,
-				'length' => 191,
+				'length' => 300,
 			]);
 			$table->addColumn('metadata', 'string', [
 				'notnull' => false,
