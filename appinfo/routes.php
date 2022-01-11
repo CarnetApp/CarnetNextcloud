@@ -13,6 +13,8 @@ return [
     'routes' => [
        ['name' => 'page#index', 'url' => '/', 'verb' => 'GET'],
        ['name' => 'page#writer', 'url' => '/writer', 'verb' => 'GET'],
+       ['name' => 'page#browser', 'url' => '/browser', 'verb' => 'GET'],
+
        ['name' => 'page#importer', 'url' => '/importer', 'verb' => 'GET'],
        ['name' => 'page#exporter', 'url' => 'exporter/exporter.html', 'verb' => 'GET'],
 
