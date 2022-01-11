@@ -53,7 +53,7 @@ class Application extends App {
             });
     }
 }
-$app = new Application();
+$app = \OC::$server->query(Application::class);
 $container = $app->getContainer();
 
 $app->connectWatcher($container);
