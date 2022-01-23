@@ -1,7 +1,7 @@
 <?php
 global $fullscreen;
 global $appVersion;
-$fullscreen = $_['carnet_display_fullscreen'];
+$fullscreen = True;
 $currentpath = __DIR__."/CarnetElectron/";
 $appVersion = $_['app_version'];
 

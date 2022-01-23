@@ -101,8 +101,7 @@ class PageController extends Controller {
 			'app_version' => App::getAppInfo($this->appName)['version'],
 		];
 		$response =  new TemplateResponse($this->appName,"settings", $parameters);
-		if($this->config->getAppValue('carnet', 'carnetDisplayFullscreen', 'no') === "yes")
-			$response->renderAs("blank");
+		$response->renderAs("blank");
 		$policy = new ContentSecurityPolicy();
         $policy->addAllowedFrameDomain('\'self\'');
 		$response->setContentSecurityPolicy($policy); // allow iframe
