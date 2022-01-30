@@ -54,6 +54,8 @@ class PageController extends Controller {
 	 * @NoCSRFRequired
 	 */
 	public function index() {
+		if($this->config->getAppValue('carnet', 'carnetDisplayFullscreen', 'no') === "yes")
+			return $this->browser();
 		$parameters = [
 			'nc_version' => \OCP\Util::getVersion()[0],
 			'carnet_display_fullscreen' => $this->config->getAppValue('carnet', 'carnetDisplayFullscreen', 'no'),
