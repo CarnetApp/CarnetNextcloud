@@ -75,13 +75,17 @@ rm carnet-*-v*
 (
   git push origin --tag
 
-  github-release phief/CarnetNextcloud "$version" master "$changelog" "$zip_name"
-  github-release phief/CarnetNextcloud "$version" master "$changelog" "$tar_name"
-  github-release phief/CarnetNextcloud "$version" master "$changelog" "$tar_oc_name"
+#  github-release phief/CarnetNextcloud "$version" master "$changelog" "$zip_name"
+#  github-release phief/CarnetNextcloud "$version" master "$changelog" "$tar_name"
+#  github-release phief/CarnetNextcloud "$version" master "$changelog" "$tar_oc_name"
 
-  github-release upload --user phief --repo exode --tag "$version" --name "$zip_name" --file "$zip_name"
-  git push origin master
+#  github-release upload --user phief --repo exode --tag "$version" --name "$zip_name" --file "$zip_name"
+github-release release --user CarnetApp --tag "$version" --repo CarnetNextcloud
+github-release upload --user CarnetApp --tag "$version" --name "$zip_name" --file "$zip_name" --repo CarnetNextcloud
+github-release upload --user CarnetApp --tag "$version" --name "$tar_name" --file "$tar_name" --repo CarnetNextcloud
+github-release upload --user CarnetApp --tag "$version" --name "$tar_oc_name" --file "$tar_oc_name" --repo CarnetNextcloud
+  git push origin main
   openssl dgst -sha512 -sign ~/.nextcloud/certificates/carnet.key "$tar_name" | openssl base64
   echo "https://github.com/CarnetApp/CarnetNextcloud/releases/download/$version/carnet-nc-$version.tar.gz"
-  git checkout master
+  git checkout main
 )
