@@ -38,14 +38,14 @@ class Version002401Date20210711195249 extends SimpleMigrationStep {
 				'notnull' => true,
 				'length' => 191,
 			]);
-			$table->addColumn('metadata', 'string', [
+			$table->addColumn('metadata', 'text', [
 				'notnull' => false,
 				'length' => 10000000,
 			]);
 			$table->addColumn('last_modification_file', 'integer', [
 				'notnull' => false,
 			]);
-			$table->addColumn('low_case_text', 'string', [
+			$table->addColumn('low_case_text', 'text', [
 				'notnull' => false,
 				'length' => 10000000,
 			]);
