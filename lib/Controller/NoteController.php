@@ -643,7 +643,7 @@ public function getOpusEncoder(){
                     try{
                         $meta = $utils->getMetadata($this->CarnetFolder, $path);
                         $array[$path] = $meta;
-                        $cache->addToCache($path, $meta, $meta['lastmodfile'], $meta['text']);
+                        $cache->addToCache($path, $meta, $meta['lastmodfile'], isset($meta['text']) ? $meta['text'] : '');
                     } catch(\PhpZip\Exception\ZipException $e){
 
                     }
