@@ -1,7 +1,7 @@
 <?php
 namespace OCA\Carnet\Controller;
 
-use OCP\App;
+use OC_App;
 use OCP\IRequest;
 use OCP\AppFramework\Http\ContentSecurityPolicy;
 use OCP\AppFramework\Http\TemplateResponse;
@@ -31,7 +31,7 @@ class PageController extends Controller {
 		$parameters = [
 			'nc_version' => \OCP\Util::getVersion()[0],
 			'carnet_display_fullscreen' => $this->config->getAppValue('carnet', 'carnetDisplayFullscreen', 'no'),
-			'app_version' => App::getAppInfo($this->appName)['version'],
+			'app_version' => OC_App::getAppInfo($this->appName)['version'],
 		];
 		$response = new TemplateResponse($this->appName,"browser",$parameters);
 		$response->renderAs("blank");
@@ -59,7 +59,7 @@ class PageController extends Controller {
 		$parameters = [
 			'nc_version' => \OCP\Util::getVersion()[0],
 			'carnet_display_fullscreen' => $this->config->getAppValue('carnet', 'carnetDisplayFullscreen', 'no'),
-			'app_version' => App::getAppInfo($this->appName)['version'],
+			'app_version' => OC_App::getAppInfo($this->appName)['version'],
 		];
 		$response = new TemplateResponse($this->appName,"index",$parameters);
 		$policy = new ContentSecurityPolicy();
@@ -76,7 +76,7 @@ class PageController extends Controller {
 	 */
 	public function writer() {
 		$parameters = [
-			'app_version' => App::getAppInfo($this->appName)['version'],
+			'app_version' => OC_App::getAppInfo($this->appName)['version'],
 		];
 		$response = new TemplateResponse($this->appName,"writer",$parameters);
 		$policy = new ContentSecurityPolicy();
@@ -100,7 +100,7 @@ class PageController extends Controller {
    public function settings() {
 		$parameters = [
 			'carnet_display_fullscreen' => $this->config->getAppValue('carnet', 'carnetDisplayFullscreen', 'no'),
-			'app_version' => App::getAppInfo($this->appName)['version'],
+			'app_version' => OC_App::getAppInfo($this->appName)['version'],
 		];
 		$response =  new TemplateResponse($this->appName,"settings", $parameters);
 		$response->renderAs("blank");
@@ -116,7 +116,7 @@ class PageController extends Controller {
 	*/
 	public function importer() {
 		$parameters = [
-			'app_version' => App::getAppInfo($this->appName)['version'],
+			'app_version' => OC_App::getAppInfo($this->appName)['version'],
 		];
 		$response =  new TemplateResponse($this->appName,"importer", $parameters);
 		$response->renderAs("blank");
@@ -130,7 +130,7 @@ class PageController extends Controller {
 	*/
 	public function exporter() {
 		$parameters = [
-			'app_version' => App::getAppInfo($this->appName)['version'],
+			'app_version' => OC_App::getAppInfo($this->appName)['version'],
 		];
 		$response =  new TemplateResponse($this->appName,"exporter", $parameters);
 		$response->renderAs("blank");
