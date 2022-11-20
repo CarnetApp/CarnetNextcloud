@@ -1,7 +1,7 @@
 <?php
  namespace OCA\Carnet\Controller;
  use Exception;
- use OCP\App;
+ use OC_App;
  use OCP\IRequest;
  use OCP\AppFramework\Controller;
  use OCP\AppFramework\Http\FileDisplayResponse;
@@ -241,7 +241,7 @@
    public function getChangelog() {
        
     $changelog = file_get_contents(__DIR__."/../../CHANGELOG.md");
-    $current = App::getAppInfo($this->appName)['version'];
+    $current = OC_App::getAppInfo($this->appName)['version'];
     $last = $this->Config->getUserValue($this->userId, $this->appName, "last_changelog_version");
     if($last !== $current){
         $this->Config->setUserValue($this->userId, $this->appName, "last_changelog_version", $current);
