@@ -30,7 +30,7 @@ $file = preg_replace_callback('/<link(.*?)href=\"(.*?\.css(?:\?.*?)?)"/s',functi
 $file .= "<span style=\"display:none;\" id=\"token\">".$_['requesttoken']."</span>";
 
 $file = str_replace("<!ROOTPATH>", $root."/CarnetWebClient/dist/", $file);
-$root = substr(__DIR__, strlen($_SERVER['DOCUMENT_ROOT']));
+//$root = substr(__DIR__, strlen($_SERVER['DOCUMENT_ROOT']));
 $urlGenerator = \OC::$server->getURLGenerator();
 $file = str_replace("<!ROOTURL>", $root."/CarnetWebClient/dist/", $file);
 if (method_exists(\OC::$server, "getContentSecurityPolicyNonceManager")){

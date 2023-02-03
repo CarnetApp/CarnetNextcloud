@@ -971,7 +971,7 @@ public function getOpusEncoder(){
                 imagedestroy($dst);
                 $preview = "./note/getmedia?note=".$_POST['path']."&media="."preview_".$_FILES['media']['name'][0].".jpg";
             }
-            fclose($fileIn);
+//            fclose($fileIn);
         }
         
         $mtime = $this->saveFiles($folder,$files, $_POST['path'],$id);
