@@ -739,12 +739,14 @@ public function getOpusEncoder(){
         $this->waitEndOfExtraction($id);
         $cache = $this->getCacheFolder();
         $folder = $cache->get("currentnote".$id);
+        $mainFile = $_POST['isMarkdown'] ? "note.md" : "index.html";
         try{
-            $file = $folder->get("index.html");
+            $file = $folder->get($mainFile);
         } catch(\OCP\Files\NotFoundException $e) {
-            $file = $folder->newFile("index.html");
+            $file = $folder->newFile($mainFile);
         }
         $file->putContent($_POST['html']);
+        
         try{
             $file = $folder->get("metadata.json");
         } catch(\OCP\Files\NotFoundException $e) {
@@ -752,7 +754,7 @@ public function getOpusEncoder(){
         }
         $file->putContent($_POST['metadata']);
         $path = $_POST['path'];
-        $mtime = $this->saveFiles($folder, array(0 => "index.html", 1 =>"metadata.json"), $_POST['path'], $id);
+        $mtime = $this->saveFiles($folder, array(0 => $mainFile, 1 =>"metadata.json"), $_POST['path'], $id);
         if($mtime !== false){
             //we need to refresh cache
             $cache = new CacheManager($this->db, $this->CarnetFolder);
@@ -785,7 +787,7 @@ public function getOpusEncoder(){
                 return false;
             }
         } catch(\OCP\Files\NotFoundException $e) {
-            if($this->shouldUseFolderNotes()){
+            if($this->shouldUseFolderNotes() || $_POST['isMarkdown']){
                 return $this->saveOpenNoteAsDir($inFolder, $files, $path, $id);
             } else {
                 $this->saveOpenNote($_POST['path'],$id);
@@ -1153,7 +1155,14 @@ public function getOpusEncoder(){
         try{
             $noteNode = $this->CarnetFolder->get($path);
             if($noteNode->getType() === "dir"){
-                $data['html'] = $noteNode->get('index.html')->getContent();
+                if ($noteNode->nodeExists("note.md")){
+                    $data['html'] = $noteNode->get("note.md")->getContent(); 
+                    $data['isMarkdown'] = true;
+                }
+                else {
+                    $data['html'] = $noteNode->get('index.html')->getContent();
+                    $data['isMarkdown'] = false;
+                }
                 try{
                     $data['metadata'] = json_decode($noteNode->get('metadata.json')->getContent());
                 } catch(\OCP\Files\NotFoundException $e) {
@@ -1172,6 +1181,7 @@ public function getOpusEncoder(){
             }
         } catch(\OCP\Files\NotFoundException $e) {
             $data["error"] = "not found";
+            $data["isNew"] = true;
         }
 
         $data['id'] = $editUniqueID;
