@@ -1304,7 +1304,7 @@ public function getOpusEncoder(){
      }
 
      public function useMDEditor(){
-        return $this->Config->getUserValue($this->userId, $this->appName, "use_md_editor",false);
+        return $this->Config->getUserValue($this->userId, $this->appName, "use_md_editor",0);
      }
 
      /**
@@ -1312,6 +1312,10 @@ public function getOpusEncoder(){
      * @NoCSRFRequired
      */
      public function setUseMDEditor($useMD){
+        if($useMD === "false")
+            $useMD = 0;
+        else if($useMD === "true")
+            $useMD = 1 ;
         return $this->Config->setUserValue($this->userId, $this->appName, "use_md_editor", $useMD);
      }
 
