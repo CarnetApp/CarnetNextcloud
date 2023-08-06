@@ -280,7 +280,7 @@
    */
    public function getLangJson($lang){
      if($lang !== ".." && $lang !== "../"){
-        $response = new StreamResponse(__DIR__.'/../../templates/CarnetElectron/i18n/'.$lang.".json");
+        $response = new StreamResponse(__DIR__.'/../../templates/CarnetWebClient/i18n/'.$lang.".json");
         $response->addHeader("Content-Type", "application/json");
         $response->cacheFor(604800);
         return $response;
@@ -296,7 +296,7 @@
   * @NoCSRFRequired
   */
   public function getOpusDecoderJavascript(){
-    $response = new StreamResponse(__DIR__.'/../../templates/CarnetElectron/reader/libs/recorder/decoderWorker.min.js');
+    $response = new StreamResponse(__DIR__.'/../../templates/CarnetWebClient/reader/libs/recorder/decoderWorker.min.js');
     $response->addHeader("Content-Type", "application/javascript");
     return $response;
   }
@@ -307,7 +307,7 @@
   * @NoCSRFRequired
   */
   public function getOpusEncoderJavascript(){
-    $response = new StreamResponse(__DIR__.'/../../templates/CarnetElectron/reader/libs/recorder/encoderWorker.min.js');
+    $response = new StreamResponse(__DIR__.'/../../templates/CarnetWebClient/reader/libs/recorder/encoderWorker.min.js');
     $response->addHeader("Content-Type", "application/javascript");
     return $response;
   }
@@ -320,7 +320,7 @@
 public function getOpusEncoder(){
     echo"bla";
     return;
-  $response = new StreamResponse(__DIR__.'/../../templates/CarnetElectron/reader/libs/recorder/encoderWorker.min.wasm');
+  $response = new StreamResponse(__DIR__.'/../../templates/CarnetWebClient/reader/libs/recorder/encoderWorker.min.wasm');
   $response->addHeader("Content-Type", "application/wasm");
   return $response;
 }
@@ -332,7 +332,7 @@ public function getOpusEncoder(){
    public function getUbuntuFont(){
       $font = basename($_SERVER['REQUEST_URI']);
       if($font !== ".." && $font !== "../")
-        return new StreamResponse(__DIR__.'/../../templates/CarnetElectron/fonts/'.basename($_SERVER['REQUEST_URI']));
+        return new StreamResponse(__DIR__.'/../../templates/CarnetWebClient/fonts/'.basename($_SERVER['REQUEST_URI']));
       else
         die();
    }
@@ -344,7 +344,7 @@ public function getOpusEncoder(){
   public function getMaterialFont(){
     $font = basename($_SERVER['REQUEST_URI']);
     if($font !== ".." && $font !== "../")
-      return new StreamResponse(__DIR__.'/../../templates/CarnetElectron/fonts/'.basename($_SERVER['REQUEST_URI']));
+      return new StreamResponse(__DIR__.'/../../templates/CarnetWebClient/fonts/'.basename($_SERVER['REQUEST_URI']));
     else
       die();
  }
@@ -1303,6 +1303,18 @@ public function getOpusEncoder(){
          // empty for now
      }
 
+     public function useMDEditor(){
+        return $this->Config->getUserValue($this->userId, $this->appName, "use_md_editor",false);
+     }
+
+     /**
+     * @NoAdminRequired
+     * @NoCSRFRequired
+     */
+     public function setUseMDEditor($useMD){
+        return $this->Config->setUserValue($this->userId, $this->appName, "use_md_editor", $useMD);
+     }
+
      public function shouldUseFolderNotes(){
         return $this->Config->getUserValue($this->userId, $this->appName, "should_use_folder_notes",false);
      }
@@ -1339,16 +1351,16 @@ public function getOpusEncoder(){
      * @NoCSRFRequired
      */
     public function getAppThemes(){
-        $root = $this->getCarnetElectronUrl()."/css/";
-        return json_decode('[{"name":"Carnet", "path":"'.$this->getCarnetElectronPath().'/css/carnet", "preview":"'.$root.'carnet/preview.png"}, {"name":"Dark", "path":"'.$this->getCarnetElectronPath().'/css/dark", "preview":"'.$root.'dark/preview.png"}, {"name":"Black", "path":"'.$this->getCarnetElectronPath().'/css/black", "preview":"'.$root.'black/preview.png"}]');
+        $root = $this->getCarnetWebClientUrl()."/css/";
+        return json_decode('[{"name":"Carnet", "path":"'.$this->getCarnetWebClientPath().'/css/carnet", "preview":"'.$root.'carnet/preview.png"}, {"name":"Dark", "path":"'.$this->getCarnetWebClientPath().'/css/dark", "preview":"'.$root.'dark/preview.png"}, {"name":"Black", "path":"'.$this->getCarnetWebClientPath().'/css/black", "preview":"'.$root.'black/preview.png"}]');
     }
 
-    private function getCarnetElectronPath(){
-        return __DIR__.'/../../templates/CarnetElectron';
+    private function getCarnetWebClientPath(){
+        return __DIR__.'/../../templates/CarnetWebClient';
     }
 
-    private function getCarnetElectronUrl(){
-        $root = \OCP\Util::linkToAbsolute($this->appName,"templates")."/CarnetElectron";
+    private function getCarnetWebClientUrl(){
+        $root = \OCP\Util::linkToAbsolute($this->appName,"templates")."/CarnetWebClient";
         if(strpos($root,"http://") === 0 && !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off'){
             //should be https...
             $root = "https".substr($root,strlen("http"));
@@ -1367,8 +1379,8 @@ public function getOpusEncoder(){
         $browser = array();
         $editor = array();
         $settings = array();
-        if(strpos($url, $this->getCarnetElectronPath()) === 0){
-            $url = $this->getCarnetElectronUrl().substr($url, strlen($this->getCarnetElectronPath()), strlen($url));
+        if(strpos($url, $this->getCarnetWebClientPath()) === 0){
+            $url = $this->getCarnetWebClientUrl().substr($url, strlen($this->getCarnetWebClientPath()), strlen($url));
         }
         foreach($meta['browser'] as $css){
             array_push($browser, $url."/".$css);

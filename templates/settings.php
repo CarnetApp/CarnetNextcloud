@@ -2,13 +2,13 @@
 global $fullscreen;
 global $appVersion;
 $fullscreen = True;
-$currentpath = __DIR__."/CarnetElectron/";
+$currentpath = __DIR__."/CarnetWebClient/";
 $appVersion = $_['app_version'];
 
 $root = \OCP\Util::linkToAbsolute("carnet","templates");
 $root = parse_url($root, PHP_URL_PATH); 
 $file = file_get_contents($currentpath."settings.html");
-$file = str_replace("href=\"","href=\"".$root."/CarnetElectron/",$file);
+$file = str_replace("href=\"","href=\"".$root."/CarnetWebClient/",$file);
 $file = preg_replace_callback('/<script(.*?)src=\"(.*?\.js(?:\?.*?)?)"/s',function ($matches) {
     global $currentpath;
     global $appVersion;
@@ -23,16 +23,16 @@ $file .= "<span style=\"display:none;\" id=\"token\">".$_['requesttoken']."</spa
 if($_['carnet_display_fullscreen']==="yes"){
     $file .= "<script src=\"compatibility/nextcloud/fullscreen.js??v=".$appVersion."\"></script>";
     if($_['nc_version']>=16)
-        style("carnet","../templates/CarnetElectron/compatibility/nextcloud/nc16");
+        style("carnet","../templates/CarnetWebClient/compatibility/nextcloud/nc16");
 }
 else if(isset ($_['nc_version']) && $_['nc_version']>=14)
-    style("carnet","../templates/CarnetElectron/compatibility/nextcloud/nc14-header");
+    style("carnet","../templates/CarnetWebClient/compatibility/nextcloud/nc14-header");
 $nonce = "";
 if (method_exists(\OC::$server, "getContentSecurityPolicyNonceManager")){
     $nonce = \OC::$server->getContentSecurityPolicyNonceManager()->getNonce();
 }
-$file = str_replace("src=\"","defer nonce='".$nonce."' src=\"".$root."/CarnetElectron/",$file);
+$file = str_replace("src=\"","defer nonce='".$nonce."' src=\"".$root."/CarnetWebClient/",$file);
 echo $file;
-echo "<span style=\"display:none;\" id=\"root-url\">".$root."/CarnetElectron/</span>";
+echo "<span style=\"display:none;\" id=\"root-url\">".$root."/CarnetWebClient/</span>";
 echo "<span style=\"display:none;\" id=\"logout-token\">".urlencode(\OCP\Util::callRegister())."</span>";
 ?>
