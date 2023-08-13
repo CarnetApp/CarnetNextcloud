@@ -907,6 +907,7 @@ public function getOpusEncoder(){
      * @NoCSRFRequired
      */
      public function addMediaToOpenNote($id){
+        $path = $_POST['path'];
         $this->waitEndOfExtraction($id);
         $cache = $this->getCacheFolder();
         $folder = $cache->get("currentnote".$id);
@@ -1001,7 +1002,7 @@ public function getOpusEncoder(){
             }
             if(!isset($meta['media']))
                     $meta['media'] = array();
-            if(!in_array($meta['media'],$media))
+            if(!in_array($media, $meta['media']))
                 array_push($meta['media'],$media);
             $cache->addToCache($path, $meta, $mtime, $text);
 
