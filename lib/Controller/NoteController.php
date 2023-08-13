@@ -280,7 +280,7 @@
    */
    public function getLangJson($lang){
      if($lang !== ".." && $lang !== "../"){
-        $response = new StreamResponse(__DIR__.'/../../templates/CarnetElectron/i18n/'.$lang.".json");
+        $response = new StreamResponse(__DIR__.'/../../templates/CarnetWebClient/i18n/'.$lang.".json");
         $response->addHeader("Content-Type", "application/json");
         $response->cacheFor(604800);
         return $response;
@@ -296,7 +296,7 @@
   * @NoCSRFRequired
   */
   public function getOpusDecoderJavascript(){
-    $response = new StreamResponse(__DIR__.'/../../templates/CarnetElectron/reader/libs/recorder/decoderWorker.min.js');
+    $response = new StreamResponse(__DIR__.'/../../templates/CarnetWebClient/reader/libs/recorder/decoderWorker.min.js');
     $response->addHeader("Content-Type", "application/javascript");
     return $response;
   }
@@ -307,7 +307,7 @@
   * @NoCSRFRequired
   */
   public function getOpusEncoderJavascript(){
-    $response = new StreamResponse(__DIR__.'/../../templates/CarnetElectron/reader/libs/recorder/encoderWorker.min.js');
+    $response = new StreamResponse(__DIR__.'/../../templates/CarnetWebClient/reader/libs/recorder/encoderWorker.min.js');
     $response->addHeader("Content-Type", "application/javascript");
     return $response;
   }
@@ -320,7 +320,7 @@
 public function getOpusEncoder(){
     echo"bla";
     return;
-  $response = new StreamResponse(__DIR__.'/../../templates/CarnetElectron/reader/libs/recorder/encoderWorker.min.wasm');
+  $response = new StreamResponse(__DIR__.'/../../templates/CarnetWebClient/reader/libs/recorder/encoderWorker.min.wasm');
   $response->addHeader("Content-Type", "application/wasm");
   return $response;
 }
@@ -332,7 +332,7 @@ public function getOpusEncoder(){
    public function getUbuntuFont(){
       $font = basename($_SERVER['REQUEST_URI']);
       if($font !== ".." && $font !== "../")
-        return new StreamResponse(__DIR__.'/../../templates/CarnetElectron/fonts/'.basename($_SERVER['REQUEST_URI']));
+        return new StreamResponse(__DIR__.'/../../templates/CarnetWebClient/fonts/'.basename($_SERVER['REQUEST_URI']));
       else
         die();
    }
@@ -344,7 +344,7 @@ public function getOpusEncoder(){
   public function getMaterialFont(){
     $font = basename($_SERVER['REQUEST_URI']);
     if($font !== ".." && $font !== "../")
-      return new StreamResponse(__DIR__.'/../../templates/CarnetElectron/fonts/'.basename($_SERVER['REQUEST_URI']));
+      return new StreamResponse(__DIR__.'/../../templates/CarnetWebClient/fonts/'.basename($_SERVER['REQUEST_URI']));
     else
       die();
  }
@@ -739,12 +739,14 @@ public function getOpusEncoder(){
         $this->waitEndOfExtraction($id);
         $cache = $this->getCacheFolder();
         $folder = $cache->get("currentnote".$id);
+        $mainFile = $_POST['isMarkdown'] ? "note.md" : "index.html";
         try{
-            $file = $folder->get("index.html");
+            $file = $folder->get($mainFile);
         } catch(\OCP\Files\NotFoundException $e) {
-            $file = $folder->newFile("index.html");
+            $file = $folder->newFile($mainFile);
         }
         $file->putContent($_POST['html']);
+        
         try{
             $file = $folder->get("metadata.json");
         } catch(\OCP\Files\NotFoundException $e) {
@@ -752,7 +754,7 @@ public function getOpusEncoder(){
         }
         $file->putContent($_POST['metadata']);
         $path = $_POST['path'];
-        $mtime = $this->saveFiles($folder, array(0 => "index.html", 1 =>"metadata.json"), $_POST['path'], $id);
+        $mtime = $this->saveFiles($folder, array(0 => $mainFile, 1 =>"metadata.json"), $_POST['path'], $id);
         if($mtime !== false){
             //we need to refresh cache
             $cache = new CacheManager($this->db, $this->CarnetFolder);
@@ -785,7 +787,7 @@ public function getOpusEncoder(){
                 return false;
             }
         } catch(\OCP\Files\NotFoundException $e) {
-            if($this->shouldUseFolderNotes()){
+            if($this->shouldUseFolderNotes() || $_POST['isMarkdown']){
                 return $this->saveOpenNoteAsDir($inFolder, $files, $path, $id);
             } else {
                 $this->saveOpenNote($_POST['path'],$id);
@@ -905,6 +907,7 @@ public function getOpusEncoder(){
      * @NoCSRFRequired
      */
      public function addMediaToOpenNote($id){
+        $path = $_POST['path'];
         $this->waitEndOfExtraction($id);
         $cache = $this->getCacheFolder();
         $folder = $cache->get("currentnote".$id);
@@ -999,7 +1002,7 @@ public function getOpusEncoder(){
             }
             if(!isset($meta['media']))
                     $meta['media'] = array();
-            if(!in_array($meta['media'],$media))
+            if(!in_array($media, $meta['media']))
                 array_push($meta['media'],$media);
             $cache->addToCache($path, $meta, $mtime, $text);
 
@@ -1158,7 +1161,14 @@ public function getOpusEncoder(){
         try{
             $noteNode = $this->CarnetFolder->get($path);
             if($noteNode->getType() === "dir"){
-                $data['html'] = $noteNode->get('index.html')->getContent();
+                if ($noteNode->nodeExists("note.md")){
+                    $data['html'] = $noteNode->get("note.md")->getContent(); 
+                    $data['isMarkdown'] = true;
+                }
+                else {
+                    $data['html'] = $noteNode->get('index.html')->getContent();
+                    $data['isMarkdown'] = false;
+                }
                 try{
                     $data['metadata'] = json_decode($noteNode->get('metadata.json')->getContent());
                 } catch(\OCP\Files\NotFoundException $e) {
@@ -1177,6 +1187,7 @@ public function getOpusEncoder(){
             }
         } catch(\OCP\Files\NotFoundException $e) {
             $data["error"] = "not found";
+            $data["isNew"] = true;
         }
 
         $data['id'] = $editUniqueID;
@@ -1293,6 +1304,22 @@ public function getOpusEncoder(){
          // empty for now
      }
 
+     public function useMDEditor(){
+        return $this->Config->getUserValue($this->userId, $this->appName, "use_md_editor",0);
+     }
+
+     /**
+     * @NoAdminRequired
+     * @NoCSRFRequired
+     */
+     public function setUseMDEditor($useMD){
+        if($useMD === "false")
+            $useMD = 0;
+        else if($useMD === "true")
+            $useMD = 1 ;
+        return $this->Config->setUserValue($this->userId, $this->appName, "use_md_editor", $useMD);
+     }
+
      public function shouldUseFolderNotes(){
         return $this->Config->getUserValue($this->userId, $this->appName, "should_use_folder_notes",false);
      }
@@ -1329,16 +1356,16 @@ public function getOpusEncoder(){
      * @NoCSRFRequired
      */
     public function getAppThemes(){
-        $root = $this->getCarnetElectronUrl()."/css/";
-        return json_decode('[{"name":"Carnet", "path":"'.$this->getCarnetElectronPath().'/css/carnet", "preview":"'.$root.'carnet/preview.png"}, {"name":"Dark", "path":"'.$this->getCarnetElectronPath().'/css/dark", "preview":"'.$root.'dark/preview.png"}, {"name":"Black", "path":"'.$this->getCarnetElectronPath().'/css/black", "preview":"'.$root.'black/preview.png"}]');
+        $root = $this->getCarnetWebClientUrl()."/css/";
+        return json_decode('[{"name":"Carnet", "path":"'.$this->getCarnetWebClientPath().'/css/carnet", "preview":"'.$root.'carnet/preview.png"}, {"name":"Dark", "path":"'.$this->getCarnetWebClientPath().'/css/dark", "preview":"'.$root.'dark/preview.png"}, {"name":"Black", "path":"'.$this->getCarnetWebClientPath().'/css/black", "preview":"'.$root.'black/preview.png"}]');
     }
 
-    private function getCarnetElectronPath(){
-        return __DIR__.'/../../templates/CarnetElectron';
+    private function getCarnetWebClientPath(){
+        return __DIR__.'/../../templates/CarnetWebClient';
     }
 
-    private function getCarnetElectronUrl(){
-        $root = \OCP\Util::linkToAbsolute($this->appName,"templates")."/CarnetElectron";
+    private function getCarnetWebClientUrl(){
+        $root = \OCP\Util::linkToAbsolute($this->appName,"templates")."/CarnetWebClient";
         if(strpos($root,"http://") === 0 && !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off'){
             //should be https...
             $root = "https".substr($root,strlen("http"));
@@ -1357,8 +1384,8 @@ public function getOpusEncoder(){
         $browser = array();
         $editor = array();
         $settings = array();
-        if(strpos($url, $this->getCarnetElectronPath()) === 0){
-            $url = $this->getCarnetElectronUrl().substr($url, strlen($this->getCarnetElectronPath()), strlen($url));
+        if(strpos($url, $this->getCarnetWebClientPath()) === 0){
+            $url = $this->getCarnetWebClientUrl().substr($url, strlen($this->getCarnetWebClientPath()), strlen($url));
         }
         foreach($meta['browser'] as $css){
             array_push($browser, $url."/".$css);

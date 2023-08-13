@@ -33,7 +33,7 @@ class PageController extends Controller {
 			'carnet_display_fullscreen' => $this->config->getAppValue('carnet', 'carnetDisplayFullscreen', 'no'),
 			'app_version' => OC_App::getAppInfo($this->appName)['version'],
 		];
-		$response = new TemplateResponse($this->appName,"browser",$parameters);
+		$response = new TemplateResponse($this->appName,"new_browser",$parameters);
 		$response->renderAs("blank");
 		$policy = new ContentSecurityPolicy();
 		$policy->addAllowedFrameDomain('\'self\'');
@@ -78,7 +78,11 @@ class PageController extends Controller {
 		$parameters = [
 			'app_version' => OC_App::getAppInfo($this->appName)['version'],
 		];
-		$response = new TemplateResponse($this->appName,"writer",$parameters);
+		if($this->config->getUserValue($this->userId, $this->appName, "use_md_editor",0)){
+			$response = new TemplateResponse($this->appName,"new_editor",$parameters);
+		}
+		else
+			$response = new TemplateResponse($this->appName,"writer",$parameters);
 		$policy = new ContentSecurityPolicy();
 		$policy->addAllowedMediaDomain('blob:');
 		$policy->addAllowedFrameDomain('\'self\'');

@@ -57,8 +57,8 @@ return [
        ['name' => 'note#deleteNote', 'url' => '/notes', 'verb' => 'DELETE'],
        ['name' => 'note#search', 'url' => '/notes/search', 'verb' => 'GET'],
        ['name' => 'note#getSearchCache', 'url' => '/notes/getSearchCache', 'verb' => 'GET'],
-       ['name' => 'note#getUbuntuFont', 'url' => '/templates/CarnetElectron/fonts/ubuntu.woff2', 'verb' => 'GET' ],
-       ['name' => 'note#getMaterialFont', 'url' => '/templates/CarnetElectron/fonts/material-icons.woff2', 'verb' => 'GET' ],
+       ['name' => 'note#getUbuntuFont', 'url' => '/templates/CarnetWebClient/fonts/ubuntu.woff2', 'verb' => 'GET' ],
+       ['name' => 'note#getMaterialFont', 'url' => '/templates/CarnetWebClient/fonts/material-icons.woff2', 'verb' => 'GET' ],
        ['name' => 'note#getChangelog', 'url' => '/settings/changelog', 'verb' => 'GET' ],
        ['name' => 'note#getLangJson', 'url' => '/settings/lang/json', 'verb' => 'GET' ],
        ['name' => 'note#getUISettings', 'url' => '/settings/ui', 'verb' => 'GET' ],
@@ -76,7 +76,8 @@ return [
 
        ['name' => 'note#setShouldUseFolderNotes', 'url' => '/settings/note_folder', 'verb' => 'POST' ],
        ['name' => 'note#shouldUseFolderNotes', 'url' => '/settings/note_folder', 'verb' => 'GET' ],
-
+       ['name' => 'note#useMDEditor', 'url' => '/settings/use_md_editor', 'verb' => 'GET' ],
+       ['name' => 'note#setUseMDEditor', 'url' => '/settings/use_md_editor', 'verb' => 'POST' ]
 
     ]
 ];

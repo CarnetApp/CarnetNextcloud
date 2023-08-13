@@ -38,6 +38,10 @@ rm carnet-*-v*
   cur=$(pwd)
   cp . ../tmpcarnet/carnet -R
   cd ../tmpcarnet/carnet/
+  echo "Copying CarnetWebClient"
+  sudo rm templates/CarnetWebClient
+  cp ../../CarnetWebClient/dist templates/CarnetWebClient -R
+  echo "Cleaning"
   sudo rm .git -R
   sudo rm templates/CarnetElectron/.git -R
   sudo rm templates/CarnetElectron/node_modules/ -R
