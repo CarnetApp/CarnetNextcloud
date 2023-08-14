@@ -793,13 +793,16 @@ public function getOpusEncoder(){
                 if(!$outFolder->nodeExists($parent)){
                     $outFolder->newFolder($parent);
                    
-                }
-               
-              //  
-
-                
+                }                
             }
-            $inFolder->get($file)->copy($outFolder->getFullPath($file));
+            //nexccloud copy breaks encryption, doing my own function
+            try {
+                $outFile = $outFolder->get($file);
+            } catch(\OCP\Files\NotFoundException $e) {
+                $outFolder->newFile($file);
+                $outFile = $outFolder->get($file);
+            }
+            $outFile->putContent($inFolder->get($file)->fopen("r"));         
         }        
         return $outFolder->getFileInfo()->getMtime();
      }
@@ -1173,6 +1176,26 @@ public function getOpusEncoder(){
 
      }
 
+     private function recursiveCopy($fromNode, $toNode){
+        foreach($fromNode->getDirectoryListing() as $child){
+            $nodeName = $child->getName();
+            if($child->getType() === "dir"){
+                if(!$toNode->nodeExists($nodeName))
+                    $toNode->newFolder($nodeName);
+                $this->recursiveCopy($child, $toNode->get($nodeName));
+            } else {
+                try {
+                    $toFile = $toNode->get($nodeName);
+                } catch(\OCP\Files\NotFoundException $e) {
+                    $toNode->newFile($nodeName);
+                    $toFile = $toNode->get($nodeName);
+                }
+                $toFile->putContent($child->getContent());
+            }
+
+        }
+     }
+
      /**
      * @NoAdminRequired
      * @NoCSRFRequired
@@ -1221,7 +1244,12 @@ public function getOpusEncoder(){
             if($this->CarnetFolder->nodeExists($path)){                
                 $noteNode = $this->CarnetFolder->get($path);
                 if($noteNode->getType() === "dir"){
-                    $folder = $noteNode->copy($cache->getFullPath($noteFolderName));
+                    //nextcloud copy doesn't work well with encryption, so making my own function
+                    if(!$cache->nodeExists($noteFolderName))
+                        $cache->newFolder($noteFolderName);
+                    $folder = $cache->get($noteFolderName);
+                    $this->recursiveCopy($noteNode, $folder);
+
                 }
                 else{
                     $folder = $cache->newFolder($noteFolderName);
