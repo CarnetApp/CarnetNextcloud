@@ -482,29 +482,6 @@ public function getOpusEncoder(){
       * @NoAdminRequired
       * @NoCSRFRequired
       */
-     public function saveRecent($id) {
-        // check if file exists and write to it if possible
-        try {
-            try {
-                $file = $this->storage->get('/myfile.txt');
-            } catch(\OCP\Files\NotFoundException $e) {
-                $this->storage->touch('/myfile.txt');
-                $file = $this->storage->get('/myfile.txt');
-            }
-
-            // the id can be accessed by $file->getId();
-            $file->putContent($content);
-
-        } catch(\OCP\Files\NotPermittedException $e) {
-            // you have to create this exception by yourself ;)
-            throw new StorageException('Cant write to file');
-        }
-     }
-
-     /**
-      * @NoAdminRequired
-      * @NoCSRFRequired
-      */
      public function internalSaveKeywordsDB($str) {
         $this->getKeywordsDBFile()->putContent($str);
      }
