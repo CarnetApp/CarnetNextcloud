@@ -1,4 +1,4 @@
-# Version 0.25.0
+# Version 0.25.2
 
 Introducing new Markdown Editor 🎉
 available for now only as an option in settings, still not complete, but will become the default option in the future
@@ -7,6 +7,7 @@ Built with tiptap editor and tiptap-markdown extension from https://github.com/a
 
 Multiple fixes
 better packaging for the whole client
+Fix encryption on note folder (nextcloud side)
 
 # Version 0.24.0 - 0.24.1
 
