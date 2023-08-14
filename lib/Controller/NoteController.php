@@ -997,7 +997,7 @@ public function getOpusEncoder(){
             if(isset($preview)){
                 if(!isset($meta['previews']))
                     $meta['previews'] = array();
-                if(!in_array($meta['previews'],$preview))
+                if(!in_array($preview, $meta['previews']))
                     array_push($meta['previews'],$preview);
             }
             if(!isset($meta['media']))
