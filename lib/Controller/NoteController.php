@@ -837,6 +837,7 @@ public function getOpusEncoder(){
      */
     public function deleteMediaFromOpenNote($id){
         $this->waitEndOfExtraction($id);
+        $path = $_GET['path'];
         $cache = $this->getCacheFolder();
         $folder = $cache->get("currentnote".$id);
         $files = array();
