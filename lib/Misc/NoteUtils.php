@@ -54,8 +54,14 @@ class NoteUtils{
             
             }
             try{
-                $text = self::getTextFromHTML($node->get('index.html')->getContent());
-
+                if($node->nodeExists('index.html')) {
+                    $text = self::getTextFromHTML($node->get('index.html')->getContent());
+                    $meta['isMarkdown'] = false;
+                }
+                else {
+                    $text = $node->get('note.md')->getContent();
+                    $meta['isMarkdown'] = true;
+                }
                 $meta['shorttext'] = self::getShortText($text);
                 $meta['text'] = $text;
                 $meta['media'] = array();
