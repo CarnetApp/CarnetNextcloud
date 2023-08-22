@@ -30,6 +30,7 @@ $file = preg_replace_callback('/<script(.*?)src=\"(.*?\.js(?:\?.*?)?)"/s',functi
 $file .= "<script src=\"libs/fullscreen.js?v=".$appVersion."\"></script>";
 
 $file .= "<span style=\"display:none;\" id=\"token\">".$_['requesttoken']."</span>";
+$file = str_replace("!API_URL", "api/",$file);
 if($_['carnet_display_fullscreen']==="yes"){
     
     $file = str_replace('</head>', "

@@ -6,6 +6,7 @@ use OCP\IRequest;
 use OCP\AppFramework\Http\ContentSecurityPolicy;
 use OCP\AppFramework\Http\TemplateResponse;
 use OCP\AppFramework\Http\DataResponse;
+use OCP\AppFramework\Http\StreamResponse;
 use OCP\AppFramework\Controller;
 
 class PageController extends Controller {
@@ -38,6 +39,10 @@ class PageController extends Controller {
 		$policy = new ContentSecurityPolicy();
 		$policy->addAllowedFrameDomain('\'self\'');
 		$policy->addAllowedFrameDomain('data:');
+		if (method_exists($policy, "addAllowedWorkerSrcDomain")){
+			$policy->addAllowedWorkerSrcDomain('\'self\'');
+
+		}
 		
 		$response->setContentSecurityPolicy($policy); // allow iframe
 		return $response;
@@ -141,5 +146,24 @@ class PageController extends Controller {
 		
 		return $response;
    }
+
+     /**
+	 * @NoAdminRequired
+	* @NoCSRFRequired
+	*/
+	public function sw(){
+		$response = new StreamResponse(__DIR__.'/../../templates/CarnetWebClient/sw.js');
+		$response->addHeader("Content-Type", "application/javascript");
+
+		$policy = new ContentSecurityPolicy();
+		if (method_exists($policy, "addAllowedWorkerSrcDomain")){
+			$policy->addAllowedWorkerSrcDomain('\'self\'');
+			$policy->addAllowedConnectDomain('*');
+
+		}
+		
+		$response->setContentSecurityPolicy($policy); // allow iframe
+		return $response;
+	}
 
 }
