@@ -21,3 +21,4 @@ cd ../../../CarnetWebClient
 git checkout -b nextcloud-stable-$version
 git push origin nextcloud-stable-$version
 git push framagit nextcloud-stable-$version
+git checkout main
