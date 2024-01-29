@@ -3,6 +3,7 @@
  use Exception;
  use OC_App;
  use OCP\IRequest;
+ use OCP\App\IAppManager;
  use OCP\AppFramework\Controller;
  use OCP\AppFramework\Http\FileDisplayResponse;
  use OCP\AppFramework\Http\DataDisplayResponse;
@@ -44,9 +45,11 @@
     private $db;
     private $urlGenerator;
     public static $lastWrite = null;
-    public function __construct($AppName, IRequest $request, $UserId, $RootFolder, $Config,  IDBConnection $IDBConnection, IURLGenerator $urlGenerator){
+    private $appManager;
+    public function __construct($AppName, IRequest $request, IAppManager $AppManager, $UserId, $RootFolder, $Config,  IDBConnection $IDBConnection, IURLGenerator $urlGenerator){
         parent::__construct($AppName, $request);
         $this->userId = $UserId;
+        $this->appManager = $AppManager;
         $this->db = $IDBConnection;
         $this->Config = $Config;
         $this->rootFolder = $RootFolder;
@@ -241,7 +244,7 @@
    public function getChangelog() {
        
     $changelog = file_get_contents(__DIR__."/../../CHANGELOG.md");
-    $current = OC_App::getAppInfo($this->appName)['version'];
+    $current = $this->appManager->getAppInfo($this->appName)['version'];
     $last = $this->Config->getUserValue($this->userId, $this->appName, "last_changelog_version");
     if($last !== $current){
         $this->Config->setUserValue($this->userId, $this->appName, "last_changelog_version", $current);
@@ -716,7 +719,10 @@ public function getOpusEncoder(){
         $this->waitEndOfExtraction($id);
         $cache = $this->getCacheFolder();
         $folder = $cache->get("currentnote".$id);
-        $mainFile = $_POST['isMarkdown'] ? "note.md" : "index.html";
+        $mainFile = "index.html";
+        if (isset($_POST['isMarkdown'])) {
+            $mainFile = $_POST['isMarkdown'] ? "note.md" : "index.html";
+        }
         try{
             $file = $folder->get($mainFile);
         } catch(\OCP\Files\NotFoundException $e) {
@@ -764,7 +770,7 @@ public function getOpusEncoder(){
                 return false;
             }
         } catch(\OCP\Files\NotFoundException $e) {
-            if($this->shouldUseFolderNotes() || $_POST['isMarkdown']){
+             if($this->shouldUseFolderNotes() || isset($_POST['isMarkdown']) && $_POST['isMarkDown']){
                 return $this->saveOpenNoteAsDir($inFolder, $files, $path, $id);
             } else {
                 $this->saveOpenNote($_POST['path'],$id);
