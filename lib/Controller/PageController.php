@@ -3,6 +3,7 @@ namespace OCA\Carnet\Controller;
 
 use OC_App;
 use OCP\IRequest;
+use OCP\App\IAppManager;
 use OCP\AppFramework\Http\ContentSecurityPolicy;
 use OCP\AppFramework\Http\TemplateResponse;
 use OCP\AppFramework\Http\DataResponse;
@@ -11,11 +12,13 @@ use OCP\AppFramework\Controller;
 class PageController extends Controller {
 	private $userId;
 	private $config;
-	public function __construct($AppName, IRequest $request, $UserId, $Config){
-		parent::__construct($AppName, $request);
-		$this->userId = $UserId;
-		$this->config = $Config;
-	}
+		private $appManager;
+	public function __construct($AppName, IRequest $request,IAppManager $AppManager, $UserId, $Config){
+        	parent::__construct($AppName, $request);
+        	$this->userId = $UserId;
+        	$this->config = $Config;
+        	$this->appManager = $AppManager;
+    	}
 
 	/**
 	 * CAUTION: the @Stuff turns off security checks; for this page no admin is
@@ -31,7 +34,7 @@ class PageController extends Controller {
 		$parameters = [
 			'nc_version' => \OCP\Util::getVersion()[0],
 			'carnet_display_fullscreen' => $this->config->getAppValue('carnet', 'carnetDisplayFullscreen', 'no'),
-			'app_version' => OC_App::getAppInfo($this->appName)['version'],
+			'app_version' => $this->appManager->getAppInfo($this->appName)['version'],
 		];
 		$response = new TemplateResponse($this->appName,"new_browser",$parameters);
 		$response->renderAs("blank");
@@ -59,7 +62,7 @@ class PageController extends Controller {
 		$parameters = [
 			'nc_version' => \OCP\Util::getVersion()[0],
 			'carnet_display_fullscreen' => $this->config->getAppValue('carnet', 'carnetDisplayFullscreen', 'no'),
-			'app_version' => OC_App::getAppInfo($this->appName)['version'],
+			'app_version' => $this->appManager->getAppInfo($this->appName)['version'],
 		];
 		$response = new TemplateResponse($this->appName,"index",$parameters);
 		$policy = new ContentSecurityPolicy();
@@ -76,7 +79,7 @@ class PageController extends Controller {
 	 */
 	public function writer() {
 		$parameters = [
-			'app_version' => OC_App::getAppInfo($this->appName)['version'],
+			'app_version' => $this->appManager->getAppInfo($this->appName)['version'],
 		];
 		if($this->config->getUserValue($this->userId, $this->appName, "use_md_editor",0)){
 			$response = new TemplateResponse($this->appName,"new_editor",$parameters);
@@ -104,7 +107,7 @@ class PageController extends Controller {
    public function settings() {
 		$parameters = [
 			'carnet_display_fullscreen' => $this->config->getAppValue('carnet', 'carnetDisplayFullscreen', 'no'),
-			'app_version' => OC_App::getAppInfo($this->appName)['version'],
+			'app_version' => $this->appManager->getAppInfo($this->appName)['version'],
 		];
 		$response =  new TemplateResponse($this->appName,"settings", $parameters);
 		$response->renderAs("blank");
@@ -120,7 +123,7 @@ class PageController extends Controller {
 	*/
 	public function importer() {
 		$parameters = [
-			'app_version' => OC_App::getAppInfo($this->appName)['version'],
+			'app_version' => $this->appManager->getAppInfo($this->appName)['version'],
 		];
 		$response =  new TemplateResponse($this->appName,"importer", $parameters);
 		$response->renderAs("blank");
@@ -134,7 +137,7 @@ class PageController extends Controller {
 	*/
 	public function exporter() {
 		$parameters = [
-			'app_version' => OC_App::getAppInfo($this->appName)['version'],
+			'app_version' => $this->appManager->getAppInfo($this->appName)['version'],
 		];
 		$response =  new TemplateResponse($this->appName,"exporter", $parameters);
 		$response->renderAs("blank");
