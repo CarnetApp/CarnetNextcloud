@@ -770,7 +770,7 @@ public function getOpusEncoder(){
                 return false;
             }
         } catch(\OCP\Files\NotFoundException $e) {
-             if($this->shouldUseFolderNotes() || isset($_POST['isMarkdown']) && $_POST['isMarkDown']){
+             if($this->shouldUseFolderNotes() || isset($_POST['isMarkdown']) && $_POST['isMarkdown']){
                 return $this->saveOpenNoteAsDir($inFolder, $files, $path, $id);
             } else {
                 $this->saveOpenNote($_POST['path'],$id);
