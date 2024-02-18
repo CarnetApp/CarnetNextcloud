@@ -1,9 +1,12 @@
+# Version 0.25.3
+
+Fix Nextcloud 28 thanks to Playnary, LucioAlbenga and joshua-schnabel
+
 # Version 0.25.2
 
 Introducing new Markdown Editor 🎉
 available for now only as an option in settings, still not complete, but will become the default option in the future
 Built with tiptap editor and tiptap-markdown extension from https://github.com/aguingand/tiptap-markdown
-
 
 Multiple fixes
 better packaging for the whole client
@@ -28,7 +31,6 @@ Spanish (Maira Belmonte)
 Chinese (Lurenjia)
 Russian (Mac Guffin)
 French (Aznörth)
-
 
 # Version 0.23.7
 
