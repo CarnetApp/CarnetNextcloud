@@ -40,13 +40,16 @@ class Cache extends Command {
         if($this->action === "rebuild"){
             $users = $this->userManager->search("",20000, 0);
             $arrayId = array();
-            echo count($users);
             foreach($users as $user){
                 array_push($arrayId,$user->getUID());
             }
             $cache = new CacheManager($this->db, null);
             $cache->buildCache($this->Config, $this->appName, $this->rootFolder, $arrayId);
+        } else if ($this->action === "clear"){
+            $cache = new CacheManager($this->db, null);
+            $cache->clearCache();
         }
+        return 0;
     }
     protected function configure() {
         $this->setName('carnet:cache')

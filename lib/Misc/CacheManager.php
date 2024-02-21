@@ -44,6 +44,12 @@ class CacheManager{
 
     }
 
+    public function clearCache(){
+        $sql = 'DELETE FROM `*PREFIX*carnet_metadata`';
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute();
+    }
+
     public function buildCache($config, $appName, $rootFolder, $users){
         $arrayFolder = array();
         $sql = 'SELECT path, last_modification_file FROM `*PREFIX*carnet_metadata`';
