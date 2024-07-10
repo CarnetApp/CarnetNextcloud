@@ -465,6 +465,11 @@ public function getOpusEncoder(){
          if(!$this->CarnetFolder->nodeExists("quickdoc/recentdb/recentnc"))
             $lastmod = -1;
          $myDb = $this->getRecentFile();
+	 if(empty($myDb->getContent())){ //was corrupted, need to recreate
+	     $myDb->delete();
+	     $myDb = $this->getRecentFile();
+	     $lastmod = -1;
+	 }
          if($lastmod != -1)
             $lastmod = $myDb->getMTime(); 
          $hasChanged = false;
