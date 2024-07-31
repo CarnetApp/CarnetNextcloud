@@ -14,7 +14,7 @@
  use OCP\IDBConnection;
  use OCP\IURLGenerator;
  use OCA\Carnet\Misc\Search;
- //require_once 'vendor/autoload.php';
+ require_once 'carnet/vendor/autoload.php';
  function endsWith($string, $endString) 
  { 
      $len = strlen($endString); 
