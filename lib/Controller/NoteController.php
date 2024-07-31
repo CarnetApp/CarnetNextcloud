@@ -391,6 +391,11 @@ public function getOpusEncoder(){
       if(!$this->CarnetFolder->nodeExists("quickdoc/keywords/keywordsnc"))
         $lastmod = -1;
       $myDb = $this->getKeywordsDBFile();
+      if(empty($myDb->getContent())){ //was corrupted, need to recreate
+        $myDb->delete();
+        $myDb = $this->getKeywordsDBFile();
+        $lastmod = -1;
+      }
       $hasChanged = false;
       if($lastmod != -1)
         $lastmod = $myDb->getMTime();
