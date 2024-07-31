@@ -37,6 +37,7 @@
         return $this->inputStream;
      }
  }
+
  class NoteController extends Controller {
 	private $userId;
     private $bla;

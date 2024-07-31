@@ -1,4 +1,6 @@
 #!/bin/bash
+# go get github.com/github-release/github-release
+
 version=v$(sed -n -e 's/.*<version>\(.*\)<\/version>.*/\1/p' appinfo/info.xml)
 git checkout stable
 if [ -z "$GITHUB_TOKEN" ]; then
@@ -39,7 +41,7 @@ rm carnet-*-v*
   cp . ../tmpcarnet/carnet -R
   cd ../tmpcarnet/carnet/
   echo "Copying CarnetWebClient"
-  sudo rm templates/CarnetWebClient
+  sudo rm -r templates/CarnetWebClient
   cp ../../CarnetWebClient/dist templates/CarnetWebClient -R
   echo "Cleaning"
   sudo rm .git -R
