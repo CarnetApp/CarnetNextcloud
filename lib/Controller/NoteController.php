@@ -554,29 +554,39 @@ public function getOpusEncoder(){
       * @NoCSRFRequired
       */
 	 public function updateMetadata($path, $metadata){
-    
-        $tmppath = tempnam(sys_get_temp_dir(), uniqid().".zip");
-        $tmppath2 = tempnam(sys_get_temp_dir(), uniqid().".zip");
-        if(!file_put_contents($tmppath, $this->CarnetFolder->get($path)->fopen("r")))
-            return;
 
-        $zipFile = new \PhpZip\ZipFile();
-        $zipFile->openFromStream(fopen($tmppath, "r")); //issue with encryption when open directly + unexpectedly faster to copy before Oo'
-        $zipFile->addFromString("metadata.json", $metadata, \PhpZip\ZipFile::METHOD_DEFLATED);
-        $zipFile->saveAsFile($tmppath2);
-        $tmph = fopen($tmppath2, "r");
-        if($tmph){
+
+        if(NoteUtils::isFolderNote($path, $this->CarnetFolder)){
             try{
-                $file = $this->CarnetFolder->get($path);
-                $file->putContent($tmph);   
+                $noteNode = $this->CarnetFolder->get($path);
+                $file = $noteNode->get("metadata.json");
+                $file->putContent($metadata);
+
             } catch(\OCP\Files\NotFoundException $e) {
             }
-            fclose($tmph);
-        } else 
-            throw new Exception('Unable to create Zip');
-       unlink($tmppath);	
-       unlink($tmppath2);	
+        } else {
+            $tmppath = tempnam(sys_get_temp_dir(), uniqid().".zip");
+            $tmppath2 = tempnam(sys_get_temp_dir(), uniqid().".zip");
+            if(!file_put_contents($tmppath, $this->CarnetFolder->get($path)->fopen("r")))
+                    return;
 
+                $zipFile = new \PhpZip\ZipFile();
+                $zipFile->openFromStream(fopen($tmppath, "r")); //issue with encryption when open directly + unexpectedly faster to copy before Oo'
+                $zipFile->addFromString("metadata.json", $metadata, \PhpZip\ZipFile::METHOD_DEFLATED);
+                $zipFile->saveAsFile($tmppath2);
+                $tmph = fopen($tmppath2, "r");
+                if($tmph){
+                    try{
+                        $file = $this->CarnetFolder->get($path);
+                        $file->putContent($tmph);   
+                    } catch(\OCP\Files\NotFoundException $e) {
+                    }
+                    fclose($tmph);
+                } else 
+                    throw new Exception('Unable to create Zip');
+            unlink($tmppath);	
+            unlink($tmppath2);
+        }
      }
 
 

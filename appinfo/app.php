@@ -84,6 +84,6 @@ $container->query('OCP\INavigationManager')
                         'name'  => 'Carnet'
                 ];
         }
-);
+    );
 
 ?>

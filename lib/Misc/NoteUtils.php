@@ -33,6 +33,11 @@ class NoteUtils{
         return mb_substr($text, 0, 150);
     }
 
+    public static function isFolderNote($path, $carnetFolder){
+        $node = $carnetFolder->get($path);
+        return $node->getType() === "dir" && self::isNote($path);
+    }
+
     public static function isNote($path){
         return self::endsWith($path, ".sqd");
     }
