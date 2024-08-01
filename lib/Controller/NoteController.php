@@ -578,7 +578,7 @@ public function getOpusEncoder(){
 
                 $zipFile = new \PhpZip\ZipFile();
                 $zipFile->openFromStream(fopen($tmppath, "r")); //issue with encryption when open directly + unexpectedly faster to copy before Oo'
-                $zipFile->addFromString("metadata.json", $metadata, \PhpZip\ZipFile::METHOD_DEFLATED);
+                $zipFile->addFromString("metadata.json", $metadata, 8);
                 $zipFile->saveAsFile($tmppath2);
                 $tmph = fopen($tmppath2, "r");
                 if($tmph){
@@ -1076,6 +1076,7 @@ public function getOpusEncoder(){
         //tried to do with a direct fopen on $file but lead to bad size on nextcloud
         $tmppath = tempnam(sys_get_temp_dir(), uniqid().".sqd");
         $zipFile->saveAsFile($tmppath);
+        $zipFile->close();
         $tmph = fopen($tmppath, "r");
         if($tmph){
             if($this->CarnetFolder->nodeExists($path)){
@@ -1120,7 +1121,7 @@ public function getOpusEncoder(){
                 $media = array_merge($media, $res['media']);
 
             }else {
-                $archive->addFromStream($in->fopen("r"), $path, \PhpZip\ZipFile::METHOD_DEFLATED);
+                $archive->addFromStream($in->fopen("r"), $path, null);
                 if(substr($path,0,strlen("data/preview_")) === "data/preview_"){
                     array_push($previews, $path);
                 } else if(substr($path,0,strlen("data/")) === "data/"){
@@ -1129,6 +1130,7 @@ public function getOpusEncoder(){
             }
 
         }
+        
        
         return array("previews" => $previews, "media" => $media);
      }

@@ -1,5 +1,5 @@
 {
-    "name": "Quick Doc",
+    "name": "carnet/carnetnextcloud",
     "description": "QuickDoc on Nextcloud",
     "type": "project",
     "license": "AGPL",
@@ -9,9 +9,6 @@
         }
     ],
     "require": {
-        "nelexa/zip": "^3.1"
-    },
-    "require-dev": {
-        "phpunit/phpunit": "^5.4"
+        "nelexa/zip": "^4.0.1"
     }
 }
