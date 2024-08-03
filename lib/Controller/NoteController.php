@@ -742,7 +742,7 @@ public function getOpusEncoder(){
         $folder = $cache->get("currentnote".$id);
         $mainFile = "index.html";
         if (isset($_POST['isMarkdown'])) {
-            $mainFile = $_POST['isMarkdown'] ? "note.md" : "index.html";
+            $mainFile = $_POST['isMarkdown'] === "true" ? "note.md" : "index.html";
         }
         try{
             $file = $folder->get($mainFile);
