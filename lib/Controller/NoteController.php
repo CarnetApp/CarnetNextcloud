@@ -578,7 +578,7 @@ public function getOpusEncoder(){
 
                 $zipFile = new \PhpZip\ZipFile();
                 $zipFile->openFromStream(fopen($tmppath, "r")); //issue with encryption when open directly + unexpectedly faster to copy before Oo'
-                $zipFile->addFromString("metadata.json", $metadata, 8);
+                $zipFile->addFromString("metadata.json", $metadata, null);
                 $zipFile->saveAsFile($tmppath2);
                 $tmph = fopen($tmppath2, "r");
                 if($tmph){
