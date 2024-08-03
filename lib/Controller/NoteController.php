@@ -1121,6 +1121,8 @@ public function getOpusEncoder(){
                 $media = array_merge($media, $res['media']);
 
             }else {
+                if($inf->getName() === ".extraction_finished")
+                    continue;
                 $archive->addFromStream($in->fopen("r"), $path, null);
                 if(substr($path,0,strlen("data/preview_")) === "data/preview_"){
                     array_push($previews, $path);
