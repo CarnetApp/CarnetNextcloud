@@ -1172,6 +1172,7 @@ public function getOpusEncoder(){
         $path = $_GET['path'];
         try{
             $noteNode = $this->CarnetFolder->get($path);
+            $data["isNew"] = false;
             if($noteNode->getType() === "dir"){
                 if ($noteNode->nodeExists("note.md")){
                     $data['html'] = $noteNode->get("note.md")->getContent(); 
