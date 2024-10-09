@@ -34,7 +34,7 @@ mkdir carnet
 cd carnet
 ```
 
-Follow instructions on building [CarnetWebClient](../CarnetWebClient)
+Follow instructions on building [CarnetWebClient](https://github.com/CarnetApp/CarnetWebClient)
 
 Link it to templates inside the nextcloud app
 
