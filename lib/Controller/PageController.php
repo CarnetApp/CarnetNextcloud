@@ -81,7 +81,7 @@ class PageController extends Controller {
 		$parameters = [
 			'app_version' => $this->appManager->getAppInfo($this->appName)['version'],
 		];
-		if($this->config->getUserValue($this->userId, $this->appName, "use_md_editor",1)){
+		if($this->config->getUserValue($this->userId, $this->appName, "use_md_editor",0)){
 			$response = new TemplateResponse($this->appName,"new_editor",$parameters);
 		}
 		else
