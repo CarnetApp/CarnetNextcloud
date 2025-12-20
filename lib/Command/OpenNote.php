@@ -12,6 +12,8 @@ use OCP\Files\IRootFolder;
 use OCP\Files\NotFoundException;
 use OCA\Carnet\Misc\CacheManager;
 use OCP\IDBConnection;
+use OCP\IConfig;
+
 
 class OpenNote extends Command {
     private $output;
@@ -24,7 +26,7 @@ class OpenNote extends Command {
          * @param string $appName
          * @param IRootFolder $rootFolder
     */
-public function __construct($AppName, $RootFolder,  $Config, IDBConnection $IDBConnection){
+public function __construct($AppName, $RootFolder,  IConfig $Config, IDBConnection $IDBConnection){
     parent::__construct();
     $this->appName = $AppName;
     $this->Config = $Config;
