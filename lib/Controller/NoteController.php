@@ -14,6 +14,8 @@
  use OCP\IDBConnection;
  use OCP\IURLGenerator;
  use OCA\Carnet\Misc\Search;
+ use OCP\IConfig;
+
  require_once 'carnet/vendor/autoload.php';
  function endsWith($string, $endString) 
  { 
@@ -47,7 +49,7 @@
     private $urlGenerator;
     public static $lastWrite = null;
     private $appManager;
-    public function __construct($AppName, IRequest $request, IAppManager $AppManager, $UserId, $RootFolder, $Config,  IDBConnection $IDBConnection, IURLGenerator $urlGenerator){
+    public function __construct($AppName, IRequest $request, IAppManager $AppManager, $UserId, $RootFolder, IConfig $Config,  IDBConnection $IDBConnection, IURLGenerator $urlGenerator){
         parent::__construct($AppName, $request);
         $this->userId = $UserId;
         $this->appManager = $AppManager;

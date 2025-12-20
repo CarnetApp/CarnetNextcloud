@@ -5,6 +5,7 @@ use OCA\Carnet\Misc\CacheManager;
 use OCA\Carnet\Misc\NoteUtils;
 use OCA\Carnet\Controller\NoteController;
 use OCP\IDBConnection;
+use OCP\IConfig;
 
 class FSHooks {
     private $userFolder;
@@ -14,7 +15,7 @@ class FSHooks {
     private $db;
     private $folder;
     private $carnetFolder;
-    public function __construct($UserFolder, $UserId, $Config, $appName, IDBConnection $connection){
+    public function __construct($UserFolder, $UserId, IConfig $Config, $appName, IDBConnection $connection){
         $this->userFolder = $UserFolder;
         $this->Config = $Config;
         $this->userId = $UserId;

@@ -8,12 +8,13 @@ use OCP\AppFramework\Http\ContentSecurityPolicy;
 use OCP\AppFramework\Http\TemplateResponse;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\Controller;
+use OCP\IConfig;
 
 class PageController extends Controller {
 	private $userId;
 	private $config;
 		private $appManager;
-	public function __construct($AppName, IRequest $request,IAppManager $AppManager, $UserId, $Config){
+	public function __construct($AppName, IRequest $request,IAppManager $AppManager, $UserId, IConfig $Config){
         	parent::__construct($AppName, $request);
         	$this->userId = $UserId;
         	$this->config = $Config;
