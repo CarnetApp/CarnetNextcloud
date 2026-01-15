@@ -13,7 +13,7 @@ use OCP\Files\NotFoundException;
 use OCA\Carnet\Misc\CacheManager;
 use OCP\IDBConnection;
 use OCP\IConfig;
-
+use OCP\IUserManager;
 class Cache extends Command {
 
 
@@ -21,7 +21,7 @@ class Cache extends Command {
          * @param string $appName
          * @param IRootFolder $rootFolder
     */
-    public function __construct($AppName, $RootFolder,  IConfig $Config,  IDBConnection $IDBConnection, $UserManager){
+    public function __construct($AppName, $RootFolder,  IConfig $Config,  IDBConnection $IDBConnection, IUserManager $UserManager){
         parent::__construct();
         $this->appName = $AppName;
         $this->Config = $Config;
