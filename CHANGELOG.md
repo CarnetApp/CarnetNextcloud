@@ -1,3 +1,7 @@
+# Version 0.25.12
+
+Fix AppInfo deprecated (@presslab-us)
+
 # Version 0.25.3
 
 Fix Nextcloud 28 thanks to Playnary, LucioAlbenga and joshua-schnabel
