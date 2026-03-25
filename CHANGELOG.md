@@ -1,4 +1,4 @@
-# Version 0.25.12
+# Version 0.25.13
 
 Fix AppInfo deprecated (@presslab-us)
 
