@@ -1,3 +1,7 @@
+# Version 0.25.14
+
+Fix Nextcloud 33/34 compatibility (removed OC\Server deprecated methods)
+
 # Version 0.25.13
 
 Fix AppInfo deprecated (@presslab-us)

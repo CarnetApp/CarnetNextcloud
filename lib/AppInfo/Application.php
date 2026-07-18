@@ -8,7 +8,10 @@ use OCP\Files\IRootFolder;
 use OCP\Files\Node;
 use OCP\AppFramework\IAppContainer;
 use OCP\Util;
+use OCP\IConfig;
 use OCP\IDBConnection;
+use OCP\IUserManager;
+use OCP\IUserSession;
 
 if ((@include_once __DIR__ . '/../../vendor/autoload.php')===false) {
 	throw new \Exception('Cannot include autoload. Did you run install dependencies using composer?');
@@ -20,15 +23,15 @@ class Application extends App {
         $container = $this->getContainer();
         $container->registerService('Config', function($c) {
 
-            return $c->query('ServerContainer')->getConfig();
+            return $c->get(IConfig::class);
         });
 
         $container->registerService('RootFolder', function($c) {
 
-            return $c->query('ServerContainer')->getRootFolder();
+            return $c->get(IRootFolder::class);
         });
         $container->registerService('UserManager', function($c) {
-            return $c->query('ServerContainer')->getUserManager();
+            return $c->get(IUserManager::class);
         });
     }
 
@@ -36,18 +39,16 @@ class Application extends App {
             /** @var IRootFolder $root */
             $root = $container->query(IRootFolder::class);
             $root->listen('\OC\Files', 'postWrite', function (Node $node) use ($container) {
-                $c = $container->query('ServerContainer'); 
-                $user = $c->getUserSession()->getUser();
+                $user = $container->get(IUserSession::class)->getUser();
                 if($user != null){
-                    $watcher = new FSHooks($c->getUserFolder(), $user->getUID(), $c->getConfig(), 'carnet',$container->query(IDBConnection::class));
+                    $watcher = new FSHooks($container->get(IRootFolder::class)->getUserFolder($user->getUID()), $user->getUID(), $container->get(IConfig::class), 'carnet',$container->query(IDBConnection::class));
                     $watcher->postWrite($node);
                  }
             });
             $root->listen('\OC\Files', 'postDelete', function (Node $node) use ($container) {
-                $c = $container->query('ServerContainer');
-                $user = $c->getUserSession()->getUser();
+                $user = $container->get(IUserSession::class)->getUser();
                 if($user != null){
-                    $watcher = new FSHooks($c->getUserFolder(), $user->getUID(), $c->getConfig(), 'carnet',$container->query(IDBConnection::class));
+                    $watcher = new FSHooks($container->get(IRootFolder::class)->getUserFolder($user->getUID()), $user->getUID(), $container->get(IConfig::class), 'carnet',$container->query(IDBConnection::class));
                     $watcher->postDelete($node);
                  }
             });
