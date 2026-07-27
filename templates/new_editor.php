@@ -33,8 +33,14 @@ $file = str_replace("<!ROOTPATH>", $root."/CarnetWebClient/", $file);
 //$root = substr(__DIR__, strlen($_SERVER['DOCUMENT_ROOT']));
 $urlGenerator = \OC::$server->getURLGenerator();
 $file = str_replace("<!ROOTURL>", $root."/CarnetWebClient/", $file);
+$nonce = null;
 if (method_exists(\OC::$server, "getContentSecurityPolicyNonceManager")){
     $nonce = \OC::$server->getContentSecurityPolicyNonceManager()->getNonce();
+}
+elseif (class_exists(\OC\Security\CSP\ContentSecurityPolicyNonceManager::class)){
+    $nonce = \OCP\Server::get(\OC\Security\CSP\ContentSecurityPolicyNonceManager::class)->getNonce();
+}
+if ($nonce !== null){
     $file = str_replace("src=\"","defer nonce='".$nonce."' src=\"",$file);
 }
 $file = str_replace("<!APIURL>", parse_url($urlGenerator->linkToRouteAbsolute("carnet.page.index"), PHP_URL_PATH), $file);

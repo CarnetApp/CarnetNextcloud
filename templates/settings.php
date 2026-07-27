@@ -31,6 +31,9 @@ $nonce = "";
 if (method_exists(\OC::$server, "getContentSecurityPolicyNonceManager")){
     $nonce = \OC::$server->getContentSecurityPolicyNonceManager()->getNonce();
 }
+elseif (class_exists(\OC\Security\CSP\ContentSecurityPolicyNonceManager::class)){
+    $nonce = \OCP\Server::get(\OC\Security\CSP\ContentSecurityPolicyNonceManager::class)->getNonce();
+}
 $file = str_replace("src=\"","defer nonce='".$nonce."' src=\"".$root."/CarnetWebClient/",$file);
 echo $file;
 echo "<span style=\"display:none;\" id=\"root-url\">".$root."/CarnetWebClient/</span>";

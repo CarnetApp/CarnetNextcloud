@@ -50,6 +50,9 @@ $nonce = "";
 if (method_exists(\OC::$server, "getContentSecurityPolicyNonceManager")){
     $nonce = \OC::$server->getContentSecurityPolicyNonceManager()->getNonce();
 }
+elseif (class_exists(\OC\Security\CSP\ContentSecurityPolicyNonceManager::class)){
+    $nonce = \OCP\Server::get(\OC\Security\CSP\ContentSecurityPolicyNonceManager::class)->getNonce();
+}
 else{
     style("carnet","../templates/CarnetWebClient/compatibility/nextcloud/owncloud");
 }
