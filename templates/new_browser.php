@@ -47,8 +47,8 @@ else {
     style("carnet","../templates/CarnetWebClient/compatibility/nextcloud/nc14-header");
 }
 $nonce = "";
-if (method_exists(\OC::$server, "getContentSecurityPolicyNonceManager")){
-    $nonce = \OC::$server->getContentSecurityPolicyNonceManager()->getNonce();
+if (class_exists('\OCP\Server') && class_exists('\OC\Security\CSP\ContentSecurityPolicyNonceManager')){
+    $nonce = \OCP\Server::get(\OC\Security\CSP\ContentSecurityPolicyNonceManager::class)->getNonce();
 }
 else{
     style("carnet","../templates/CarnetWebClient/compatibility/nextcloud/owncloud");
