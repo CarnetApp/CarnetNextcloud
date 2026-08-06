@@ -10,6 +10,9 @@ use OCP\AppFramework\IAppContainer;
 use OCP\Util;
 use OCP\IDBConnection;
 
+use OCP\IUserManager;
+use OCP\IUserSession;
+use OCP\IConfig;
 if ((@include_once __DIR__ . '/../../vendor/autoload.php')===false) {
 	throw new \Exception('Cannot include autoload. Did you run install dependencies using composer?');
 }
@@ -20,21 +23,20 @@ class Application extends App {
         $container = $this->getContainer();
         $container->registerService('Config', function($c) {
 
-            return $c->query('ServerContainer')->getConfig();
+            return $c->get(IConfig::class);
         });
 
         $container->registerService('RootFolder', function($c) {
-
-            return $c->query('ServerContainer')->getRootFolder();
+            return $c->get(IRootFolder::class);
         });
         $container->registerService('UserManager', function($c) {
-            return $c->query('ServerContainer')->getUserManager();
+            return $c->get(IUserManager::class);
         });
     }
 
     public function connectWatcher(IAppContainer $container) {
             /** @var IRootFolder $root */
-            $root = $container->query(IRootFolder::class);
+            $root = $container->get(IRootFolder::class);
             $root->listen('\OC\Files', 'postWrite', function (Node $node) use ($container) {
                 $c = $container->query('ServerContainer'); 
                 $user = $c->getUserSession()->getUser();
@@ -49,14 +51,18 @@ class Application extends App {
                 if($user != null){
                     $watcher = new FSHooks($c->getUserFolder(), $user->getUID(), $c->getConfig(), 'carnet',$container->query(IDBConnection::class));
                     $watcher->postDelete($node);
+                 
+                
                  }
             });
     }
+
+
 }
 $app = \OC::$server->query(Application::class);
 $container = $app->getContainer();
 
-$app->connectWatcher($container);
+//$app->connectWatcher($container);
 
 $appName = $container->query('AppName');
 $container->query('OCP\INavigationManager')
