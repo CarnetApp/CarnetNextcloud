@@ -68,7 +68,7 @@ $appName = $container->query('AppName');
 $container->query('OCP\INavigationManager')
     ->add(
         function () use ($container, $appName) {
-            $urlGenerator = $container->query('OCP\IURLGenerator');
+            $urlGenerator = $container->get(\OCP\IURLGenerator::class);
 
             return [
                         'id'    => $appName,
