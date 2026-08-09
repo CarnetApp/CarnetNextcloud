@@ -1,3 +1,7 @@
+# Version 0.25.14
+
+Fix nc33-nc34 compatibility, with help from @tareko @sstefanov and @zentala
+
 # Version 0.25.13
 
 Fix AppInfo deprecated (@presslab-us)
