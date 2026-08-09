@@ -22,7 +22,6 @@ class FileListener implements IEventListener {
 
     public function __construct(private LoggerInterface $logger,  private IUserSession $userSession, private IConfig $Config, private IDBConnection $db, private IRootFolder $rootFolder) {
         $this->logger = $logger;
-        $this->logger->warning('FileListener total');
         $this->folder = $this->Config->getUserValue($this->userSession->getUser()->getUID(), "carnet", "note_folder");
         $UserFolder = $this->rootFolder->getUserFolder($this->userSession->getUser()->getUID());
         if(empty($this->folder))
@@ -59,7 +58,6 @@ class FileListener implements IEventListener {
     public function postDelete($node){
         if($this->carnetFolder == null)
             return;
-        $this->logger->warning('FileListener: carnetFolder not null');
         if($this->isMine($node)){
                 $cacheManager = new CacheManager($this->db, $this->carnetFolder);
                 $cacheManager->deleteFromCache($this->getRelativePath($node->getPath()));
