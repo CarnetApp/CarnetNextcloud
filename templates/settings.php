@@ -28,8 +28,8 @@ if($_['carnet_display_fullscreen']==="yes"){
 else if(isset ($_['nc_version']) && $_['nc_version']>=14)
     style("carnet","../templates/CarnetWebClient/compatibility/nextcloud/nc14-header");
 $nonce = "";
-if (method_exists(\OC::$server, "getContentSecurityPolicyNonceManager")){
-    $nonce = \OC::$server->getContentSecurityPolicyNonceManager()->getNonce();
+if (class_exists('\OCP\Server') && class_exists('\OC\Security\CSP\ContentSecurityPolicyNonceManager')){
+    $nonce = \OCP\Server::get(\OC\Security\CSP\ContentSecurityPolicyNonceManager::class)->getNonce();
 }
 $file = str_replace("src=\"","defer nonce='".$nonce."' src=\"".$root."/CarnetWebClient/",$file);
 echo $file;

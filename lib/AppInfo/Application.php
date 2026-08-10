@@ -3,66 +3,60 @@
 namespace OCA\Carnet\AppInfo;
 use OCP\AppFramework\App;
 use OCA\Mail\HordeTranslationHandler;
-use OCA\Carnet\Hooks\FSHooks;
 use OCP\Files\IRootFolder;
 use OCP\Files\Node;
 use OCP\AppFramework\IAppContainer;
 use OCP\Util;
 use OCP\IDBConnection;
 
+use OCP\AppFramework\Bootstrap\IBootstrap;
+use OCP\AppFramework\Bootstrap\IBootContext;
+use OCP\AppFramework\Bootstrap\IRegistrationContext;
+use OCP\Files\Events\Node\NodeWrittenEvent;
+use OCP\Files\Events\Node\NodeDeletedEvent;
+use OCA\Carnet\Listener\FileListener;
+use OCP\IUserManager;
+use OCP\IUserSession;
+use OCP\IConfig;
 if ((@include_once __DIR__ . '/../../vendor/autoload.php')===false) {
 	throw new \Exception('Cannot include autoload. Did you run install dependencies using composer?');
 }
-class Application extends App {
+class Application extends App implements IBootstrap{
 
     public function __construct(array $urlParams=array()){
         parent::__construct('carnet', $urlParams);
         $container = $this->getContainer();
         $container->registerService('Config', function($c) {
 
-            return $c->query('ServerContainer')->getConfig();
+            return $c->get(IConfig::class);
         });
 
         $container->registerService('RootFolder', function($c) {
-
-            return $c->query('ServerContainer')->getRootFolder();
+            return $c->get(IRootFolder::class);
         });
         $container->registerService('UserManager', function($c) {
-            return $c->query('ServerContainer')->getUserManager();
+            return $c->get(IUserManager::class);
         });
     }
 
-    public function connectWatcher(IAppContainer $container) {
-            /** @var IRootFolder $root */
-            $root = $container->query(IRootFolder::class);
-            $root->listen('\OC\Files', 'postWrite', function (Node $node) use ($container) {
-                $c = $container->query('ServerContainer'); 
-                $user = $c->getUserSession()->getUser();
-                if($user != null){
-                    $watcher = new FSHooks($c->getUserFolder(), $user->getUID(), $c->getConfig(), 'carnet',$container->query(IDBConnection::class));
-                    $watcher->postWrite($node);
-                 }
-            });
-            $root->listen('\OC\Files', 'postDelete', function (Node $node) use ($container) {
-                $c = $container->query('ServerContainer');
-                $user = $c->getUserSession()->getUser();
-                if($user != null){
-                    $watcher = new FSHooks($c->getUserFolder(), $user->getUID(), $c->getConfig(), 'carnet',$container->query(IDBConnection::class));
-                    $watcher->postDelete($node);
-                 }
-            });
+    public function register(IRegistrationContext $context): void {
+        $context->registerEventListener(NodeDeletedEvent::class, FileListener::class);
+        $context->registerEventListener(NodeWrittenEvent::class, FileListener::class);
     }
+    
+    public function boot(IBootContext $context): void {
+
+    }
+
 }
 $app = \OC::$server->query(Application::class);
 $container = $app->getContainer();
-
-$app->connectWatcher($container);
 
 $appName = $container->query('AppName');
 $container->query('OCP\INavigationManager')
     ->add(
         function () use ($container, $appName) {
-            $urlGenerator = $container->query('OCP\IURLGenerator');
+            $urlGenerator = $container->get(\OCP\IURLGenerator::class);
 
             return [
                         'id'    => $appName,

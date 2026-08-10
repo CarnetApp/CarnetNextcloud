@@ -31,10 +31,10 @@ $file .= "<span style=\"display:none;\" id=\"token\">".$_['requesttoken']."</spa
 
 $file = str_replace("<!ROOTPATH>", $root."/CarnetWebClient/", $file);
 //$root = substr(__DIR__, strlen($_SERVER['DOCUMENT_ROOT']));
-$urlGenerator = \OC::$server->getURLGenerator();
+$urlGenerator = \OCP\Server::get(\OCP\IURLGenerator::class);
 $file = str_replace("<!ROOTURL>", $root."/CarnetWebClient/", $file);
-if (method_exists(\OC::$server, "getContentSecurityPolicyNonceManager")){
-    $nonce = \OC::$server->getContentSecurityPolicyNonceManager()->getNonce();
+if (class_exists('\OCP\Server') && class_exists('\OC\Security\CSP\ContentSecurityPolicyNonceManager')){
+    $nonce = \OCP\Server::get(\OC\Security\CSP\ContentSecurityPolicyNonceManager::class)->getNonce();
     $file = str_replace("src=\"","defer nonce='".$nonce."' src=\"",$file);
 }
 $file = str_replace("<!APIURL>", parse_url($urlGenerator->linkToRouteAbsolute("carnet.page.index"), PHP_URL_PATH), $file);
