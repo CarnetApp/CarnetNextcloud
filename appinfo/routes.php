@@ -74,10 +74,5 @@ return [
 
        ['name' => 'note#getNote', 'url' => '/note/get_note', 'verb' => 'GET'],
 
-       ['name' => 'note#setShouldUseFolderNotes', 'url' => '/settings/note_folder', 'verb' => 'POST' ],
-       ['name' => 'note#shouldUseFolderNotes', 'url' => '/settings/note_folder', 'verb' => 'GET' ],
-       ['name' => 'note#useMDEditor', 'url' => '/settings/use_md_editor', 'verb' => 'GET' ],
-       ['name' => 'note#setUseMDEditor', 'url' => '/settings/use_md_editor', 'verb' => 'POST' ]
-
     ]
 ];
