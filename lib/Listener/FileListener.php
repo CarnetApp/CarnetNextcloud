@@ -22,8 +22,16 @@ class FileListener implements IEventListener {
 
     public function __construct(private LoggerInterface $logger,  private IUserSession $userSession, private IConfig $Config, private IDBConnection $db, private IRootFolder $rootFolder) {
         $this->logger = $logger;
-        $this->folder = $this->Config->getUserValue($this->userSession->getUser()->getUID(), "carnet", "note_folder");
-        $UserFolder = $this->rootFolder->getUserFolder($this->userSession->getUser()->getUID());
+    }
+
+    // Public share uploads and guest flows (e.g. LibreSign external signers) have no session user
+    private function loadCarnetFolder($node): void {
+        $uid = $this->userSession->getUser()?->getUID() ?? $node->getOwner()?->getUID();
+        $this->carnetFolder = null;
+        if ($uid === null)
+            return;
+        $this->folder = $this->Config->getUserValue($uid, "carnet", "note_folder");
+        $UserFolder = $this->rootFolder->getUserFolder($uid);
         if(empty($this->folder))
             $this->folder= NoteUtils::$defaultCarnetNotePath;
         try{
@@ -42,6 +50,7 @@ class FileListener implements IEventListener {
         $path = $node->getPath(); 
         $name = $node->getName(); 
         try {
+            $this->loadCarnetFolder($node);
             if ($event instanceof NodeDeletedEvent){
                 $this->postDelete($node);
             }
