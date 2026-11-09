@@ -22,6 +22,8 @@ class FileListener implements IEventListener {
 
     public function __construct(private LoggerInterface $logger,  private IUserSession $userSession, private IConfig $Config, private IDBConnection $db, private IRootFolder $rootFolder) {
         $this->logger = $logger;
+        if ($this->userSession->getUser() === null)
+            return;
         $this->folder = $this->Config->getUserValue($this->userSession->getUser()->getUID(), "carnet", "note_folder");
         $UserFolder = $this->rootFolder->getUserFolder($this->userSession->getUser()->getUID());
         if(empty($this->folder))
