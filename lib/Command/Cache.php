@@ -35,7 +35,7 @@ class Cache extends Command {
     * @param OutputInterface $output
     * @return int
     */
-    protected function execute(InputInterface $input, OutputInterface $output) {
+    protected function execute(InputInterface $input, OutputInterface $output): int {
         $this->output = $output;
         $this->action = $input->getArgument('action');
         if($this->action === "rebuild"){
@@ -52,7 +52,7 @@ class Cache extends Command {
         }
         return 0;
     }
-    protected function configure() {
+    protected function configure(): void {
         $this->setName('carnet:cache')
         ->setDescription('Cache')
         ->addArgument(

@@ -48,7 +48,7 @@ private function getCacheFolder(){
 * @param OutputInterface $output
 * @return int
 */
-protected function execute(InputInterface $input, OutputInterface $output) {
+protected function execute(InputInterface $input, OutputInterface $output): int {
     $this->output = $output;
     $this->userId = $input->getArgument('user_id');
     $folder = $this->Config->getUserValue($this->userId , $this->appName, "note_folder");
@@ -97,9 +97,10 @@ protected function execute(InputInterface $input, OutputInterface $output) {
         $this->output->writeln('not found in '.$e);
     }
     $folder->newFile(".extraction_finished");
+    return 0;
 }      
 
-protected function configure() {
+protected function configure(): void {
 $this->setName('carnet:opennote')
 ->setDescription('OpenNote')
 ->addArgument(
